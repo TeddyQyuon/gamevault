@@ -1,0 +1,19 @@
+:root {
+  /* GameVault design tokens — adjust to match reference images */
+  --color-page: #f7f7f8;
+  --color-surface: #ffffff;
+  --color-elevated: #f0f1f3;
+  --color-border: #e1e3e7;
+  --color-primary: #ff5a00;
+  --color-primary-hover: #e74f00;
+  --color-cyan: #38bdf8;
+  --color-purple: #8b5cf6;
+  --color-text: #17191d;
+  --color-muted: #656b75;
+  --color-success: #10d9a0;
+  --color-warning: #fbbf24;
+  --color-danger: #fb7185;
+  --radius-card: 12px;
+  --shadow-card: 0 3px 14px rgba(23, 25, 29, 0.03);
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+}

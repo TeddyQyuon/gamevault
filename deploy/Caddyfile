@@ -1,0 +1,9 @@
+# {$DOMAIN} gets automatic HTTPS. /api/* goes to Express, the rest to nginx.
+{$DOMAIN} {
+  handle /api/* {
+    reverse_proxy api:3001
+  }
+  handle {
+    reverse_proxy web:80
+  }
+}
