@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 44" width="44" height="44" fill="none">
+  <defs>
+    <linearGradient id="gvGradPrimary" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3B82F6" />
+      <stop offset="50%" stop-color="#2563EB" />
+      <stop offset="100%" stop-color="#1D4ED8" />
+    </linearGradient>
+    <linearGradient id="gvGradAccent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF6B00" />
+      <stop offset="100%" stop-color="#FF3D00" />
+    </linearGradient>
+    <linearGradient id="gvGradGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#60A5FA" />
+      <stop offset="100%" stop-color="#2563EB" />
+    </linearGradient>
+    <filter id="gvShadow" x="-10%" y="-10%" width="125%" height="125%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#1E3A8A" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Outer Vault Hexagon Shield -->
+  <polygon points="22,3 39,12 39,32 22,41 5,32 5,12" fill="url(#gvGradPrimary)" filter="url(#gvShadow)" />
+
+  <!-- Inner Dark Tech Core -->
+  <polygon points="22,6.5 36,14 36,30 22,37.5 8,30 8,14" fill="#0C1222" />
+
+  <!-- Vault Shackle / Lock Arch -->
+  <path d="M16 19.5V15.5C16 12.186 18.686 9.5 22 9.5C25.314 9.5 28 12.186 28 15.5V19.5" stroke="url(#gvGradGlow)" stroke-width="3" stroke-linecap="round" />
+
+  <!-- Vault Body / Controller Safe Unit -->
+  <rect x="13.5" y="18.5" width="17" height="13" rx="3.5" fill="url(#gvGradPrimary)" />
+
+  <!-- Gamepad D-pad Cross in Vault Core -->
+  <path d="M20.5 22H23.5V24H25.5V26H23.5V28H20.5V26H18.5V24H20.5V22Z" fill="#FFFFFF" />
+
+  <!-- Security Keyhole / Vault Core Diode -->
+  <circle cx="22" cy="25" r="1.5" fill="url(#gvGradAccent)" />
+
+  <!-- Accent Gem Dot -->
+  <circle cx="22" cy="34" r="1.2" fill="#60A5FA" />
+</svg>

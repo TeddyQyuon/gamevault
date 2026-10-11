@@ -1,0 +1,33 @@
+{
+  "name": "gamevault-server",
+  "private": true,
+  "version": "0.1.0",
+  "description": "GameVault Express API â€” auth, catalogue, Stripe Checkout (test mode), webhooks, fulfilment.",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js",
+    "catalog:prepare": "node src/prepare-subscriptions.js",
+    "catalog:publish": "node src/publish-store.js",
+    "launch:check": "node src/launch-check.js",
+    "db:migrate": "node src/migrate.js",
+    "db:seed": "node src/seed.js",
+    "admin:promote": "node src/make-admin.js",
+    "test": "node --test tests/pricing.test.js tests/webhooks.test.js tests/integration.test.js tests/connect.test.js tests/live-guards.test.js tests/manual-delivery.test.js",
+    "lint": "eslint src tests"
+  },
+  "dependencies": {
+    "bcryptjs": "3.0.3",
+    "cookie-parser": "1.4.7",
+    "cors": "2.8.5",
+    "dotenv": "16.4.5",
+    "express": "4.21.2",
+    "express-rate-limit": "7.4.1",
+    "mysql2": "3.24.4",
+    "sequelize": "6.37.8",
+    "stripe": "22.6.1"
+  },
+  "devDependencies": {
+    "eslint": "^9.13.0"
+  }
+}

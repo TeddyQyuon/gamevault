@@ -1,0 +1,12 @@
+﻿export const FAQS = [
+  { q: 'How will I receive my subscription?', a: 'After payment is confirmed, we email your subscription details and activation instructions to the email address entered at checkout. Delivery is within 1 hour after confirmed payment. Your order page shows the delivery status.' },
+  { q: 'Where are my subscription details?', a: 'Check the inbox and spam folder for your checkout email address. The order page shows whether your email delivery is pending or delivered. Keep your order number when asking for help.' },
+  { q: 'Will GameVault charge me every month?', a: 'Membership offers use a one-time payment for the term shown. They do not create a recurring GameVault charge. Follow the provider account settings and renewal terms in your activation instructions.' },
+  { q: 'Can I buy from another country?', a: 'Check the supported countries and account requirements on the offer before paying. The checkout country field does not change which countries the membership supports.' },
+  { q: 'How do I activate my membership?', a: 'Follow the instructions in your delivery email. Depending on the offer, these may describe account access, an existing-account upgrade, or activation with a code. Check the account requirements before buying.' },
+  { q: 'What if my email delivery is late?', a: 'Check your order status and spam folder. If more than 1 hour has passed since confirmed payment, keep your order number and contact the seller. Do not place another order to retry delivery.' },
+  { q: 'Which payment methods are available?', a: 'Available payment methods are shown in Stripe Checkout. All store prices are in SGD. Checkout explicitly identifies test payments when the store is using Stripe test mode.' },
+  { q: 'What happens if payment is still pending?', a: 'Email delivery starts after confirmed payment. Some payment methods take longer to confirm. Refresh your order status before paying again.' },
+  { q: 'Why is an offer unavailable?', a: 'The seller can pause an email-delivered offer when it cannot be fulfilled. These subscriptions do not depend on stored code stock. Activation-code inventory offers remain available only while codes are in stock.' },
+  { q: 'Where are activation codes for code-inventory offers?', a: 'For offers explicitly sold as activation codes, your code appears in the paid order and Account > Library after allocation. Email-delivered memberships are tracked in your orders and delivered to your checkout email.' },
+]
