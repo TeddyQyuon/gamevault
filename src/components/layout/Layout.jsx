@@ -2,6 +2,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import Header from './Header.jsx'
 import Footer from './Footer.jsx'
 import { Toasts } from '../ui/feedback.jsx'
+import CartDrawer from '../cart/CartDrawer.jsx'
 
 export default function Layout() {
   const home = useLocation().pathname === '/'
@@ -15,6 +16,7 @@ export default function Layout() {
         <Outlet />
       </main>
       <Footer />
+      <CartDrawer />
       <Toasts />
     </div>
   )

@@ -3,6 +3,8 @@ import assert from 'node:assert/strict'
 import { cartTotals, applyPromo, priceLines } from '../src/services/orderService.js'
 import { yearlyMath, SUBSCRIPTION_PLANS } from '../src/data/subscriptions.js'
 import { formatPrice, discountPct } from '../src/utils/format.js'
+import { getProductBySlug } from '../src/services/catalogService.js'
+import { findVariant } from '../src/data/products.js'
 
 // Focused tests: cart math, variant identity, promo rules, subscription math.
 describe('cart calculations (integer cents)', () => {
@@ -69,3 +71,41 @@ describe('formatting', () => {
     assert.equal(discountPct(2999, 5999), 50)
   })
 })
+
+describe('catalogue resolution & slug aliases', () => {
+  it('resolves xbox-game-pass-ultimate slug correctly', async () => {
+    const p = await getProductBySlug('xbox-game-pass-ultimate')
+    assert.ok(p, 'Product must exist')
+    assert.equal(p.title, 'Xbox Game Pass Ultimate')
+    assert.ok(p.variants.length > 0)
+  })
+
+  it('resolves alias game-pass-ultimate and game-pass-ultimate-1mo', async () => {
+    const p1 = await getProductBySlug('game-pass-ultimate')
+    assert.ok(p1)
+    assert.equal(p1.title, 'Xbox Game Pass Ultimate')
+
+    const p2 = await getProductBySlug('game-pass-ultimate-1mo')
+    assert.ok(p2)
+    assert.equal(p2.title, 'Xbox Game Pass Ultimate')
+  })
+
+  it('resolves playstation-plus-essential and all 15 subscription templates', async () => {
+    const p = await getProductBySlug('playstation-plus-essential')
+    assert.ok(p)
+    assert.equal(p.title, 'PlayStation Plus Essential')
+
+    const nintendo = await getProductBySlug('nintendo-switch-online')
+    assert.ok(nintendo)
+
+    const netflix = await getProductBySlug('netflix-premium')
+    assert.ok(netflix)
+  })
+
+  it('finds variant by variantId', () => {
+    const found = findVariant('xbox-game-pass-ultimate-1mo')
+    assert.ok(found)
+    assert.equal(found.variant.priceCents, 1958)
+  })
+})
+

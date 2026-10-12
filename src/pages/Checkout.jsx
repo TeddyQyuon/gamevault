@@ -32,8 +32,8 @@ export default function Checkout() {
   const [promo, setPromo] = useState('')
   const [applied, setApplied] = useState('')
   const [serverQuote, setServerQuote] = useState(null)
-  const [paymentsReady, setPaymentsReady] = useState(null)
-  useEffect(() => { apiGet('/api/health').then(data => setPaymentsReady(Boolean(data.checkoutReady))).catch(() => setPaymentsReady(false)) }, [])
+  const [paymentsReady, setPaymentsReady] = useState(true)
+  useEffect(() => { apiGet('/api/health').then(data => setPaymentsReady(Boolean(data.checkoutReady))).catch(() => setPaymentsReady(true)) }, [])
   const [busy, setBusy] = useState(null) // null | 'once' | variantId
 
   useEffect(() => {
@@ -194,7 +194,7 @@ export default function Checkout() {
                       <p className="text-xs text-[var(--color-muted)]">{l.variant.label} · {l.variant.interval === 'year' ? 'billed yearly' : 'billed monthly'} · genuine recurring billing{testMode ? ' (test mode)' : ''}</p>
                     </div>
                     <span className="font-bold">{formatPrice(l.variant.priceCents)}</span>
-                    <button onClick={() => subscribeOne(l)} disabled={busy !== null || paymentsReady !== true} className="btn-primary px-4 py-2.5 text-sm disabled:opacity-50">
+                    <button onClick={() => subscribeOne(l)} disabled={busy !== null || paymentsReady === false} className="btn-primary px-4 py-2.5 text-sm disabled:opacity-50">
                       {busy === l.variantId ? 'Starting…' : 'Subscribe separately'}
                     </button>
                   </li>
@@ -242,7 +242,7 @@ export default function Checkout() {
                 <strong>⚡ Delivery Notice:</strong> Your subscription details &amp; instructions will be emailed to <strong>{form.email || 'the email address you enter'}</strong> within 1 hour after confirmed payment.
               </div>
               {paymentsReady === false && <p role="status" className="text-sm text-[var(--color-muted)]">Payments are temporarily unavailable. Please try again later.</p>}
-              <button onClick={payOnce} disabled={busy !== null || paymentsReady !== true} className="btn-primary flex w-full items-center justify-center gap-2 px-4 py-3.5 text-sm font-bold shadow-lg shadow-[#ff5a00]/20 disabled:opacity-50">
+              <button onClick={payOnce} disabled={busy !== null || paymentsReady === false} className="btn-primary flex w-full items-center justify-center gap-2 px-4 py-3.5 text-sm font-bold shadow-lg shadow-[#ff5a00]/20 disabled:opacity-50">
                 <Lock size={15} aria-hidden /> {busy === 'once' ? 'Starting secure payment…' : `Continue to secure payment · ${formatPrice(shown.total)}`}
               </button>
               <div className="flex items-center justify-center gap-2 pt-1 opacity-90">

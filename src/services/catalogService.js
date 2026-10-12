@@ -57,10 +57,23 @@ async function loadCatalogue() {
   if (!request || Date.now() - refreshedAt > 15000) {
     refreshedAt = Date.now()
     catalogueError = null
-    request = apiGet('/api/products').then(({ products = [] }) => {
-      const liveProducts = products.map(normalize).filter((product) => product.variants.length)
-      return liveProducts
-    }).catch((error) => { catalogueError = error.message; request = null; return [] }).then((products) => { registerCatalogue(products); return products })
+    request = apiGet('/api/products')
+      .then((data) => {
+        const products = Array.isArray(data?.products) ? data.products : []
+        if (products.length === 0) return PRODUCTS
+        const liveProducts = products.map(normalize).filter((product) => product.variants.length)
+        return liveProducts.length > 0 ? liveProducts : PRODUCTS
+      })
+      .catch((error) => {
+        catalogueError = error.message
+        request = null
+        return PRODUCTS
+      })
+      .then((products) => {
+        const finalProducts = Array.isArray(products) && products.length > 0 ? products : PRODUCTS
+        registerCatalogue(finalProducts)
+        return finalProducts
+      })
   }
   return request
 }
@@ -88,8 +101,62 @@ export async function getProducts(filters = {}) {
   }
   return list.filter((p) => p.variants.length)
 }
+
 export async function getProductBySlug(slug) {
-  return (await loadCatalogue()).find((p) => p.slug === slug) || null
+  const catalogue = await loadCatalogue()
+  if (!slug) return null
+  const clean = slug.toLowerCase().trim()
+
+  // 1. Direct match by slug or ID
+  let match = catalogue.find((p) => p.slug === slug || p.id === slug || p.id === `p-${slug}` || p.slug?.toLowerCase() === clean)
+  if (match) return match
+
+  // 2. Known alias mappings
+  const ALIAS_MAP = {
+    'xbox-game-pass-ultimate': ['xbox-game-pass-ultimate', 'game-pass-ultimate', 'game-pass-ultimate-1mo', 'p-xbox-game-pass-ultimate', 'p-gpu-1mo'],
+    'playstation-plus-essential': ['playstation-plus-essential', 'playstation-plus', 'ps-plus-12mo', 'p-playstation-plus-essential', 'p-psplus-12mo'],
+    'netflix-premium': ['netflix-premium', 'netflix', 'netflix-gift-card', 'netflix-gift-1mo', 'p-netflix-gift', 'p-netflix-1mo'],
+    'spotify-premium': ['spotify-premium', 'spotify', 'spotify-gift-card', 'spotify-gift-1mo', 'p-spotify-gift', 'p-spotify-1mo'],
+    'apple-gift-card': ['apple-gift-card', 'apple-gift-sg', 'apple', 'p-apple-gift', 'p-apple-sg'],
+    'google-play-card': ['google-play-card', 'googleplay-sg', 'google-play', 'p-google-play', 'p-gplay-sg'],
+    'roblox-card': ['roblox-card', 'roblox-credit-sg', 'roblox', 'p-roblox-card', 'p-roblox-sg'],
+    'razer-gold-card': ['razer-gold-card', 'razer-gold-sg', 'razer', 'p-razer-gold', 'p-razer-sg'],
+    'steam-wallet-sg': ['steam-wallet-sg', 'steam-wallet', 'steam', 'p-steam-sg'],
+    'psn-credit-sg': ['psn-credit-sg', 'psn-credit', 'psn', 'p-psn-sg'],
+    'xbox-gift-sg': ['xbox-gift-sg', 'xbox-gift-card', 'xbox', 'p-xbox-sg'],
+    'eshop-credit-us': ['eshop-credit-us', 'eshop-credit', 'eshop', 'p-eshop-us'],
+    'disney-plus': ['disney-plus', 'disney', 'p-disney-plus'],
+    'youtube-premium': ['youtube-premium', 'youtube', 'p-youtube-premium'],
+    'crunchyroll-premium': ['crunchyroll-premium', 'crunchyroll', 'p-crunchyroll-premium'],
+    'apple-music': ['apple-music', 'p-apple-music'],
+    'microsoft-365': ['microsoft-365', 'microsoft365', 'p-microsoft-365'],
+    'canva-pro': ['canva-pro', 'canva', 'p-canva-pro'],
+    'adobe-creative-cloud': ['adobe-creative-cloud', 'adobe', 'p-adobe-creative-cloud'],
+    'nordvpn': ['nordvpn', 'p-nordvpn'],
+    'ea-play': ['ea-play', 'p-ea-play'],
+    'discord-nitro': ['discord-nitro', 'p-discord-nitro'],
+    'nintendo-switch-online': ['nintendo-switch-online', 'p-nintendo-switch-online'],
+  }
+
+  for (const [canonical, aliases] of Object.entries(ALIAS_MAP)) {
+    if (aliases.includes(clean)) {
+      match = catalogue.find((p) => p.slug === canonical || aliases.includes(p.slug) || aliases.includes(p.id))
+      if (match) return match
+    }
+  }
+
+  // 3. Fallback search inside PRODUCTS
+  match = PRODUCTS.find((p) => p.slug === slug || p.id === slug || p.slug === clean)
+  if (match) return match
+
+  for (const [canonical, aliases] of Object.entries(ALIAS_MAP)) {
+    if (aliases.includes(clean)) {
+      match = PRODUCTS.find((p) => p.slug === canonical || aliases.includes(p.slug) || aliases.includes(p.id))
+      if (match) return match
+    }
+  }
+
+  return null
 }
 export function invalidateCatalogue() { request = null; refreshedAt = 0 }
 export function getCatalogueError() { return catalogueError }

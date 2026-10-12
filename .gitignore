@@ -69,3 +69,6 @@ skills/
 
 .vercel
 .vercel
+
+gamevault-*.jpg
+scripts/update-products.mjs
