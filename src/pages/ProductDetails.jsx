@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Heart, ShoppingCart, Zap } from 'lucide-react'
 import { getProductBySlug, getRelated, pushRecent } from '../services/catalogService.js'
@@ -42,6 +42,18 @@ export default function ProductDetails() {
     return () => { alive = false }
   }, [slug])
 
+  const variants = useMemo(() => {
+    if (!product?.variants) return []
+    const seen = new Set()
+    return product.variants.filter((x) => {
+      const key = `${(x.label || '').trim().toLowerCase()}__${x.priceCents}`
+      if (seen.has(key) || seen.has(x.id)) return false
+      seen.add(key)
+      seen.add(x.id)
+      return true
+    })
+  }, [product?.variants])
+
   if (loading) return <div><ProductGridSkeleton count={4} /></div>
   if (!product) {
     return (
@@ -52,7 +64,7 @@ export default function ProductDetails() {
     )
   }
 
-  const variant = product.variants.find((x) => x.id === variantId) || product.variants[0]
+  const variant = variants.find((x) => x.id === variantId) || product.variants.find((x) => x.id === variantId) || variants[0] || product.variants[0]
   const out = product.isPreview || !variantInStock(variant)
   const maxQty = Math.max(1, variantQuantityLimit(variant))
   const wished = has(product.id)
@@ -100,11 +112,11 @@ export default function ProductDetails() {
             <p className="text-sm text-[var(--color-muted)]">{product.tagline} · {product.platforms.join(' · ')}</p>
             <p className="mt-3 text-sm text-[var(--color-muted)]">{product.description}</p>
 
-            {product.variants.length > 1 && (
+            {variants.length > 1 && (
               <fieldset className="mt-4">
                 <legend className="mb-1.5 text-sm font-bold">Edition / Denomination</legend>
                 <div className="grid gap-2" role="radiogroup" aria-label="Choose edition">
-                  {product.variants.map((x) => (
+                  {variants.map((x) => (
                     <label key={x.id} className={`flex cursor-pointer items-center justify-between gap-2 rounded-lg border p-3 text-sm ${x.id === variant.id ? 'border-[#5aa2ff] bg-[#2855FF]/10' : 'border-[var(--color-border)]'}`}>
                       <span className="flex items-center gap-2">
                         <input type="radio" name="variant" checked={x.id === variant.id} onChange={() => { setVariantId(x.id); setQty(1) }} className="accent-[#2855FF]" />

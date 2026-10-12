@@ -31,6 +31,20 @@ function artFor(title) {
   return 'default'
 }
 
+function dedupeVariants(variants) {
+  if (!Array.isArray(variants)) return []
+  const seenLabels = new Set()
+  const seenIds = new Set()
+  return variants.filter((v) => {
+    if (!v) return false
+    const labelKey = `${(v.label || '').trim().toLowerCase()}__${v.priceCents}`
+    if (seenLabels.has(labelKey) || seenIds.has(v.id)) return false
+    seenLabels.add(labelKey)
+    seenIds.add(v.id)
+    return true
+  })
+}
+
 function normalize(row) {
   const local = PRODUCTS.find((p) => p.id === row.id || p.slug === row.slug)
   const category = CODE_IDS.has(row.id) ? 'subscriptions' : (CATEGORY_ALIASES[row.category] || row.category)
@@ -47,7 +61,7 @@ function normalize(row) {
     redemption: row.fulfilment === 'manual' ? ['Choose your membership term and check the supported region', 'Pay securely and check your order confirmation', 'Receive your subscription details at your checkout email within 1 hour of confirmed payment'] : row.redeemSteps || local?.redemption || ['Complete checkout', 'Open your paid order to view the code', 'Redeem the code with the service provider'],
     regionInfo: `Redeem in: ${row.region || local?.regions?.[0] || 'the region stated on this listing'}.`,
     requirements: row.eligibility || local?.requirements || 'An account with the service provider in the supported region.',
-    variants: (row.variants || []).map((v) => ({ ...v, interval: v.billingInterval || v.interval, stock: v.stockMode === 'on_demand' ? null : Number(v.stock) || 0 })),
+    variants: dedupeVariants(row.variants || []).map((v) => ({ ...v, interval: v.billingInterval || v.interval, stock: v.stockMode === 'on_demand' ? null : Number(v.stock) || 0 })),
     rating: Number(row.rating) || 0, ratingsCount: Number(row.ratingsCount) || 0,
     isPreview: false,
   }

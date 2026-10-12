@@ -4,7 +4,7 @@ import { cartTotals, applyPromo, priceLines } from '../src/services/orderService
 import { yearlyMath, SUBSCRIPTION_PLANS } from '../src/data/subscriptions.js'
 import { formatPrice, discountPct } from '../src/utils/format.js'
 import { getProductBySlug } from '../src/services/catalogService.js'
-import { findVariant } from '../src/data/products.js'
+import { findVariant, PRODUCTS } from '../src/data/products.js'
 
 // Focused tests: cart math, variant identity, promo rules, subscription math.
 describe('cart calculations (integer cents)', () => {
@@ -106,6 +106,46 @@ describe('catalogue resolution & slug aliases', () => {
     const found = findVariant('xbox-game-pass-ultimate-1mo')
     assert.ok(found)
     assert.equal(found.variant.priceCents, 1958)
+  })
+
+  it('resolves legacy and standard variant aliases', () => {
+    const netflixStd = findVariant('netflix-premium-standard')
+    assert.ok(netflixStd)
+    assert.equal(netflixStd.variant.id, 'netflix-1mo')
+    assert.equal(netflixStd.variant.priceCents, 1152)
+
+    const gpuVoucher = findVariant('gpu-1mo')
+    assert.ok(gpuVoucher)
+    assert.equal(gpuVoucher.variant.id, 'xbox-game-pass-ultimate-1mo')
+
+    const gplay = findVariant('gplay-10')
+    assert.ok(gplay)
+    assert.equal(gplay.variant.id, 'google-10')
+  })
+
+  it('has zero duplicate variant labels and IDs across all products in catalogue', () => {
+    for (const p of PRODUCTS) {
+      const labelCounts = {}
+      const idCounts = {}
+      for (const v of p.variants) {
+        labelCounts[v.label] = (labelCounts[v.label] || 0) + 1
+        idCounts[v.id] = (idCounts[v.id] || 0) + 1
+      }
+      for (const [label, count] of Object.entries(labelCounts)) {
+        assert.equal(count, 1, `Product ${p.id} (${p.title}) has duplicate variant label: "${label}"`)
+      }
+      for (const [id, count] of Object.entries(idCounts)) {
+        assert.equal(count, 1, `Product ${p.id} (${p.title}) has duplicate variant ID: "${id}"`)
+      }
+    }
+  })
+
+  it('verifies Netflix Premium has unique editions without duplication', async () => {
+    const netflix = await getProductBySlug('netflix-premium')
+    assert.ok(netflix)
+    assert.equal(netflix.variants.length, 2)
+    assert.equal(netflix.variants[0].label, '1 Month · Premium 4K')
+    assert.equal(netflix.variants[1].label, '3 Months · Premium 4K')
   })
 })
 
