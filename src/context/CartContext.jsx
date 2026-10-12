@@ -33,12 +33,18 @@ export function CartProvider({ children }) {
     writeJSON(KEYS.CART, lines)
   }, [lines])
 
+  const [isCartOpen, setIsCartOpen] = useState(false)
+
   const api = useMemo(() => ({
     lines,
     ready,
+    isCartOpen,
+    openCart: () => setIsCartOpen(true),
+    closeCart: () => setIsCartOpen(false),
+    toggleCart: () => setIsCartOpen((prev) => !prev),
     count: lines.reduce((s, l) => s + l.qty, 0),
     totals: (promo) => cartTotals(lines, promo),
-    add: (variantId, qty = 1) => {
+    add: (variantId, qty = 1, showDrawer = true) => {
       const found = findVariant(variantId)
       if (!ready || !found || !variantInStock(found.variant) || found.product.isPreview) return false
       setLines((prev) => {
@@ -47,6 +53,7 @@ export function CartProvider({ children }) {
         if (at) return prev.map((l) => (l.variantId === variantId ? { ...l, qty: Math.min(l.qty + qty, cap) } : l))
         return [...prev, { variantId, qty: Math.min(qty, cap) }]
       })
+      if (showDrawer) setIsCartOpen(true)
       return true
     },
     setQty: (variantId, qty) => {
@@ -57,7 +64,7 @@ export function CartProvider({ children }) {
     },
     remove: (variantId) => setLines((prev) => prev.filter((l) => l.variantId !== variantId)),
     clear: () => setLines([]),
-  }), [lines, ready])
+  }), [lines, ready, isCartOpen])
 
   return <CartCtx.Provider value={api}>{children}</CartCtx.Provider>
 }

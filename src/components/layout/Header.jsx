@@ -7,7 +7,7 @@ import { SearchBar } from '../ui/search.jsx'
 
 const NAV = [['/games','Games'],['/subscriptions','Subscriptions'],['/gift-cards','Gift cards'],['/streaming','Streaming'],['/deals','Deals'],['/support','Support']]
 export default function Header() {
-  const { count } = useCart()
+  const { count, openCart } = useCart()
   const { user } = useSession()
   const [open,setOpen] = useState(false)
   return <header className="store-header">
@@ -19,7 +19,7 @@ export default function Header() {
       </Link>
       <div className="store-search"><SearchBar/></div>
       <Link to={user?'/account':'/login'} className="header-account"><User size={23}/><span>{user?user.name.split(' ')[0]:'Sign in'}</span></Link>
-      <Link to="/cart" className="header-cart" aria-label={`Cart, ${count} items`}><ShoppingCart size={24}/><span>Cart</span>{count>0&&<b>{count}</b>}</Link>
+      <button type="button" onClick={openCart} className="header-cart" aria-label={`Cart, ${count} items`}><ShoppingCart size={24}/><span>Cart</span>{count>0&&<b>{count}</b>}</button>
     </div>
     <div className="store-nav-border"><div className="container-shell store-nav-row">
       <nav aria-label="Primary" className={open?'store-nav open':'store-nav'}>{NAV.map(([to,label])=><NavLink key={to} to={to} onClick={()=>setOpen(false)} className={({isActive})=>isActive?'active':''}>{label}</NavLink>)}</nav>

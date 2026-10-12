@@ -26,6 +26,10 @@ export async function api(path, { method = 'GET', body } = {}) {
   } catch {
     throw new ApiError(0, 'NETWORK_ERROR', 'Cannot reach the GameVault API. Is the backend running (npm run dev in server/)?')
   }
+  const contentType = res.headers?.get?.('content-type') || ''
+  if (contentType.includes('text/html')) {
+    throw new ApiError(503, 'BACKEND_UNAVAILABLE', 'GameVault API route not found or backend unavailable.')
+  }
   const data = await res.json().catch(() => ({}))
   if (!res.ok) {
     const err = data?.error || {}
