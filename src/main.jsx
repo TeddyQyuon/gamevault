@@ -36,13 +36,15 @@ if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
     navigator.serviceWorker
       .register('/sw.js')
       .then((reg) => {
-        // Check for updates
+        // Actively check for service worker updates on page load
+        reg.update().catch(() => {})
         reg.onupdatefound = () => {
           const installingWorker = reg.installing
           if (installingWorker) {
             installingWorker.onstatechange = () => {
               if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                console.log('[PWA] New content is available; please refresh.')
+                console.log('[PWA] New version activated, refreshing...')
+                window.location.reload()
               }
             }
           }

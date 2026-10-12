@@ -1,5 +1,5 @@
 // Antigravity Mobile PWA Service Worker
-const CACHE_NAME = 'antigravity-coder-v2'
+const CACHE_NAME = 'antigravity-coder-v5'
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
@@ -12,7 +12,7 @@ const PRECACHE_ASSETS = [
   '/icons/icon.svg'
 ]
 
-// Precache essential assets on install (individual adds so one missing asset never fails the whole cache)
+// Precache essential assets on install and force immediate activation
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(async (cache) => {
@@ -27,12 +27,15 @@ self.addEventListener('install', (event) => {
   )
 })
 
-// Clean up old caches on activate
+// Clean up old caches on activate and immediately claim all open clients
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
-        keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key))
+        keys.filter((key) => key !== CACHE_NAME).map((key) => {
+          console.log(`[SW] Purging stale cache: ${key}`)
+          return caches.delete(key)
+        })
       )
     }).then(() => self.clients.claim())
   )
@@ -86,7 +89,25 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // Static assets: Stale-while-revalidate
+  // Brand images & SVGs: Always Network-First so updated brand assets load immediately without stale cache
+  if (url.pathname.includes('/assets/') || url.pathname.endsWith('.svg') || url.pathname.endsWith('.jpg') || url.pathname.endsWith('.png')) {
+    event.respondWith(
+      fetch(request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200 && (networkResponse.type === 'basic' || networkResponse.type === 'cors')) {
+            const responseToCache = networkResponse.clone()
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(request, responseToCache)
+            })
+          }
+          return networkResponse
+        })
+        .catch(() => caches.match(request))
+    )
+    return
+  }
+
+  // Other static assets: Stale-while-revalidate
   event.respondWith(
     caches.match(request).then((cachedResponse) => {
       const fetchPromise = fetch(request)
