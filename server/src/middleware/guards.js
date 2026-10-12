@@ -12,6 +12,9 @@ export function sameOrigin(cfg) {
       let matches = false
       try { matches = new URL(origin).origin === new URL(cfg.clientUrl).origin } catch { /* Reject malformed origins. */ }
       if (!matches) throw forbidden('FORBIDDEN_ORIGIN', 'Cross-origin requests are not allowed.')
+    } else if (cfg.nodeEnv === 'production') {
+      // In production, reject state-changing browser requests that omit origin headers
+      throw forbidden('FORBIDDEN_ORIGIN', 'Cross-origin requests without origin are not allowed.')
     }
     next()
   }

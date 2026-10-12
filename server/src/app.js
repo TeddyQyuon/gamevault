@@ -19,6 +19,19 @@ import { ah } from './errors.js'
 export function createApp({ cfg, models, sequelize, stripe }) {
   const app = express()
   app.disable('x-powered-by')
+
+  // Security headers (defensive baseline against clickjacking, MIME sniffing, data leakage)
+  app.use((_req, res, next) => {
+    res.setHeader('X-Content-Type-Options', 'nosniff')
+    res.setHeader('X-Frame-Options', 'SAMEORIGIN')
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin')
+    res.setHeader('X-XSS-Protection', '1; mode=block')
+    if (cfg.cookieSecure) {
+      res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains')
+    }
+    next()
+  })
+
   app.use(cookieParser())
   app.use(cors({ origin: cfg.clientUrl, credentials: true }))
 
