@@ -28,6 +28,10 @@ function artFor(title) {
   if (name.includes('google play')) return 'googleplay'
   if (name.includes('roblox')) return 'roblox'
   if (name.includes('razer')) return 'razer'
+  const gameKeys = ['stormlands', 'neon-drift', 'shadow-realm', 'galaxy-frontiers', 'rivals-arena', 'mythic-tales', 'emberfall', 'neon-circuit', 'starborne', 'valkyrie-protocol', 'pixel-quest', 'ironclad-tactics', 'drift-horizon', 'cursed-hollow']
+  for (const k of gameKeys) {
+    if (name.includes(k.replace('-', ' ')) || name.includes(k)) return k
+  }
   return 'default'
 }
 

@@ -27,3 +27,10 @@ Before marking any task complete, or when the user indicates pausing, switching 
 1. **Codebase Preservation:** Preserve existing working functionality, comments, docstrings, and configurations.
 2. **Verification Gates:** Always run automated tests (`npm test`) and build checks (`npm run build`) to ensure zero regressions before completing tasks.
 3. **Security Standards:** Prevent secret leaks; never hardcode API keys or credentials.
+
+---
+
+## 4. Universal Parallel & Simultaneous Agent Execution Protocol
+1. **Simultaneous Task Execution:** Never execute sub-tasks or subagents serially when they can be run concurrently. Launch all subagents simultaneously in a single `invoke_subagent` call with multiple subagent definitions in the `Subagents` array.
+2. **Zero Serial Bottlenecks:** Eliminate artificial waiting gates. Cross-cutting layers (Frontend, Backend, Database, Security, QA) must work in parallel against decoupled contracts and mocks.
+3. **Immediate Concurrent Dispatch:** When orchestrating multi-agent tasks, dispatch all specialists concurrently from the start rather than staggering them across sequential waves.

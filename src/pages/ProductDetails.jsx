@@ -120,16 +120,16 @@ export default function ProductDetails() {
 
             {variants.length > 1 && (
               <fieldset className="mt-4">
-                <legend className="mb-1.5 text-sm font-bold">Edition / Denomination</legend>
+                <legend className="mb-1.5 text-sm font-bold text-[var(--color-text)]">Edition / Denomination</legend>
                 <div className="grid gap-2" role="radiogroup" aria-label="Choose edition">
                   {variants.map((x) => (
-                    <label key={x.id} className={`flex cursor-pointer items-center justify-between gap-2 rounded-lg border p-3 text-sm ${x.id === variant.id ? 'border-[#5aa2ff] bg-[#2855FF]/10' : 'border-[var(--color-border)]'}`}>
+                    <label key={x.id} className={`flex cursor-pointer items-center justify-between gap-2 rounded-lg border p-3 text-sm ${x.id === variant.id ? 'border-[var(--color-cyan)] bg-[var(--color-cyan)]/10' : 'border-[var(--color-border)] bg-[var(--color-elevated)]/40'}`}>
                       <span className="flex items-center gap-2">
-                        <input type="radio" name="variant" checked={x.id === variant.id} onChange={() => { setVariantId(x.id); setQty(1) }} className="accent-[#2855FF]" />
-                        <span className="font-semibold">{x.label}</span>
+                        <input type="radio" name="variant" checked={x.id === variant.id} onChange={() => { setVariantId(x.id); setQty(1) }} className="accent-[var(--color-primary)]" />
+                        <span className="font-semibold text-[var(--color-text)]">{x.label}</span>
                         {!variantInStock(x) && <Badge tone="warning">Unavailable</Badge>}
                       </span>
-                      <span className="font-bold">{`S$${(x.priceCents / 100).toFixed(2)}`}</span>
+                      <span className="font-bold text-[var(--color-cyan)]">{`S$${(x.priceCents / 100).toFixed(2)}`}</span>
                     </label>
                   ))}
                 </div>
@@ -137,39 +137,48 @@ export default function ProductDetails() {
             )}
 
             <div className="mt-4"><Price cents={variant.priceCents} compareAt={variant.compareAtCents} size="lg" /></div>
-            <p className="mt-1 text-xs text-[var(--color-muted)]">Region: {product.regions.join(', ')}</p>
+            
+            {/* DRM & Region Compatibility Badges (G2A Benchmark) */}
+            <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
+              <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/10 px-2 py-0.5 font-medium text-emerald-400 border border-emerald-500/20">
+                ✓ Can activate in your region ({product.regions.join(', ')})
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-md bg-[var(--color-primary)]/10 px-2 py-0.5 font-medium text-[var(--color-cyan)] border border-[var(--color-primary)]/20">
+                Official {product.platforms.join(' / ')} Key
+              </span>
+            </div>
 
             <div className="mt-3 flex items-center gap-3">
               <QtySelector qty={qty} max={maxQty} onChange={setQty} />
-              <span className={`text-sm font-semibold ${out ? 'text-[#b91c1c]' : 'text-[#15803d]'}`}>{out ? 'Unavailable' : product.fulfilment === 'manual' ? 'Available · Email delivery within 1 hour' : 'In stock · Code available after payment'}</span>
+              <span className={`text-sm font-semibold ${out ? 'text-[#f43f5e]' : 'text-[#34d399]'}`}>{out ? 'Unavailable' : product.fulfilment === 'manual' ? 'Available · Email delivery within 1 hour' : 'In stock · Instant Key Delivery'}</span>
             </div>
 
             <div className="mt-4 grid gap-2.5">
-              <button onClick={buyNow} disabled={out} className="btn-primary flex items-center justify-center gap-2 px-5 py-3.5 text-base font-extrabold shadow-lg shadow-[#ff5a00]/25 transition-transform active:scale-[0.98] disabled:opacity-50">
+              <button onClick={buyNow} disabled={out} className="btn-primary flex items-center justify-center gap-2 px-5 py-3.5 text-base font-extrabold shadow-lg shadow-[var(--color-primary)]/25 transition-transform active:scale-[0.98] disabled:opacity-50">
                 <Zap size={18} aria-hidden fill="currentColor" /> Buy Now · S${((variant.priceCents * qty) / 100).toFixed(2)}
               </button>
-              <button onClick={doAdd} disabled={out} className="flex items-center justify-center gap-2 rounded-[10px] border border-[var(--color-border)] bg-white px-4 py-3 text-sm font-bold text-[#17191d] transition-all hover:bg-[#f5f6f8] disabled:opacity-50">
+              <button onClick={doAdd} disabled={out} className="flex items-center justify-center gap-2 rounded-[10px] border border-[var(--color-border)] bg-[var(--color-elevated)] px-4 py-3 text-sm font-bold text-[var(--color-text)] transition-all hover:border-[var(--color-cyan)] disabled:opacity-50">
                 <ShoppingCart size={17} aria-hidden /> Add to Cart
               </button>
               <button onClick={() => { toggle(product.id); notify(wished ? 'Removed from wishlist' : 'Saved to wishlist', 'success') }} aria-pressed={wished} className="flex items-center justify-center gap-2 rounded-[10px] px-4 py-2 text-xs font-semibold text-[var(--color-muted)] transition-colors hover:text-[#fb7185]">
                 <Heart size={15} aria-hidden className={wished ? 'fill-[#fb7185] text-[#fb7185]' : ''} /> {wished ? 'Saved to Wishlist' : 'Add to Wishlist'}
               </button>
-              {out && <p role="alert" className="text-sm font-semibold text-[#b91c1c]">This item is currently unavailable.</p>}
+              {out && <p role="alert" className="text-sm font-semibold text-[#f43f5e]">This item is currently unavailable.</p>}
             </div>
 
             {/* Trust and Delivery Assurance Box */}
-            <div className="mt-4 space-y-2 rounded-xl border border-[#e2e8f0] bg-[#f8fafc] p-3.5 text-xs text-[#334155]">
+            <div className="mt-4 space-y-2 rounded-xl border border-[var(--color-border)] bg-[#080c14] p-3.5 text-xs text-[var(--color-muted)]">
               <div className="flex items-center gap-2">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#dcfce7] text-[#16a34a] font-bold">✓</span>
-                <span><strong>Instant Delivery:</strong> Delivery via email within 1 hour after payment.</span>
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400 font-bold">✓</span>
+                <span><strong className="text-[var(--color-text)]">Instant Delivery:</strong> Gated key reveal instantly in your order vault.</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#dbeafe] text-[#2563eb] font-bold">🔒</span>
-                <span><strong>Secure Checkout:</strong> 256-bit encrypted checkout with Stripe.</span>
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-500/20 text-cyan-400 font-bold">🔒</span>
+                <span><strong className="text-[var(--color-text)]">Secure Checkout:</strong> 256-bit encrypted checkout with Stripe.</span>
               </div>
               <div className="flex items-center gap-2">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#fef3c7] text-[#d97706] font-bold">🛡️</span>
-                <span><strong>100% Genuine:</strong> Official license / verified code guarantee.</span>
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-amber-500/20 text-amber-400 font-bold">🛡️</span>
+                <span><strong className="text-[var(--color-text)]">100% Genuine:</strong> Official publisher key guarantee.</span>
               </div>
             </div>
           </div>

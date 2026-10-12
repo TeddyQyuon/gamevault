@@ -6,7 +6,7 @@ const LINKS = [
   { to: '/account', label: 'Dashboard', icon: Home, end: true },
   { to: '/account/orders', label: 'My Orders', icon: Package },
   { to: '/account/subscriptions', label: 'Subscriptions', icon: RefreshCw },
-  { to: '/account/library', label: 'Gift Codes & Wallet', icon: Library },
+  { to: '/account/library', label: 'Digital Key Vault', icon: Library },
   { to: '/account/wishlist', label: 'Wishlist', icon: Heart },
   { to: '/account/notifications', label: 'Notifications', icon: Bell },
   { to: '/admin', label: 'Staff Console', icon: ShieldCheck },

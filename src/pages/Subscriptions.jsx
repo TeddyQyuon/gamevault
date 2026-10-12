@@ -68,19 +68,26 @@ export default function Subscriptions() {
     <Breadcrumbs trail={[{ label: 'Home', to: '/' }, { label: 'Subscriptions' }]} />
 
     <section className="subscription-hero subscription-photo-hero">
-      <img className="subscription-hero-photo" src={`${ASSETS}gaming-photo.jpg`} alt="Friends playing games together" />
+      <img className="subscription-hero-photo" src={`${ASSETS}game-pass.jpg`} alt="Gaming Subscriptions" />
       <div className="subscription-hero-copy">
         <p className="market-eyebrow">GAMES · STREAMING · MUSIC</p>
-        <h1>Subscriptions<br />for every mood.</h1>
-        <p>Shop memberships for gaming, streaming, music and software. Choose your term and region. We email your subscription details within 1 hour after confirmed payment.</p>
-        <div className="subscription-hero-points"><span><Check size={16} aria-hidden /> One-time payment</span><span><Check size={16} aria-hidden /> Email delivery within 1 hour</span></div>
+        <h1>Subscriptions<br /><span className="gradient-text">for every mood.</span></h1>
+        <p>Shop memberships for gaming, streaming, music and software. Choose your term and region. Digital membership details and codes delivered securely to your vault.</p>
+        <div className="subscription-hero-points">
+          <span><Check size={16} aria-hidden /> One-time payment</span>
+          <span><Check size={16} aria-hidden /> Instant or 1h email delivery</span>
+          <span><Check size={16} aria-hidden /> Verified global activation</span>
+        </div>
       </div>
       <div className="subscription-hero-product">
         <img src={`${ASSETS}game-pass.jpg`} alt="Xbox Game Pass Ultimate" />
-        <div><span>FEATURED MEMBERSHIP</span><strong>Xbox Game Pass Ultimate</strong><Link to="/products/xbox-game-pass-ultimate">Buy now <ArrowRight size={15} aria-hidden /></Link></div>
+        <div>
+          <span>FEATURED MEMBERSHIP</span>
+          <strong>Xbox Game Pass Ultimate</strong>
+          <Link to="/products/xbox-game-pass-ultimate">Buy now <ArrowRight size={15} aria-hidden /></Link>
+        </div>
       </div>
     </section>
-
 
     <section className="subscription-services" aria-labelledby="subscription-services-title">
       <div className="subscription-services-heading"><div><p className="market-eyebrow">SHOP BY SERVICE</p><h2 id="subscription-services-title">Popular subscriptions</h2></div><span>Select any service to view offers and buy</span></div>
@@ -123,8 +130,29 @@ export default function Subscriptions() {
 
     <section className="redeem-steps">
       <h2>Your membership in three steps</h2>
-      <div>{[{ Icon: ShoppingBag, title: 'Choose your membership', copy: 'Select the right service, region and membership term.' }, { Icon: ShieldCheck, title: 'Complete checkout', copy: 'Make a one-time payment through secure checkout.' }, { Icon: KeyRound, title: 'Check your email', copy: 'Receive your subscription details and instructions within 1 hour after confirmed payment.' }].map(({ Icon, title, copy }, index) => <article key={title}><span>0{index + 1}</span><Icon size={28} aria-hidden /><h3>{title}</h3><p>{copy}</p></article>)}</div>
+      <div>{[{ Icon: ShoppingBag, title: 'Choose your membership', copy: 'Select the right service, region and membership term.' }, { Icon: ShieldCheck, title: 'Complete checkout', copy: 'Make a one-time payment through secure checkout.' }, { Icon: KeyRound, title: 'Check your vault & email', copy: 'Receive your activation codes or subscription details within 1 hour after confirmed payment.' }].map(({ Icon, title, copy }, index) => <article key={title}><span>0{index + 1}</span><Icon size={28} aria-hidden /><h3>{title}</h3><p>{copy}</p></article>)}</div>
       <p className="redeem-note">Memberships are one-time purchases for the term shown. Check the region and account requirements on each offer before buying.</p>
+    </section>
+
+    {/* Frequently Asked Questions Accordion */}
+    <section className="mt-12 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6 md:p-8">
+      <h2 className="text-2xl font-extrabold text-[var(--color-text)]">Frequently Asked Questions</h2>
+      <div className="mt-6 space-y-4">
+        {[
+          { q: 'How quickly will I receive my subscription code?', a: 'Prepaid code offers deliver activation keys instantly to your Key Vault after payment. Manual fulfillment offers deliver credentials to your email within 1 hour.' },
+          { q: 'Do these subscriptions auto-renew?', a: 'No. All GameVault subscription offers are strictly one-time payments for the duration selected (1 month, 3 months, 12 months). You will never be charged recurring fees without consent.' },
+          { q: 'What happens if a code does not work in my country?', a: 'Every product listing explicitly specifies the supported regional compatibility (e.g., Global, North America, Singapore). Please check the region indicator before checking out.' },
+          { q: 'How do I redeem my key after checkout?', a: 'Visit your Account Key Vault or your Order Success page. Click "Display Key" to decrypt your code, then click the 1-click launcher link to activate on Steam, Xbox, or PlayStation.' },
+        ].map((item) => (
+          <details key={item.q} className="group rounded-xl border border-[var(--color-border)] bg-[#080c14] p-4 [&_summary::-webkit-details-marker]:hidden">
+            <summary className="flex cursor-pointer items-center justify-between font-bold text-sm text-[var(--color-text)]">
+              <span>{item.q}</span>
+              <span className="text-[var(--color-cyan)] transition-transform group-open:rotate-180">▾</span>
+            </summary>
+            <p className="mt-3 text-xs leading-relaxed text-[var(--color-muted)]">{item.a}</p>
+          </details>
+        ))}
+      </div>
     </section>
   </div>
 }
