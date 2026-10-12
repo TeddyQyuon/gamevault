@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" fill="none">
+  <defs>
+    <linearGradient id="boostGem" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF73FA" />
+      <stop offset="50%" stop-color="#EB459E" />
+      <stop offset="100%" stop-color="#F47B67" />
+    </linearGradient>
+  </defs>
+  <rect width="120" height="120" rx="28" fill="#1E1F22" />
+  <g transform="translate(36, 24) scale(6)">
+    <path d="M4 0L0 4V8L4 12L8 8V4L4 0ZM7 7.59L4 10.59L1 7.59V4.41L4 1.41L7 4.41V7.59Z" fill="url(#boostGem)"/>
+    <path d="M2 4.83V7.17L4 9.17L6 7.17V4.83L4 2.83L2 4.83Z" fill="url(#boostGem)"/>
+  </g>
+</svg>

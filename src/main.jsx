@@ -29,3 +29,28 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     </BrowserRouter>
   </React.StrictMode>,
 )
+
+// Register PWA Service Worker for standalone browser app shortcut & offline shell
+if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('/sw.js')
+      .then((reg) => {
+        // Check for updates
+        reg.onupdatefound = () => {
+          const installingWorker = reg.installing
+          if (installingWorker) {
+            installingWorker.onstatechange = () => {
+              if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                console.log('[PWA] New content is available; please refresh.')
+              }
+            }
+          }
+        }
+      })
+      .catch((err) => {
+        console.warn('[PWA] Service worker registration failed:', err)
+      })
+  })
+}
+

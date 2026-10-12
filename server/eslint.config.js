@@ -14,6 +14,7 @@ export default [
         setTimeout: 'readonly',
         clearTimeout: 'readonly',
         URL: 'readonly',
+        fetch: 'readonly',
       },
     },
     rules: { 'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }] },

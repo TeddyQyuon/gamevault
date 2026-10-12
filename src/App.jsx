@@ -13,6 +13,7 @@ import { AccountLayout, Dashboard, Orders, OrderDetail, SubscriptionsTab, Librar
 import Admin from './pages/Admin.jsx'
 import Support from './pages/Support.jsx'
 import NotFound from './pages/NotFound.jsx'
+import MobileCoder from './pages/MobileCoder.jsx'
 import { useSession } from './context/SessionContext.jsx'
 
 // Redirects guests to /login?next=... (UX convenience — the API enforces
@@ -28,6 +29,9 @@ function RequireAuth() {
 export default function App() {
   return (
     <Routes>
+      <Route path="coder" element={<MobileCoder />} />
+      <Route path="mobile-coder" element={<Navigate to="/coder" replace />} />
+      <Route path="agent" element={<Navigate to="/coder" replace />} />
       <Route element={<Layout />}>
         <Route index element={<Home />} />
         <Route path="games" element={<Catalogue category="games" title="Browse Games" subtitle="Discover your next adventure across all platforms." heroArt="starborne" />} />

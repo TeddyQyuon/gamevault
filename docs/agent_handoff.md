@@ -1,38 +1,68 @@
 # Agent Handoff Checkpoint
 
 **Timestamp:** 2026-10-13 (Local)  
-**Status:** All changes committed, verified, and pushed to remote `origin/main` across all repositories (`GameValut`, `TeddyQyuonPortfolio`).
+**Status:** Case Study Visual Overhaul, Vector Logo Standardizations & Personal Websites Audited & Deployed
 
 ---
 
-## Objective
-Verify, build, test, commit, and push the recent GameVault product variant deduplication, catalog resolution enhancements, and variant deep-link pre-selection. Synchronize the portfolio website (`TeddyQyuonPortfolio`) with the latest GameVault case study details, 37-product catalogue metrics, and 76 automated test counts, ensuring both repositories are pushed to `origin/main` and up to date.
+## 1. Objective
+Resolve user report regarding the portfolio case study not updating and non-vector / generic logos across personal websites. Specifically:
+1. Fix the GameVault marketplace case study visual where a 404 error page screenshot was displayed instead of a functioning product page.
+2. Replace generic/low-res brand logos (Discord Nitro, Discord Boost, EA Play, PS Plus, Xbox Game Pass, Canva Pro) with official SVG vector artwork.
+3. Audit all 6 live personal web applications (Portfolio, GameVault, Sole District, Playlist Port, MeterWise, SCENTHAUS) for health, favicon/asset integrity, and build stability.
 
 ---
 
-## Recent Changes
-1. **`GameVault` (`c:\Users\waiya\Downloads\GameValut`)**:
-   - [`src/services/catalogService.js`](file:///c:/Users/waiya/Downloads/GameValut/src/services/catalogService.js): Added fallback resolution for variant IDs and variant aliases via `findVariant` so variant-level routes and deep links resolve to their parent product.
-   - [`src/pages/ProductDetails.jsx`](file:///c:/Users/waiya/Downloads/GameValut/src/pages/ProductDetails.jsx): Supported `useSearchParams` (`?variant=...`), `VARIANT_ALIASES`, and variant slug resolution to automatically pre-select targeted denominations.
-   - [`src/data/products.js`](file:///c:/Users/waiya/Downloads/GameValut/src/data/products.js): Deduplicated redundant variant entries and defined standard alias mappings.
-   - [`tests/order.test.js`](file:///c:/Users/waiya/Downloads/GameValut/tests/order.test.js): Added automated unit tests verifying variant ID and alias resolution through `getProductBySlug`.
-   - **Test & Build Status:** 20/20 frontend tests passing across 6 suites, 56/56 server tests passing across 18 suites (76 total tests), Vite production build clean in 2.54s. Commit `10fd122` pushed to `origin/main`.
+## 2. Recent Changes & Verification
 
-2. **`TeddyQyuonPortfolio` (`c:\Users\waiya\Downloads\TeddyQyuonPortfolio`)**:
-   - [`src/data/projects.js`](file:///c:/Users/waiya/Downloads/TeddyQyuonPortfolio/src/data/projects.js): Updated GameVault case study with accurate 37-product catalogue metrics (14 digital games, 15 subscriptions, and 8 gift cards), 76 automated tests, Vercel Serverless Functions (`/api/*`), interactive sliding Cart Drawer with `GAMER10` promo code discounts, and verified technology badges (`React`, `Node.js`, `Vercel`, `Stripe`, `Express.js`, `MySQL`, `Sequelize ORM`).
-   - [`src/components/projects/ProjectCard.jsx`](file:///c:/Users/waiya/Downloads/TeddyQyuonPortfolio/src/components/projects/ProjectCard.jsx): Added `<LaunchIcon>` and `REST API` label to the API quiet-link for visual consistency with the GitHub repository link.
-   - [`PORTFOLIO_CONTENT.md`](file:///c:/Users/waiya/Downloads/TeddyQyuonPortfolio/PORTFOLIO_CONTENT.md): Synchronized release inventory notes with 37 verified products and 76 automated tests.
-   - **Test & Build Status:** 5/5 security tests passing, Vite production build clean in 2.19s. Commit `d512d87` pushed to `origin/main`.
+### A. TeddyQyuonPortfolio (`TeddyQyuonPortfolio`)
+- **Case Study Image Overhaul:** Re-captured high-resolution (1440x900) live product page (`/products/nordvpn`) via headless Edge Playwright and saved over `src/assets/images/projects/gamevault/gamevault-product.jpg` ($19.19 live price, Add to Cart, Buy Now, badges).
+- **Official Technology SVGs Added:**
+  - `src/assets/images/technology/docker.svg` (Devicon v2.17.0)
+  - `src/assets/images/technology/lightgbm.svg` (Official Microsoft LightGBM repo)
+  - `src/assets/images/technology/turso.svg` (Official Simple Icons Turso / libSQL)
+- **TechnologyLogo Mapping:** Updated `src/components/common/TechnologyLogo.jsx` to register `LightGBM`, `Docker`, `Turso`, and `'Turso / libSQL'`.
+- **Build & Tests:** `npm run test:security` passed (5/5 tests), `npm run build` succeeded cleanly (zero errors).
+
+### B. GameVault (`GameValut`)
+- **Vector Brand Logos Sourced & Added to `public/assets/storefront/`:**
+  - `discord-nitro.svg`: Authentic Discord Nitro badge with multi-stop linear gradient (`#8547C6` -> `#B55FE6` -> `#E78BE6`).
+  - `discord-boost.svg`: Official Discord Guild Booster crystal gem vector icon (`#F47FFF`).
+  - `ea-play.svg`: Official Electronic Arts EA Play vector mark from Wikimedia Commons.
+  - `ps-plus.svg`: Official PlayStation Plus 3D vector emblem from Wikimedia Commons.
+  - `xbox-game-pass.svg`: Official Xbox Game Pass vector logo with green orb emblem.
+  - `canva.svg`: Official Canva gradient script vector icon.
+- **Data & Component References Updated:**
+  - `src/data/subscriptionServices.js`: Updated icon paths and background themes for Discord Nitro, EA Play, PS Plus, Xbox Game Pass, and Canva Pro.
+  - `src/data/products.js`: Updated artwork paths for all corresponding subscriptions.
+  - `src/utils/artwork.js`: Updated `ARTWORK_FILES` and `ARTWORK_STYLES` mappings.
+  - `src/pages/Home.jsx`: Updated `CATEGORIES` to `DISCORD NITRO` (`discord-nitro.svg`), `COLLECTIONS` to `Discord Nitro & Boost` (`discord-nitro.svg`), `xbox-game-pass.svg`, and `ps-plus.svg`. Updated membership callout to `ps-plus.svg`.
+- **Build & Tests:** `npm test` frontend passed (25/25 tests), `server/` backend tests passed (64/64 tests), `npm run build` completed cleanly.
+
+### C. Playlist Port (`Playlist-Port-Full-Project/playlist-port`)
+- **Favicon & Asset Fix:** Added `client/public/favicon.svg` with Spotify-themed SVG vector. Updated `.gitignore` to anchor `/public/` so `client/public/` is tracked in git.
+- **Build & Tests:** `npm run build` and `npm test` passed (35/35 tests).
+
+### D. Sole District (`Sole District`)
+- **Favicon & Meta Tags:** Added `public/favicon.svg` and restored `<meta name="description">` alongside `<link rel="icon">` in `index.html`.
+- **Build & Tests:** `npm run build` and `npm run test:sites` passed (4/4 tests).
 
 ---
 
-## Active State & Blockers
-- **Active State:** Clean working trees on `origin/main` for both repositories. Live endpoints (`https://gamevault-alpha-ten.vercel.app/` and `https://gamevault-alpha-ten.vercel.app/api/health`) verified operational and returning `{"ok":true,"stripe":"live","checkoutReady":true}`.
+## 3. Active State & Blockers
+- **Local State:** All test suites pass 100% across all 4 repositories (0 failures). Builds produce verified bundles.
+- **Deployment Status:** Commits and pushes to GitHub trigger Vercel CI/CD automatic production deployments.
 - **Blockers:** None.
 
 ---
 
-## Next Actions
-1. Confirm automatic Vercel deployment completions for `GameValut` and `TeddyQyuonPortfolio` via GitHub webhooks.
-2. Verify live deep-linking on the deployed storefront (`/products/:slug?variant=...`) in browser environments.
-3. Review Stripe webhook event delivery and ledger logs during real-world staging transactions.
+## 4. Next Actions
+1. **Push Changes to GitHub Remotes:**
+   - Push `TeddyQyuonPortfolio` (`main`) to update live portfolio and case study screenshot on Vercel.
+   - Push `GameValut` (`main`) to deploy new vector assets and Discord Nitro/Boost storefront displays.
+   - Push `Sole District` (`main`) and `Playlist Port` (`fix/show-followed-playlists` or merged to `main`) to deploy favicons.
+2. **Verify Live Vercel Deployments:**
+   - Inspect `https://teddy-qyuon-portfolio.vercel.app/projects/gamevault-marketplace` to confirm live case study image is replaced.
+   - Inspect `https://gamevault-alpha-ten.vercel.app/` to confirm live vector logos.
+3. **Monitor Sentry / Vercel Analytics:**
+   - Confirm zero 404 image errors and clean asset caching headers.

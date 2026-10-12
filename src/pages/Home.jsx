@@ -13,16 +13,16 @@ const CATEGORIES = [
   { label: 'NINTENDO', logo: 'nintendo.svg', to: '/subscriptions?q=Nintendo' },
   { label: 'APPLE', logo: 'apple.svg', to: '/gift-cards?q=Apple' },
   { label: 'GOOGLE PLAY', logo: 'googleplay.svg', to: '/gift-cards?q=Google' },
-  { label: 'DISCORD', logo: 'discord.svg', to: '/subscriptions?q=Discord' },
+  { label: 'DISCORD NITRO', logo: 'discord-nitro.svg', to: '/products/discord-nitro' },
   { label: 'SPOTIFY', logo: 'spotify.svg', to: '/subscriptions?q=Spotify' },
 ]
 const COLLECTIONS = [
   { label: 'PC adventures', image: 'elden-ring.jpg', to: '/gift-cards?q=Steam', logo: 'steam.svg' },
-  { label: 'Xbox Game Pass', image: 'forza-horizon-5.jpg', to: '/subscriptions?q=Xbox', logo: 'xbox.svg' },
-  { label: 'PlayStation Plus', color: '#1658c9', to: '/subscriptions?q=PlayStation', logo: 'playstation.svg' },
+  { label: 'Xbox Game Pass', image: 'forza-horizon-5.jpg', to: '/subscriptions?q=Xbox', logo: 'xbox-game-pass.svg' },
+  { label: 'PlayStation Plus', color: '#1658c9', to: '/subscriptions?q=PlayStation', logo: 'ps-plus.svg' },
   { label: 'Gift cards', image: 'cyberpunk-2077.jpg', to: '/gift-cards', logo: 'razer.svg' },
   { label: 'Music & streaming', color: '#1b744c', to: '/subscriptions?type=music', logo: 'spotify.svg' },
-  { label: 'Digital essentials', image: 'baldurs-gate-3.jpg', to: '/subscriptions', logo: 'discord.svg' },
+  { label: 'Discord Nitro & Boost', color: '#5865F2', to: '/products/discord-nitro', logo: 'discord-nitro.svg' },
 ]
 
 export default function Home() {
@@ -84,7 +84,7 @@ export default function Home() {
         {games.length > 0 && <section className="market-section"><SectionHead title="Discover your next game" subtitle="Explore available game keys and editions." to="/games"/><ProductRow products={games.slice(0,6)}/></section>}
 
         <section className="membership-callout">
-          <img className="plus-brand-image" src={`${A}psplus.png`} alt="PlayStation Plus" />
+          <img className="plus-brand-image" src={`${A}ps-plus.svg`} alt="PlayStation Plus" />
           <div><p className="market-eyebrow">YOUR FAVOURITE SERVICES.</p><h2>More entertainment,<br />one simple checkout.</h2><p>Choose your membership and make a one-time payment. We'll email your subscription details within 1 hour after confirmed payment.</p><Link className="market-button" to="/subscriptions">Find your membership <ArrowRight size={18} aria-hidden /></Link></div>
         </section>
 

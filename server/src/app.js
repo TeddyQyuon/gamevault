@@ -11,6 +11,7 @@ import { manualOrdersController } from './controllers/manualOrdersController.js'
 import { supportController } from './controllers/supportController.js'
 import { connectController } from './controllers/connectController.js'
 import { webhooksController } from './controllers/webhooksController.js'
+import { coderController } from './controllers/coderController.js'
 import { stripeConfigured } from './config.js'
 import { stripeMode } from './services/stripeClient.js'
 import { ah } from './errors.js'
@@ -116,6 +117,15 @@ export function createApp({ cfg, models, sequelize, stripe }) {
   app.post('/api/connect/orders/:id/release', ...customer, checkoutLimiter, connect.releaseOrder)
   app.post('/api/connect/orders/:id/reverse', ...customer, checkoutLimiter, connect.reverseOrder)
   app.get('/api/connect/orders/:id/transfers', ...customer, connect.orderTransfers)
+
+  // Antigravity Mobile Autonomous Coder endpoints
+  const coder = coderController()
+  app.get('/api/coder/status', ah(coder.status))
+  app.post('/api/coder/status', ah(coder.status))
+  app.post('/api/coder/test', ah(coder.runTest))
+  app.post('/api/coder/git', ah(coder.gitAction))
+  app.post('/api/coder/execute', ah(coder.executeAutonomousTask))
+  app.post('/api/coder/github-dispatch', ah(coder.githubDispatch))
 
   // Safe 404 + error shape (never leak internals).
   app.use('/api', (_req, res) => res.status(404).json({ error: { code: 'NOT_FOUND', message: 'Unknown API route.' } }))

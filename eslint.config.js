@@ -22,6 +22,7 @@ export default [
         clearInterval: 'readonly',
         fetch: 'readonly',
         URLSearchParams: 'readonly',
+        console: 'readonly',
       },
     },
     settings: { react: { version: 'detect' } },
