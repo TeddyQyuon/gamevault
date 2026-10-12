@@ -60,7 +60,7 @@ export function Dashboard() {
   const codes = orders.flatMap((o) => o.items.flatMap((it) => it.codes || [])).length
   const stats = [
     { label: 'Orders', value: String(orders.length), note: 'View history →' },
-    { label: 'Codes delivered', value: String(codes), note: 'View Library →' },
+    { label: 'Keys in Vault', value: String(codes), note: 'View Vault →' },
     { label: 'Wishlisted', value: String(ids.length), note: 'View Wishlist →' },
   ]
 
@@ -76,7 +76,7 @@ export function Dashboard() {
 
       <div className="grid gap-5 xl:grid-cols-2">
         <section className="card p-5" aria-label="Active subscriptions">
-          <div className="mb-3 flex items-center justify-between"><h2 className="font-extrabold">Subscriptions</h2><Link to="/account/subscriptions" className="text-sm text-[#2454a7] hover:underline">Manage All →</Link></div>
+          <div className="mb-3 flex items-center justify-between"><h2 className="font-extrabold">Subscriptions</h2><Link to="/account/subscriptions" className="text-sm text-[var(--color-cyan)] hover:underline">Manage All →</Link></div>
           {subs.length === 0
             ? <p className="text-sm text-[var(--color-muted)]">Membership details are delivered by email within 1 hour after confirmed payment. Track delivery in your orders.</p>
             : (
@@ -90,7 +90,7 @@ export function Dashboard() {
             )}
         </section>
         <section className="card p-5" aria-label="Recent purchases">
-          <div className="mb-3 flex items-center justify-between"><h2 className="font-extrabold">Recent Purchases</h2><Link to="/account/orders" className="text-sm text-[#2454a7] hover:underline">View All →</Link></div>
+          <div className="mb-3 flex items-center justify-between"><h2 className="font-extrabold">Recent Purchases</h2><Link to="/account/orders" className="text-sm text-[var(--color-cyan)] hover:underline">View All →</Link></div>
           {orders.length === 0 ? <p className="text-sm text-[var(--color-muted)]">Your purchases will appear here after checkout.</p> : (
             <ul className="space-y-2">
               {orders.slice(0, 4).map((o) => (
@@ -105,7 +105,7 @@ export function Dashboard() {
       </div>
 
       <section className="card p-5" aria-label="Order history">
-        <div className="mb-2 flex items-center justify-between"><h2 className="font-extrabold">Order History</h2><Link to="/account/orders" className="text-sm text-[#2454a7] hover:underline">View All Orders →</Link></div>
+        <div className="mb-2 flex items-center justify-between"><h2 className="font-extrabold">Order History</h2><Link to="/account/orders" className="text-sm text-[var(--color-cyan)] hover:underline">View All Orders →</Link></div>
         <OrdersTable limit={5} />
       </section>
     </div>
@@ -191,7 +191,7 @@ export function OrderDetail() {
         ))}
       </ul>
       <p className="text-right text-sm text-[var(--color-muted)]">Subtotal {formatPrice(order.subtotalCents)}{order.discountCents > 0 && <> · Promo {order.promoCode} −{formatPrice(order.discountCents)}</>}</p>
-      <p className="text-right font-extrabold">Total: <span className="text-[#2454a7]">{formatPrice(order.totalCents)} {order.currency}</span></p>
+      <p className="text-right font-extrabold">Total: <span className="text-[var(--color-cyan)]">{formatPrice(order.totalCents)} {order.currency}</span></p>
       <OrderTaxNote />
     </div>
   )
