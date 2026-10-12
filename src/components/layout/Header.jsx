@@ -5,7 +5,7 @@ import { useCart } from '../../context/CartContext.jsx'
 import { useSession } from '../../context/SessionContext.jsx'
 import { SearchBar } from '../ui/search.jsx'
 
-const NAV = [['/games','Games'],['/subscriptions','Subscriptions'],['/gift-cards','Gift cards'],['/streaming','Streaming'],['/deals','Deals'],['/support','Support']]
+const NAV = [['/games','Games'],['/subscriptions','Subscriptions'],['/gift-cards','Gift cards'],['/streaming','Streaming'],['/deals','Deals'],['/coder','Mobile Coder'],['/support','Support']]
 export default function Header() {
   const { count, openCart } = useCart()
   const { user } = useSession()

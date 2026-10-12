@@ -13,7 +13,7 @@
     "db:migrate": "node src/migrate.js",
     "db:seed": "node src/seed.js",
     "admin:promote": "node src/make-admin.js",
-    "test": "node --test tests/pricing.test.js tests/webhooks.test.js tests/integration.test.js tests/connect.test.js tests/live-guards.test.js tests/manual-delivery.test.js",
+    "test": "node --test tests/pricing.test.js tests/webhooks.test.js tests/integration.test.js tests/connect.test.js tests/live-guards.test.js tests/manual-delivery.test.js tests/coder.test.js",
     "lint": "eslint src tests"
   },
   "dependencies": {
