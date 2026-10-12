@@ -12,22 +12,34 @@ let catalogueError = null
 
 function artFor(title) {
   const name = title.toLowerCase()
-  const service = SUBSCRIPTION_TEMPLATES.find(item => name.includes(item.query.toLowerCase()))
-  if (service) return service.art
   if (name.includes('game pass')) return 'game-pass-ultimate'
-  if (name.includes('playstation plus')) return 'playstation-plus'
+  if (name.includes('playstation plus') || name.includes('ps plus') || name.includes('ps+')) return 'playstation-plus'
+  if (name.includes('nintendo switch online') || name.includes('switch online')) return 'nintendo-switch-online'
+  if (name.includes('eshop') || name.includes('nintendo')) return 'nintendo'
+  if (name.includes('xbox')) return 'xbox'
   if (name.includes('playstation') || name.includes('psn')) return 'psn'
+  if (name.includes('boost')) return 'discord-boost'
+  if (name.includes('nitro') || name.includes('discord')) return 'discord-nitro'
   if (name.includes('spotify')) return 'spotify-premium'
   if (name.includes('netflix')) return 'netflix'
-  if (name.includes('discord') || name.includes('nitro') || name.includes('boost')) return 'discord-nitro'
-  if (name.includes('ea play')) return 'ea-play'
-  if (name.includes('nintendo')) return 'nintendo-switch-online'
+  if (name.includes('ea play') || name.includes('ea-play')) return 'ea-play'
   if (name.includes('steam')) return 'steam'
-  if (name.includes('xbox')) return 'xbox'
+  if (name.includes('apple music')) return 'apple-music'
   if (name.includes('apple')) return 'apple'
-  if (name.includes('google play')) return 'googleplay'
-  if (name.includes('roblox')) return 'roblox'
+  if (name.includes('google play') || name.includes('googleplay')) return 'googleplay'
+  if (name.includes('roblox') || name.includes('robux')) return 'roblox'
   if (name.includes('razer')) return 'razer'
+  if (name.includes('disney')) return 'disney-plus'
+  if (name.includes('youtube')) return 'youtube-premium'
+  if (name.includes('crunchyroll')) return 'crunchyroll-premium'
+  if (name.includes('microsoft 365') || name.includes('office 365') || name.includes('microsoft365')) return 'microsoft-365'
+  if (name.includes('canva')) return 'canva-pro'
+  if (name.includes('adobe')) return 'adobe-creative-cloud'
+  if (name.includes('nordvpn')) return 'nordvpn'
+
+  const service = SUBSCRIPTION_TEMPLATES.find(item => name.includes(item.query.toLowerCase()))
+  if (service) return service.art
+
   const gameKeys = ['stormlands', 'neon-drift', 'shadow-realm', 'galaxy-frontiers', 'rivals-arena', 'mythic-tales', 'emberfall', 'neon-circuit', 'starborne', 'valkyrie-protocol', 'pixel-quest', 'ironclad-tactics', 'drift-horizon', 'cursed-hollow']
   for (const k of gameKeys) {
     if (name.includes(k.replace('-', ' ')) || name.includes(k)) return k

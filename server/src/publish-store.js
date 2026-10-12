@@ -150,6 +150,7 @@ async function main() {
       deal: ['xbox-game-pass-ultimate', 'spotify-premium', 'disney-plus'].includes(service.id),
       rating: 4.8,
       ratingsCount: 850,
+      artKey: service.art,
       artworkPath: service.artworkPath,
       artworkFit: service.artworkFit || 'contain',
     }

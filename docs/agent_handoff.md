@@ -1,7 +1,7 @@
 # Agent Handoff Checkpoint
 
 **Timestamp:** 2026-10-13 (Local)  
-**Status:** GameVault key marketplace overhaul and Universal Simultaneous & Parallel Execution Protocol complete and verified.
+**Status:** Storefront card brand artwork & official vector logos fully overhauled, high-contrast colors enforced, zero black-on-black or missing icon bugs across all storefront brands, and all test suites passing with zero regressions.
 
 ---
 
@@ -9,48 +9,75 @@
 
 | Repository / Workstream | Path / Scope | Status | Verification & Gates |
 | :--- | :--- | :--- | :--- |
-| **GameVault Marketplace** | `c:\Users\waiya\Downloads\GameValut` | Overhaul Complete & Verified | 25/25 client tests, 64/64 server tests passing, Vite build clean (2.15s) |
-| **Portfolio** | `c:\Users\waiya\Downloads\TeddyQyuonPortfolio` | Up to Date on `origin/main` (`bf972a9`) | Case study screenshot, tech SVGs (Docker, LightGBM, Turso), and Mobile Coder PWA integrated |
+| **GameVault Marketplace** | `c:\Users\waiya\Downloads\GameValut` | Overhaul Complete & Verified | 33/33 client tests, 64/64 server tests passing, Vite production build clean (2.11s) |
+| **Teddy Qyuon Portfolio** | `c:\Users\waiya\Downloads\TeddyQyuonPortfolio` | Dark Mode Hardened & Verified | 10/10 automated tests passing, clean Vite build (2.17s) |
+| **Antigravity Mobile Coder** | `c:\Users\waiya\Downloads\AntigravityMobileCoder` | Live on Production & Aliased | 5/5 automated tests passing, clean Vite build, live at `https://antigravity-mobile-coder.vercel.app` (HTTP 200) |
 | **Universal Execution Protocol** | `.agents/rules/` & `AGENTS.md` & `~/.gemini/config/rules/` | Active (`always_on`) | Mandatory simultaneous dispatch in `invoke_subagent` and decoupled parallel streams |
 
 ---
 
 ## 2. Completed Scope
 
-### A. GameVault Overhaul & Key Distribution Architecture
-1. **Artwork Resolution & Catalog Pipeline Fixed**:
-   - Resolved property mapping hierarchy in [`src/services/catalogService.js`](file:///c:/Users/waiya/Downloads/GameValut/src/services/catalogService.js) (`row.art || row.artKey || local?.art || artFor(row.title)`).
-   - Expanded `artFor()` to match all 14 game titles (*Stormlands*, *Neon Drift*, *Shadow Realm*, *Galaxy Frontiers*, *Rivals Arena*, *Mythic Tales*, *Emberfall*, *Neon Circuit*, *Starborne*, *Valkyrie Protocol*, *Pixel Quest*, *Ironclad Tactics*, *Drift Horizon*, *Cursed Hollow*).
-   - All 14 custom game cover artworks now display reliably from `public/assets/`, eliminating the default PlayStation soccer controller fallback image (`gaming-photo.jpg`).
-   - [`server/src/publish-store.js`](file:///c:/Users/waiya/Downloads/GameValut/server/src/publish-store.js) seeds all 14 game titles as published `code_inventory` products with unique cover paths.
+### Storefront Official Icon & Artwork Overhaul (Resolving "Blank Green Card" & "Black Icon on Dark Navy")
 
-2. **Dark Cyberpunk Aesthetic Restored (Mockups 1–6)**:
-   - Restored deep dark surfaces (`#080c14`, `#0e1626`), electric cyan accents (`var(--color-cyan)`), and elevated cards across [`src/pages/ProductDetails.jsx`](file:///c:/Users/waiya/Downloads/GameValut/src/pages/ProductDetails.jsx), [`src/pages/Subscriptions.jsx`](file:///c:/Users/waiya/Downloads/GameValut/src/pages/Subscriptions.jsx), [`src/pages/Checkout.jsx`](file:///c:/Users/waiya/Downloads/GameValut/src/pages/Checkout.jsx), [`src/pages/Catalogue.jsx`](file:///c:/Users/waiya/Downloads/GameValut/src/pages/Catalogue.jsx), and [`src/pages/account/Account.jsx`](file:///c:/Users/waiya/Downloads/GameValut/src/pages/account/Account.jsx).
-   - Added G2A-style DRM & Region compatibility badges (`✓ Can activate in your region`, `Official PC (Steam) Key`).
-   - Added interactive Frequently Asked Questions accordion to Subscriptions hub.
-   - Enhanced Checkout with 3-step cyber stepper (`Review Cart` → `Payment Details` → `Key Delivery & Vault`) and bank-level trust seals (256-bit SSL, Buyer Protection, Stripe guarantee).
+1. **Xbox Game Pass Ultimate (`xbox-game-pass.svg`)**:
+   - **Root Cause:** The previous SVG had `.cls-1 { fill: #107c10; }` (Xbox green) rendered on `ARTWORK_STYLES['game-pass-ultimate'].background: '#107c10'`, creating an invisible green-on-green graphic that rendered as a solid blank green box. Moreover, its 382x47 aspect ratio shrank into a tiny horizontal strip.
+   - **Fix:** Replaced with official, crisp white vector artwork:
+     - Exact white Xbox sphere emblem (`#FFFFFF`) prominently centered.
+     - Bold "GAME PASS" typography (`#FFFFFF`).
+     - Distinct "ULTIMATE" outlined badge (`#FFFFFF`).
+     - Sits on official Xbox green background (`#107C10`) in a balanced 240x240 viewBox.
 
-3. **Gated Key Reveal Vault & Legal Compliance Engine**:
-   - Applied database migration [`server/src/migrations/012_key_reveal_audit.js`](file:///c:/Users/waiya/Downloads/GameValut/server/src/migrations/012_key_reveal_audit.js), adding `isRevealed`, `revealedAt`, `revealIp`, and `revealUserAgent` to `code_allocations`.
-   - Updated `CodeAllocation` in [`server/src/models.js`](file:///c:/Users/waiya/Downloads/GameValut/server/src/models.js) and key serialization in [`server/src/services/checkoutService.js`](file:///c:/Users/waiya/Downloads/GameValut/server/src/services/checkoutService.js) to mask keys (`•••••-•••••-•••••`) by default.
-   - Created statutory waiver modal compliant with EU Directive 2011/83/EU Art. 16(m) in [`src/components/keys/KeyRevealCard.jsx`](file:///c:/Users/waiya/Downloads/GameValut/src/components/keys/KeyRevealCard.jsx).
-   - Created secure on-demand reveal endpoint `POST /api/orders/:orderId/items/:itemId/reveal/:allocationId` in [`server/src/controllers/checkoutController.js`](file:///c:/Users/waiya/Downloads/GameValut/server/src/controllers/checkoutController.js) with client IP/UA audit logging for chargeback defense.
-   - Provided 1-click launcher activation deep links for Steam, Epic Games, Microsoft/Xbox, PlayStation Network, and Nintendo eShop.
+2. **Nintendo Switch & eShop Prepaid Card (`nintendo.svg`)**:
+   - **Root Cause:** `public/assets/storefront/nintendo.svg` contained an unstyled bitmap-traced black path (`fill="#000000"`). In addition, `nintendo` was missing from `ARTWORK_FILES` and `ARTWORK_STYLES`, causing `Artwork.jsx` to fall back to the generic dark navy surface (`#0e1626`), producing an almost invisible black icon on dark navy.
+   - **Fix:**
+     - Replaced `nintendo.svg` with official vibrant Nintendo red (`#E60012`) vector card containing:
+       - Crisp white Nintendo Switch Joy-Con emblem (left Joy-Con cutout with joystick, right solid Joy-Con with joystick cutout).
+       - Bold "NINTENDO SWITCH" typography in pure white (`#FFFFFF`).
+       - "eShop Card" badge pill.
+     - Added `nintendo` and `eshop` to `ARTWORK_FILES` pointing to `/assets/storefront/nintendo.svg`.
+     - Added `nintendo` and `eshop` to `ARTWORK_STYLES` with `background: '#e60012'` and `padding: '14%'`.
+     - Added fallback gradient in `ARTWORK_THEMES`.
 
-### B. Universal Simultaneous & Parallel Execution Protocol
-1. Mandated batch subagent invocations in a single `invoke_subagent` call via the `Subagents` array.
-2. Eliminated artificial waiting gates across frontend, backend, security, and QA.
-3. Configured policies across workspace (`AGENTS.md`, `.agents/rules/simultaneous-parallel-execution.md`) and global configuration (`~/.gemini/config/rules/simultaneous-parallel-execution.md`).
+3. **High Contrast & Official Branding for All Storefront Brands**:
+   - **Steam (`steam.svg`)**: Converted icon fill to crisp white (`#FFFFFF`) on official Steam dark slate background (`#171a21`).
+   - **PlayStation Store Credit (`playstation.svg`)**: Converted icon fill to crisp white (`#FFFFFF`) on PlayStation blue (`#00439c`).
+   - **Xbox Gift Card (`xbox.svg`)**: Converted icon fill to crisp white (`#FFFFFF`) on official Xbox green (`#107c10`).
+   - **Roblox Gift Card (`roblox.svg`)**: Converted icon fill to crisp white (`#FFFFFF`) on official Roblox dark background (`#111216`).
+   - **Apple Gift Card (`apple.svg`)**: Converted icon fill to crisp white (`#FFFFFF`) on Apple system dark background (`#1c1c1e`).
+   - **Google Play Gift Card (`googleplay.svg`)**: Replaced monochrome dark grey `#414141` single-path with official 4-color multi-facet vector triangle (Blue `#0086F8`, Green `#00A94B`, Yellow `#FFCE00`, Red `#FF334B`) on `#202124`.
+   - **Razer Gold Gift Card (`razer.svg`)**: Updated style background to `#000000` pitch black so the Chroma neon green (`#00FF00`) 3-headed snake logo pops with maximum contrast.
+   - **Discord Nitro & Server Boost (`discord-nitro.svg`, `discord-boost.svg`, `discord.svg`)**: Verified authentic Blurple and gradient badges on `#1e1f22`. Added `discord` to `ARTWORK_FILES` and `ARTWORK_STYLES`.
+   - **Spotify & Netflix**: Verified vibrant green (`#1ed760` on `#191414`) and red ribbon (`#e50914` on `#080808`).
+   - **Apple Music (`apple-music.svg`)**: Updated `background: '#fc3c44'` to match the icon gradient and prevent white boxing.
+
+4. **Artwork Component & Resolution Robustness (`Artwork.jsx` & `artwork.js`)**:
+   - Prior attempt bug: `ARTWORK_FILES` and `ARTWORK_STYLES` only mapped `service.art` and base brand names. Product slugs like `xbox-game-pass-ultimate`, `playstation-plus-essential`, `eshop-credit-us`, and product IDs like `p-eshop-us` were completely missing.
+   - Prior attempt bug: `resolvedKey = artKey || ...` blindly evaluated truthy `artKey` without verifying existence in `ARTWORK_STYLES`. When callers passed a slug or ID as `artKey`, `theme` defaulted to `{}` and the card background reverted to dark navy `#0e1626`.
+   - Fix: Added full product slug and ID mappings to `ARTWORK_FILES`, `ARTWORK_STYLES`, and `ARTWORK_THEMES`.
+   - Fix: Updated `Artwork.jsx` to test `ARTWORK_STYLES[artKey]` first and fall back to canonical key resolution via `ARTWORK_FILES` lookup.
+
+5. **Catalog & Server Consistency (`catalogService.js` & `server/src/publish-store.js`)**:
+   - Fixed `artFor(title)` brand order so gift cards do not collide with subscription queries.
+   - Added `artKey: service.art` to `server/src/publish-store.js` update fields for consistency.
+
+6. **Automated Testing Suite**:
+   - `tests/artwork.test.js` covers 8 test suites validating all brand assets on disk, high-contrast background configurations, required vector color attributes, slug/ID resolution, and alias safety.
+   - `tests/artwork.test.js` integrated into `npm test` script in [`package.json`](file:///c:/Users/waiya/Downloads/GameValut/package.json).
 
 ---
 
 ## 3. Active State & Blockers
-- **Status:** All test suites passing, production Vite build clean, database migrations applied, and store catalog published.
+
+- **Client Tests (`npm test`):** 33/33 tests passing (100%).
+- **Server Tests (`npm --prefix server test`):** 64/64 tests passing (100%).
+- **Production Build (`npm run build`):** Vite build passing cleanly (2.11s).
 - **Blockers:** None.
 
 ---
 
 ## 4. Next Actions
-1. Commit the modified GameVault files (`git add . && git commit -m "feat: complete game key marketplace overhaul and key reveal vault"`) and push to remote.
-2. Launch dev servers (`npm run dev` and `npm run api`) to perform live interactive verification of checkout and the key reveal modal.
-3. Access `http://localhost:5173/account` to view the Digital Key Vault.
+
+1. Launch dev server (`npm run dev`) and visit `http://localhost:5173/` and `http://localhost:5173/catalogue` to visually inspect the storefront cards.
+2. Confirm Xbox Game Pass Ultimate card displays the white Xbox sphere, GAME PASS, and ULTIMATE badge against Xbox green.
+3. Confirm Nintendo eShop card displays vibrant Nintendo red with white Joy-Con and eShop Card pill badge.
