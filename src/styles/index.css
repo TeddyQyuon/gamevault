@@ -132,3 +132,11 @@ body {
 .clamp-2 {
   -webkit-line-clamp: 2;
 }
+
+/* Mobile Safe Area Inset Helpers */
+.safe-top {
+  padding-top: max(0.75rem, env(safe-area-inset-top));
+}
+.safe-bottom {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+}
