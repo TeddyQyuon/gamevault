@@ -282,9 +282,6 @@ export const PRODUCTS = [
       v('google-10', 'S$10 Play Card', 1000, null),
       v('google-25', 'S$25 Play Card', 2500, null),
       v('google-50', 'S$50 Play Card', 5000, null),
-      v('gplay-10', 'S$10 Play Card', 1000, null),
-      v('gplay-25', 'S$25 Play Card', 2500, null),
-      v('gplay-50', 'S$50 Play Card', 5000, null),
     ],
   },
   {
@@ -341,9 +338,6 @@ export const PRODUCTS = [
     variants: [
       v('xbox-game-pass-ultimate-1mo', '1 Month · Ultimate', 1958, 2490),
       v('xbox-game-pass-ultimate-3mo', '3 Months · Ultimate', 5874, 7470),
-      v('xbox-game-pass-ultimate-standard', '1 Month · Ultimate', 1958, 2490),
-      v('game-pass-ultimate-monthly', '1 Month · Ultimate', 1958, 2490),
-      v('gpu-1mo', '1 Month Prepaid', 1958, 2490),
     ],
   },
   {
@@ -358,11 +352,8 @@ export const PRODUCTS = [
     regionInfo: 'Global account listing. Compatible with PlayStation Network accounts.',
     requirements: 'A PlayStation Network account and PlayStation console.',
     variants: [
-      v('playstation-plus-essential-12mo', '12 Months · Essential', 7205, 9500),
       v('playstation-plus-essential-1mo', '1 Month · Essential', 1090, 1490),
-      v('playstation-plus-essential-standard', '12 Months · Essential', 7205, 9500),
-      v('playstation-plus-yearly', '12 Months · Essential', 7205, 9500),
-      v('psplus-12mo', '12 Months Prepaid', 7205, 9500),
+      v('playstation-plus-essential-12mo', '12 Months · Essential', 7205, 9500),
     ],
   },
   {
@@ -378,8 +369,6 @@ export const PRODUCTS = [
     requirements: 'A Nintendo Account linked to a Nintendo Switch system.',
     variants: [
       v('nintendo-switch-online-12mo', '12 Months · Individual', 2560, 3200),
-      v('nintendo-switch-online-standard', '12 Months · Individual', 2560, 3200),
-      v('nintendo-12mo', '12 Months · Individual', 2560, 3200),
     ],
   },
   {
@@ -395,7 +384,6 @@ export const PRODUCTS = [
     requirements: 'An EA Account.',
     variants: [
       v('ea-play-1mo', '1 Month · EA Play', 767, 990),
-      v('ea-play-standard', '1 Month · EA Play', 767, 990),
     ],
   },
   {
@@ -411,7 +399,6 @@ export const PRODUCTS = [
     requirements: 'A free Discord account.',
     variants: [
       v('discord-nitro-1mo', '1 Month · Nitro', 1279, 1490),
-      v('discord-nitro-standard', '1 Month · Nitro', 1279, 1490),
     ],
   },
   {
@@ -428,7 +415,6 @@ export const PRODUCTS = [
     variants: [
       v('netflix-1mo', '1 Month · Premium 4K', 1152, 1690),
       v('netflix-3mo', '3 Months · Premium 4K', 3456, 5070),
-      v('netflix-premium-standard', '1 Month · Premium 4K', 1152, 1690),
     ],
   },
   {
@@ -445,7 +431,6 @@ export const PRODUCTS = [
     variants: [
       v('spotify-1mo', '1 Month · Individual', 549, 1090),
       v('spotify-3mo', '3 Months · Individual', 1647, 3270),
-      v('spotify-premium-standard', '1 Month · Individual', 549, 1090),
     ],
   },
   {
@@ -461,7 +446,6 @@ export const PRODUCTS = [
     requirements: 'Disney+ supported app or web browser.',
     variants: [
       v('disney-1mo', '1 Month · Premium', 1013, 1490),
-      v('disney-plus-standard', '1 Month · Premium', 1013, 1490),
     ],
   },
   {
@@ -477,7 +461,6 @@ export const PRODUCTS = [
     requirements: 'A Google / YouTube account.',
     variants: [
       v('youtube-1mo', '1 Month · Individual', 287, 890),
-      v('youtube-premium-standard', '1 Month · Individual', 287, 890),
     ],
   },
   {
@@ -493,7 +476,6 @@ export const PRODUCTS = [
     requirements: 'A Crunchyroll account.',
     variants: [
       v('crunchyroll-1mo', '1 Month · Fan Plan', 2122, 2590),
-      v('crunchyroll-premium-standard', '1 Month · Fan Plan', 2122, 2590),
     ],
   },
   {
@@ -509,7 +491,6 @@ export const PRODUCTS = [
     requirements: 'An Apple ID account.',
     variants: [
       v('apple-music-1mo', '1 Month · Individual', 1198, 1490),
-      v('apple-music-standard', '1 Month · Individual', 1198, 1490),
     ],
   },
   {
@@ -525,7 +506,6 @@ export const PRODUCTS = [
     requirements: 'A Microsoft account and Windows 10/11 or macOS.',
     variants: [
       v('microsoft-365-12mo', '12 Months · Personal', 15499, 17800),
-      v('microsoft-365-standard', '12 Months · Personal', 15499, 17800),
     ],
   },
   {
@@ -541,7 +521,6 @@ export const PRODUCTS = [
     requirements: 'A free Canva account.',
     variants: [
       v('canva-pro-12mo', '12 Months · Pro', 365, 8900),
-      v('canva-pro-standard', '12 Months · Pro', 365, 8900),
     ],
   },
   {
@@ -557,7 +536,6 @@ export const PRODUCTS = [
     requirements: 'An Adobe ID and Windows 10/11 or macOS system.',
     variants: [
       v('adobe-creative-cloud-1mo', '1 Month · Creative Cloud', 1598, 7900),
-      v('adobe-creative-cloud-standard', '1 Month · Creative Cloud', 1598, 7900),
     ],
   },
   {
@@ -573,7 +551,6 @@ export const PRODUCTS = [
     requirements: 'A Nord Account and compatible device.',
     variants: [
       v('nordvpn-1mo', '1 Month · Basic', 1919, 2390),
-      v('nordvpn-standard', '1 Month · Basic', 1919, 2390),
     ],
   },
 ]
@@ -590,15 +567,42 @@ export function productInStock(product) {
   return product.variants.some((x) => x.inStock !== undefined ? x.inStock : Number(x.stock) > 0)
 }
 
+export const VARIANT_ALIASES = {
+  'xbox-game-pass-ultimate-standard': 'xbox-game-pass-ultimate-1mo',
+  'game-pass-ultimate-monthly': 'xbox-game-pass-ultimate-1mo',
+  'gpu-1mo': 'xbox-game-pass-ultimate-1mo',
+  'playstation-plus-essential-standard': 'playstation-plus-essential-12mo',
+  'playstation-plus-yearly': 'playstation-plus-essential-12mo',
+  'psplus-12mo': 'playstation-plus-essential-12mo',
+  'nintendo-switch-online-standard': 'nintendo-switch-online-12mo',
+  'nintendo-12mo': 'nintendo-switch-online-12mo',
+  'ea-play-standard': 'ea-play-1mo',
+  'discord-nitro-standard': 'discord-nitro-1mo',
+  'netflix-premium-standard': 'netflix-1mo',
+  'spotify-premium-standard': 'spotify-1mo',
+  'disney-plus-standard': 'disney-1mo',
+  'youtube-premium-standard': 'youtube-1mo',
+  'crunchyroll-premium-standard': 'crunchyroll-1mo',
+  'apple-music-standard': 'apple-music-1mo',
+  'microsoft-365-standard': 'microsoft-365-12mo',
+  'canva-pro-standard': 'canva-pro-12mo',
+  'adobe-creative-cloud-standard': 'adobe-creative-cloud-1mo',
+  'nordvpn-standard': 'nordvpn-1mo',
+  'gplay-10': 'google-10',
+  'gplay-25': 'google-25',
+  'gplay-50': 'google-50',
+}
+
 export function findVariant(variantId) {
+  const resolvedId = VARIANT_ALIASES[variantId] || variantId
   const catalogue = runtimeCatalogue ?? PRODUCTS
   for (const p of catalogue) {
-    const variant = p.variants.find((x) => x.id === variantId)
+    const variant = p.variants.find((x) => x.id === resolvedId || x.id === variantId)
     if (variant) return { product: p, variant }
   }
   if (runtimeCatalogue && runtimeCatalogue !== PRODUCTS) {
     for (const p of PRODUCTS) {
-      const variant = p.variants.find((x) => x.id === variantId)
+      const variant = p.variants.find((x) => x.id === resolvedId || x.id === variantId)
       if (variant) return { product: p, variant }
     }
   }
