@@ -170,6 +170,12 @@ export async function getProductBySlug(slug) {
     }
   }
 
+  // 4. Resolve via variant ID or legacy variant alias
+  const resolved = findVariant(clean) || findVariant(slug)
+  if (resolved?.product) {
+    return catalogue.find((p) => p.id === resolved.product.id || p.slug === resolved.product.slug) || resolved.product
+  }
+
   return null
 }
 export function invalidateCatalogue() { request = null; refreshedAt = 0 }

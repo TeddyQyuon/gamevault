@@ -147,5 +147,20 @@ describe('catalogue resolution & slug aliases', () => {
     assert.equal(netflix.variants[0].label, '1 Month · Premium 4K')
     assert.equal(netflix.variants[1].label, '3 Months · Premium 4K')
   })
+
+  it('resolves products when passed variant ID or alias to getProductBySlug', async () => {
+    const eshop = await getProductBySlug('eshop-50')
+    assert.ok(eshop)
+    assert.equal(eshop.id, 'p-eshop-us')
+
+    const gplay = await getProductBySlug('gplay-25')
+    assert.ok(gplay)
+    assert.equal(gplay.id, 'p-google-play')
+
+    const nord = await getProductBySlug('nordvpn-standard')
+    assert.ok(nord)
+    assert.equal(nord.id, 'p-nordvpn')
+  })
 })
+
 

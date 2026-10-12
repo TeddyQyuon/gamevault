@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { Heart, ShoppingCart, Zap } from 'lucide-react'
 import { getProductBySlug, getRelated, pushRecent } from '../services/catalogService.js'
+import { VARIANT_ALIASES } from '../data/products.js'
 import Artwork from '../components/ui/Artwork.jsx'
 import { Badge, Breadcrumbs, Button } from '../components/ui/controls.jsx'
 import { Price, QtySelector } from '../components/ui/displays.jsx'
@@ -14,6 +15,7 @@ import { variantInStock, variantQuantityLimit } from '../utils/stock.js'
 
 export default function ProductDetails() {
   const { slug } = useParams()
+  const [searchParams] = useSearchParams()
   const nav = useNavigate()
   const { add } = useCart()
   const { has, toggle } = useWishlist()
@@ -33,14 +35,18 @@ export default function ProductDetails() {
       setProduct(p)
       setLoading(false)
       if (p) {
-        setVariantId(p.variants.find(variantInStock)?.id || p.variants[0]?.id || '')
+        const queryVariant = searchParams.get('variant')
+        const targetId = queryVariant || slug
+        const resolvedTargetId = VARIANT_ALIASES[targetId] || targetId
+        const targeted = p.variants.find((v) => v.id === resolvedTargetId || v.id === targetId)
+        setVariantId(targeted?.id || p.variants.find(variantInStock)?.id || p.variants[0]?.id || '')
         setQty(1)
         pushRecent(p.slug)
         getRelated(p).then((r) => alive && setRelated(r))
       }
     })
     return () => { alive = false }
-  }, [slug])
+  }, [slug, searchParams])
 
   const variants = useMemo(() => {
     if (!product?.variants) return []
