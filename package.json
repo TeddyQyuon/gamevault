@@ -9,7 +9,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint src",
-    "test": "node --test tests/order.test.js tests/duplicate.test.js tests/coder-pwa.test.js",
+    "test": "node --test tests/order.test.js tests/duplicate.test.js tests/coder-pwa.test.js tests/artwork.test.js",
     "api": "npm --prefix server run dev",
     "api:start": "npm --prefix server start",
     "api:test": "npm --prefix server test",
