@@ -92,6 +92,8 @@ export function createApp({ cfg, models, sequelize, stripe }) {
   // Logged-in shoppers reuse these too — ownership is resolved per-order.
   const guestCheckout = [maybeGuest, sameOrigin(cfg)]
   app.get('/api/orders/:id', ...guestCheckout, shop.getOrder)
+  app.post('/api/orders/:orderId/items/:itemId/reveal/:allocationId', ...guestCheckout, checkoutLimiter, shop.revealKey)
+  app.post('/api/orders/:orderId/reveal/:allocationId', ...guestCheckout, checkoutLimiter, shop.revealKey)
   app.post('/api/promos/validate', ...guestCheckout, checkoutLimiter, shop.validatePromo)
   app.post('/api/checkout/sessions', ...guestCheckout, checkoutLimiter, shop.createSession)
   app.post('/api/checkout/subscriptions', ...guestCheckout, checkoutLimiter, shop.createSubscription)

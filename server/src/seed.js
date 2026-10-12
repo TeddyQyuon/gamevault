@@ -6,6 +6,7 @@ import { getSequelize } from './db.js'
 import { defineModels } from './models.js'
 import { loadConfigStrict, stripeLiveMode } from './config.js'
 import { PRODUCTS } from '../../src/data/products.js'
+import { encryptCode, hashCode, maskCode } from './services/codeCrypto.js'
 
 const PREPAID = new Set(['p-gpu-1mo', 'p-psplus-12mo', 'p-netflix-1mo', 'p-spotify-1mo'])
 
@@ -45,32 +46,50 @@ async function main() {
       continue
     }
     const prepaid = PREPAID.has(p.id)
+    const isGame = p.category === 'games'
     await Product.upsert({
       id: p.id, slug: p.slug, title: p.title, category: prepaid ? 'subscriptions' : p.category,
       tagline: p.tagline || '', description: p.description || '', artKey: p.art || 'default',
       featured: Boolean(p.featured), trending: Boolean(p.trending), deal: Boolean(p.deal),
-      rating: 0, ratingsCount: 0,
-      // Seed content is non-saleable fixture data. The four prepaid entries
-      // are empty product starters; other fictional listings are demo-only.
-      publication: 'draft', availability: 'coming_soon', fulfilment: prepaid ? 'code_inventory' : 'demo_test',
-      productType: prepaid ? 'prepaid_voucher' : 'gift_card',
+      rating: p.rating || 0, ratingsCount: p.ratingsCount || 0,
+      publication: isGame ? 'published' : 'draft',
+      availability: isGame ? 'available' : 'coming_soon',
+      fulfilment: (prepaid || isGame) ? 'code_inventory' : 'demo_test',
+      productType: prepaid ? 'prepaid_voucher' : isGame ? 'game_key' : 'gift_card',
       region: p.regions?.[0] || 'Singapore',
     })
     products += 1
     for (const x of p.variants) {
       await Variant.upsert({
         id: x.id, productId: p.id, label: x.label,
-        // Fixture prices are deliberately unset. Staff must enter the
-        // supplier-backed retail price before a listing can be published.
-        priceCents: 0, compareAtCents: null,
-        stock: 0,
+        priceCents: isGame ? (x.priceCents || 2999) : 0, compareAtCents: x.compareAtCents || null,
+        stock: isGame ? 999 : 0,
         billingType: 'one_time',
         billingInterval: null,
-        stripePriceId: null, // optional: paste a dashboard Price id here later
+        stripePriceId: null,
         active: true,
-        trackInventory: prepaid,
+        trackInventory: isGame || prepaid,
       })
       variants += 1
+      if (isGame) {
+        const existingCount = await InventoryCode.count({ where: { variantId: x.id, status: 'available' } })
+        if (existingCount < 5) {
+          for (let i = existingCount + 1; i <= 5; i++) {
+            const rawCode = `GV-${p.slug.toUpperCase().slice(0, 4)}-${x.id.toUpperCase().slice(0, 4)}-${String(i).padStart(3, '0')}`
+            try {
+              await InventoryCode.create({
+                variantId: x.id,
+                codeCipher: encryptCode(rawCode),
+                codeHash: hashCode(rawCode),
+                codeMasked: maskCode(rawCode),
+                status: 'available',
+              })
+            } catch {
+              // Ignore duplicate hash on replay
+            }
+          }
+        }
+      }
     }
   }
   console.log(`seeded ${products} products, ${variants} variants`)

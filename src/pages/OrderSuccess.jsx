@@ -6,6 +6,7 @@ import { useCart } from '../context/CartContext.jsx'
 import { useOrders } from '../context/OrdersContext.jsx'
 import { useStripeMode } from '../context/SessionContext.jsx'
 import { Breadcrumbs, Button } from '../components/ui/controls.jsx'
+import { KeyRevealCard } from '../components/keys/KeyRevealCard.jsx'
 import { formatPrice } from '../utils/format.js'
 
 // Payment and delivery status are read from the authenticated API only.
@@ -98,11 +99,28 @@ export default function OrderSuccess() {
           <p className="mt-2">{waiting.length ? <>We’ll email your subscription details and activation instructions to <strong>{order.contact.email}</strong> within 1 hour after confirmed payment.</> : <>We’ve sent your subscription details to <strong>{order.contact.email}</strong>. Check your inbox and spam folder.</>}</p>
           {waiting.length > 0 && order.paidAt && <p className="mt-2 text-[var(--color-muted)]">Delivery due by {new Date(new Date(order.paidAt).getTime() + Math.min(...waiting.map(item => item.deliveryWindowMinutes || 60)) * 60000).toLocaleString()}.</p>}
         </div>}
-        <ul className="mt-4 space-y-3 text-left text-sm">{order.items.map(item => <li key={item.id} className="rounded-xl border p-3">
-          <strong>{item.productTitle}</strong><p>{item.variantLabel} × {item.qty}{item.region ? ` · ${item.region}` : ''}</p>
+        <ul className="mt-4 space-y-3 text-left text-sm">{order.items.map(item => <li key={item.id} className="rounded-xl border border-[var(--color-border)] p-3">
+          <strong>{item.productTitle}</strong><p className="text-[var(--color-muted)]">{item.variantLabel} × {item.qty}{item.region ? ` · ${item.region}` : ''}</p>
           {item.fulfilment === 'manual' && <p className="mt-1 text-[var(--color-muted)]">{item.deliveredAt ? `Emailed ${new Date(item.deliveredAt).toLocaleString()}` : 'Awaiting email delivery'}</p>}
-          {item.codes?.map(code => <code key={code} className="mt-2 block select-all rounded-lg bg-black/5 p-2 font-mono">{code}</code>)}
-          {item.fulfilment !== 'manual' && !item.codes?.length && <p className="mt-1">Delivery pending. Contact support if you need help.</p>}
+          {item.allocations && item.allocations.length > 0 ? (
+            <div className="mt-3 space-y-2">
+              {item.allocations.map((alloc) => (
+                <KeyRevealCard
+                  key={alloc.id}
+                  orderId={order.id}
+                  itemId={item.id}
+                  allocation={alloc}
+                  productTitle={item.productTitle}
+                  platform={item.variantLabel}
+                  sessionId={sessionId}
+                  onRevealed={() => setRetry(v => v + 1)}
+                />
+              ))}
+            </div>
+          ) : (
+            item.codes?.map(code => <code key={code} className="mt-2 block select-all rounded-lg bg-[#080c14] border border-[var(--color-border)] p-2 font-mono text-sm text-[var(--color-text)]">{code}</code>)
+          )}
+          {item.fulfilment !== 'manual' && !item.codes?.length && !item.allocations?.length && <p className="mt-1 text-[var(--color-muted)]">Delivery pending. Contact support if you need help.</p>}
         </li>)}</ul>
         {order.guest && <p className="mt-3 text-xs text-[var(--color-muted)]">Keep this private order link to check delivery status.</p>}
         <div className="mt-5 flex flex-wrap justify-center gap-3"><button className="btn-primary px-4 py-2 text-sm" onClick={() => setRetry(value => value + 1)}>Refresh status</button>{!order.guest && <Button to={`/account/orders/${order.id}`} variant="secondary">Order details</Button>}<Button to="/subscriptions" variant="secondary">Continue shopping</Button><Button to={`/support?order=${encodeURIComponent(orderId)}`} variant="ghost">Get help</Button></div>

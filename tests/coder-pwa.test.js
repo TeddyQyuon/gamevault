@@ -3,25 +3,33 @@ import assert from 'node:assert/strict'
 import fs from 'fs'
 import path from 'path'
 
-test('PWA manifest: valid JSON and required properties', () => {
-  const manifestPath = path.resolve('public/manifest.webmanifest')
-  assert.ok(fs.existsSync(manifestPath), 'manifest.webmanifest exists')
+test('PWA manifest: valid JSON and required properties in both webmanifest and json formats', () => {
+  const manifests = ['public/manifest.webmanifest', 'public/manifest.json']
 
-  const content = JSON.parse(fs.readFileSync(manifestPath, 'utf8'))
-  assert.equal(content.name, 'Antigravity Mobile Coder')
-  assert.equal(content.short_name, 'Antigravity')
-  assert.equal(content.display, 'standalone')
-  assert.equal(content.start_url, '/coder')
-  assert.equal(content.theme_color, '#0f172a')
-  assert.ok(Array.isArray(content.icons))
-  assert.ok(content.icons.length >= 3)
+  for (const m of manifests) {
+    const manifestPath = path.resolve(m)
+    assert.ok(fs.existsSync(manifestPath), `${m} exists`)
 
-  const has192 = content.icons.some((i) => i.sizes === '192x192')
-  const has512 = content.icons.some((i) => i.sizes === '512x512')
-  const hasMaskable = content.icons.some((i) => i.purpose === 'maskable')
-  assert.ok(has192, 'contains 192x192 icon')
-  assert.ok(has512, 'contains 512x512 icon')
-  assert.ok(hasMaskable, 'contains maskable icon')
+    const content = JSON.parse(fs.readFileSync(manifestPath, 'utf8'))
+    assert.equal(content.name, 'Antigravity Mobile Coder')
+    assert.equal(content.short_name, 'Antigravity')
+    assert.equal(content.display, 'standalone')
+    assert.equal(content.start_url, '/coder')
+    assert.equal(content.theme_color, '#0f172a')
+    assert.ok(Array.isArray(content.icons))
+    assert.ok(content.icons.length >= 3)
+
+    const has192 = content.icons.some((i) => i.sizes === '192x192')
+    const has512 = content.icons.some((i) => i.sizes === '512x512')
+    const hasMaskable = content.icons.some((i) => i.purpose === 'maskable')
+    assert.ok(has192, `${m} contains 192x192 icon`)
+    assert.ok(has512, `${m} contains 512x512 icon`)
+    assert.ok(hasMaskable, `${m} contains maskable icon`)
+
+    assert.ok(Array.isArray(content.shortcuts), `${m} contains shortcuts array`)
+    assert.ok(content.shortcuts.length >= 3, `${m} has all 3 repo shortcuts`)
+    assert.ok(content.shortcuts.some((s) => s.url.includes('repo=meterwise')))
+  }
 })
 
 test('PWA service worker: valid file and offline fallback', () => {
@@ -33,6 +41,7 @@ test('PWA service worker: valid file and offline fallback', () => {
   assert.match(code, /addEventListener\('install'/)
   assert.match(code, /addEventListener\('fetch'/)
   assert.match(code, /NETWORK_OFFLINE/)
+  assert.match(code, /Promise\.allSettled/)
 })
 
 test('PWA icons: all icon files exist on disk with valid byte headers', () => {
@@ -48,8 +57,9 @@ test('PWA icons: all icon files exist on disk with valid byte headers', () => {
 
   // Check PNG signature [137, 80, 78, 71, 13, 10, 26, 10]
   const pngSig = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])
-  const header192 = fs.readFileSync(icon192).subarray(0, 8)
-  assert.deepEqual(header192, pngSig)
+  assert.deepEqual(fs.readFileSync(icon192).subarray(0, 8), pngSig)
+  assert.deepEqual(fs.readFileSync(icon512).subarray(0, 8), pngSig)
+  assert.deepEqual(fs.readFileSync(iconMaskable).subarray(0, 8), pngSig)
 })
 
 test('HTML: index.html contains PWA meta tags and manifest link', () => {
@@ -60,6 +70,7 @@ test('HTML: index.html contains PWA meta tags and manifest link', () => {
   assert.match(html, /name="theme-color"/)
   assert.match(html, /name="apple-mobile-web-app-capable"/)
   assert.match(html, /name="mobile-web-app-capable"/)
+  assert.match(html, /viewport-fit=cover/)
 })
 
 test('Repository presets: all 3 target repositories are defined with verified paths', () => {

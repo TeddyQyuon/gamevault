@@ -103,7 +103,7 @@ export default function Catalogue({ category, dealsOnly, title, subtitle, heroAr
         <aside className="card hidden h-fit p-4 lg:block" aria-label="Filters">
           <div className="mb-2 flex items-center justify-between">
             <h2 className="font-extrabold">Filters</h2>
-            {hasFilters && <button onClick={() => setParams({ sort: filters.sort })} className="text-xs font-semibold text-[#2454a7] hover:underline">Clear filters</button>}
+            {hasFilters && <button onClick={() => setParams({ sort: filters.sort })} className="text-xs font-semibold text-[var(--color-cyan)] hover:underline">Clear filters</button>}
           </div>
           {filterPanel}
         </aside>
@@ -141,7 +141,7 @@ export default function Catalogue({ category, dealsOnly, title, subtitle, heroAr
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
                 <button key={n} aria-label={`Page ${n}`} aria-current={n === page ? 'page' : undefined}
                   onClick={() => { const next = new URLSearchParams(params); next.set('page', n); setParams(next) }}
-                  className={`min-h-[40px] min-w-[40px] rounded-lg border px-3 text-sm font-bold ${n === page ? 'border-transparent bg-[#2855FF]' : 'border-[var(--color-border)] hover:border-[var(--color-cyan)]'}`}>
+                  className={`min-h-[40px] min-w-[40px] rounded-lg border px-3 text-sm font-bold ${n === page ? 'border-transparent bg-[var(--color-primary)] text-white' : 'border-[var(--color-border)] hover:border-[var(--color-cyan)] text-[var(--color-text)]'}`}>
                   {n}
                 </button>
               ))}

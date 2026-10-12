@@ -1,26 +1,28 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" fill="none">
   <defs>
     <linearGradient id="nitroGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#8547C6" />
-      <stop offset="50%" stop-color="#B57BEE" />
-      <stop offset="100%" stop-color="#F47B67" />
+      <stop offset="0%" stop-color="#8547C6"/>
+      <stop offset="35%" stop-color="#B57BEE"/>
+      <stop offset="70%" stop-color="#EB459E"/>
+      <stop offset="100%" stop-color="#F47B67"/>
     </linearGradient>
-    <linearGradient id="boostGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FF73FA" />
-      <stop offset="100%" stop-color="#F47B67" />
+    <linearGradient id="nitroSpeed" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#8547C6"/>
+      <stop offset="100%" stop-color="#EB459E"/>
     </linearGradient>
   </defs>
-  <rect width="120" height="120" rx="28" fill="#1E1F22" />
-  <!-- Discord Nitro Stylized Emblem -->
-  <g transform="translate(20, 22) scale(3.33)">
-    <path fill="url(#nitroGrad)" d="M15 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />
-    <path fill="url(#nitroGrad)" fill-rule="evenodd" d="M7 4a1 1 0 0 0 0 2h3a1 1 0 1 1 0 2H5.5a1 1 0 0 0 0 2H8a1 1 0 1 1 0 2H6a1 1 0 1 0 0 2h1.25A8 8 0 1 0 15 4H7Zm8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" clip-rule="evenodd" />
-    <path fill="url(#nitroGrad)" d="M2.5 10a1 1 0 0 0 0-2H2a1 1 0 0 0 0 2h.5Z" />
+  <rect width="120" height="120" rx="28" fill="#1E1F22"/>
+  <!-- Discord Official Nitro Badge (Flying Rocket/Capsule & Speed Trails) -->
+  <g transform="translate(24, 18) scale(1.75)">
+    <!-- Exhaust dashes -->
+    <path fill="url(#nitroSpeed)" d="M3.8 1.56C3.8.76 3.12.09 2.31.09H1.49C.68.09 0 .76 0 1.56s.68 1.46 1.49 1.46h.82C3.12 3.02 3.8 2.36 3.8 1.56z"/>
+    <!-- Main Nitro speed trail -->
+    <path fill="url(#nitroGrad)" d="M35.68 8.82C33.24 3.63 28.08.57 22.66.31H7.33C5.97.31 5.02 1.37 5.02 2.57c0 1.33 1.09 2.26 2.31 2.26h3.93c.82 0 1.5.66 1.5 1.46s-.68 1.46-1.5 1.46H1.63C.81 7.75.14 8.42.14 9.22c0 .8.67 1.46 1.49 1.46h6.92c.81 0 1.49.67 1.49 1.46s-.68 1.46-1.49 1.46H4.21c-.81 0-1.49.67-1.49 1.46s.68 1.46 1.49 1.46h2.98c.14 1.6.54 3.2 1.22 4.66 3.39 7.31 12.35 10.51 19.81 7.18 7.73-3.45 10.99-12.23 7.46-19.54z"/>
+    <!-- Outer white capsule -->
+    <path fill="#FFFFFF" d="M23.42 7.36c4.29-1.93 9.36-.08 11.33 4.12 1.97 4.2.09 9.18-4.2 11.11-4.29 1.93-9.36.08-11.33-4.12-1.97-4.2-.09-9.18 4.2-11.11z"/>
+    <!-- Inner Discord Blurple Hexagon Badge -->
+    <path fill="#5865F2" d="M30.25 10.16l2.72 4.52c.13.27.13.4 0 .67l-2.72 4.52c-.13.27-.4.27-.54.27h-5.29c-.27 0-.41-.13-.54-.27l-2.72-4.52c-.13-.27-.13-.4 0-.67l2.72-4.52c.13-.27.41-.27.54-.27h5.29c.27 0 .41.13.54.27z"/>
   </g>
-  <!-- Mini Server Boost Badge Overlay -->
-  <g transform="translate(80, 76) scale(2.2)">
-    <circle cx="4" cy="6" r="6" fill="#111214" />
-    <path d="M4 0L0 4V8L4 12L8 8V4L4 0ZM7 7.59L4 10.59L1 7.59V4.41L4 1.41L7 4.41V7.59Z" fill="url(#boostGrad)"/>
-    <path d="M2 4.83V7.17L4 9.17L6 7.17V4.83L4 2.83L2 4.83Z" fill="url(#boostGrad)"/>
-  </g>
+  <!-- Authentic bold geometric NITRO wordmark -->
+  <text x="60" y="101" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="900" font-size="18" letter-spacing="3.5" fill="#FFFFFF" text-anchor="middle">NITRO</text>
 </svg>

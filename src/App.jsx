@@ -36,6 +36,9 @@ export default function App() {
         <Route path="deals" element={<Catalogue dealsOnly title="Browse Deals" subtitle="Compare currently available offers and prices." heroArt="rivals-arena" />} />
         <Route path="search" element={<Catalogue title="Search Results" subtitle="Find products across the store." heroArt="emberfall" />} />
         <Route path="products/:slug" element={<ProductDetails />} />
+        <Route path="boost" element={<Navigate to="/products/discord-nitro" replace />} />
+        <Route path="discord-boost" element={<Navigate to="/products/discord-nitro" replace />} />
+        <Route path="nitro" element={<Navigate to="/products/discord-nitro" replace />} />
         <Route path="subscriptions" element={<Subscriptions />} />
         <Route path="cart" element={<Cart />} />
         <Route path="checkout" element={<Checkout />} />

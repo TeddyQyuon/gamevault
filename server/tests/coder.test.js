@@ -15,10 +15,12 @@ test('coder controller: repository resolution', () => {
   const pf = resolveRepo('portfolio')
   assert.equal(pf.key, 'portfolio')
   assert.match(pf.path, /TeddyQyuonPortfolio/i)
+  assert.equal(pf.testCmd, 'npm run build && npm run test:security')
 
   const mw = resolveRepo('meterwise')
   assert.equal(mw.key, 'meterwise')
   assert.match(mw.path, /meterwise/i)
+  assert.equal(mw.testCmd, 'npm test')
 
   // Default fallback is gamevault
   const def = resolveRepo(null)
@@ -57,6 +59,9 @@ test('coder controller: status endpoint response', async () => {
   assert.ok(jsonResult.activePresets.portfolio)
   assert.ok(jsonResult.activePresets.meterwise)
   assert.equal(jsonResult.cloudExecution.githubActionAvailable, true)
+  assert.ok(jsonResult.cloudExecution.colabManagedAgentsUrl)
+  assert.match(jsonResult.cloudExecution.colab20SubagentsSnippet, /20 parallel Antigravity subagents/)
+  assert.match(jsonResult.cloudExecution.colab20SubagentsSnippet, /antigravity-preview-05-2026/)
 })
 
 test('coder controller: test endpoint execution', async () => {

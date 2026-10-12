@@ -15,8 +15,9 @@ import * as m008 from './migrations/008_guest_checkout.js'
 import * as m009 from './migrations/009_category_union.js'
 import * as m010 from './migrations/010_manual_delivery.js'
 import * as m011 from './migrations/011_support_requests.js'
+import * as m012 from './migrations/012_key_reveal_audit.js'
 
-const MIGRATIONS = [m001, m002, m003, m004, m005, m006, m007, m008, m009, m010, m011]
+const MIGRATIONS = [m001, m002, m003, m004, m005, m006, m007, m008, m009, m010, m011, m012]
 
 async function main() {
   const cfg = loadConfigStrict()

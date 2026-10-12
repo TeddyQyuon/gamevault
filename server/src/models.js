@@ -221,6 +221,10 @@ export function defineModels(sequelize) {
     // the code resolves from the encrypted inventory row at read time).
     code: { type: DataTypes.STRING(64), allowNull: false, unique: true },
     inventoryCodeId: { type: DataTypes.INTEGER.UNSIGNED, allowNull: true },
+    isRevealed: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
+    revealedAt: { type: DataTypes.DATE, allowNull: true },
+    revealIp: { type: DataTypes.STRING(45), allowNull: true },
+    revealUserAgent: { type: DataTypes.STRING(255), allowNull: true },
   }, { tableName: 'code_allocations', updatedAt: false })
 
   // --- catalogue operations tables (migration 004) ---

@@ -4,6 +4,7 @@ import { stripeLiveMode } from '../config.js'
 import { priceOneTimeCart, priceSubscriptionVariant, fingerprint } from './pricing.js'
 import { reserveForAttempt, releaseAttempt, releaseExpired } from './inventory.js'
 import { codesForItem } from './fulfilment.js'
+import { maskCode } from './codeCrypto.js'
 
 // Checkout orchestration: pending-order snapshot FIRST (one DB transaction),
 // Stripe network calls AFTER (never hold a transaction open across the network).
@@ -376,15 +377,34 @@ export async function getGuestOrder(models, orderId, sessionId) {
 }
 
 async function serializeOrder(order, models) {
-  const items = await Promise.all((order.OrderItems || []).map(async (it) => ({
-    id: it.id, variantId: it.variantId, productTitle: it.productTitle,
-    variantLabel: it.variantLabel, unitCents: it.unitCents, qty: it.qty,
-    lineTotalCents: it.lineTotalCents, fulfilment: it.fulfilment, region: it.region,
-    deliveryWindowMinutes: it.deliveryWindowMinutes, deliveredAt: it.deliveredAt,
-    codes: order.payStatus === 'paid'
-      ? (await Promise.all((it.CodeAllocations || []).map(c => codesForItem(models, c)))).filter(Boolean)
-      : [],
-  })))
+  const items = await Promise.all((order.OrderItems || []).map(async (it) => {
+    const allocations = order.payStatus === 'paid'
+      ? (await Promise.all((it.CodeAllocations || []).map(async (c) => {
+          const resolved = await codesForItem(models, c)
+          if (!resolved) return null
+          const isRevealed = Boolean(c.isRevealed)
+          return {
+            id: c.id,
+            orderItemId: it.id,
+            code: isRevealed ? resolved : null,
+            codeMasked: isRevealed ? null : maskCode(resolved),
+            isRevealed,
+            revealedAt: c.revealedAt,
+          }
+        }))).filter(Boolean)
+      : []
+
+    const codes = allocations.map((a) => (a.isRevealed ? a.code : a.codeMasked))
+
+    return {
+      id: it.id, variantId: it.variantId, productTitle: it.productTitle,
+      variantLabel: it.variantLabel, unitCents: it.unitCents, qty: it.qty,
+      lineTotalCents: it.lineTotalCents, fulfilment: it.fulfilment, region: it.region,
+      deliveryWindowMinutes: it.deliveryWindowMinutes, deliveredAt: it.deliveredAt,
+      codes,
+      allocations,
+    }
+  }))
   return {
     id: order.id, mode: order.mode, payStatus: order.payStatus, fulfilStatus: order.fulfilStatus,
     subtotalCents: order.subtotalCents, discountCents: order.discountCents,

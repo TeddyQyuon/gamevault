@@ -19,7 +19,7 @@ function artFor(title) {
   if (name.includes('playstation') || name.includes('psn')) return 'psn'
   if (name.includes('spotify')) return 'spotify-premium'
   if (name.includes('netflix')) return 'netflix'
-  if (name.includes('discord')) return 'discord-nitro'
+  if (name.includes('discord') || name.includes('nitro') || name.includes('boost')) return 'discord-nitro'
   if (name.includes('ea play')) return 'ea-play'
   if (name.includes('nintendo')) return 'nintendo-switch-online'
   if (name.includes('steam')) return 'steam'
@@ -48,21 +48,28 @@ function dedupeVariants(variants) {
 function normalize(row) {
   const local = PRODUCTS.find((p) => p.id === row.id || p.slug === row.slug)
   const category = CODE_IDS.has(row.id) ? 'subscriptions' : (CATEGORY_ALIASES[row.category] || row.category)
+  const resolvedArt = (row.art && row.art !== 'default')
+    ? row.art
+    : (row.artKey && row.artKey !== 'default')
+      ? row.artKey
+      : (local?.art && local?.art !== 'default')
+        ? local.art
+        : artFor(row.title)
   return {
     ...local, ...row,
-    art: row.artKey && row.artKey !== 'default' ? row.artKey : artFor(row.title),
+    art: resolvedArt,
     category,
     tagline: row.tagline || (row.fulfilment === 'manual' ? 'Email delivery within 1 hour after confirmed payment' : local?.tagline || 'Digital activation code'),
     description: row.description || (row.fulfilment === 'manual' ? 'One-time membership purchase for the term shown. Subscription details and activation instructions are emailed within 1 hour after confirmed payment. Check the supported region and account requirements before ordering.' : local?.description || 'A prepaid digital code. Check its region and redemption requirements before buying.'),
-    platforms: local?.platforms || [row.brand || 'Digital'],
+    platforms: local?.platforms || (row.brand ? [row.brand] : ['PC (Steam)']),
     genres: local?.genres || [category],
-    regions: [row.region || local?.regions?.[0] || 'Check product details'],
+    regions: (Array.isArray(local?.regions) && local.regions.length) ? local.regions : [row.region || 'Global'],
     features: row.fulfilment === 'manual' ? ['Email delivery within 1 hour after confirmed payment', 'One-time payment for the selected term', 'Eligibility and region stated on this offer'] : local?.features || ['Prepaid activation code', 'One-time payment', 'Redeem with the service provider'],
     redemption: row.fulfilment === 'manual' ? ['Choose your membership term and check the supported region', 'Pay securely and check your order confirmation', 'Receive your subscription details at your checkout email within 1 hour of confirmed payment'] : row.redeemSteps || local?.redemption || ['Complete checkout', 'Open your paid order to view the code', 'Redeem the code with the service provider'],
-    regionInfo: `Redeem in: ${row.region || local?.regions?.[0] || 'the region stated on this listing'}.`,
+    regionInfo: local?.regionInfo || `Redeem in: ${row.region || 'the region stated on this listing'}.`,
     requirements: row.eligibility || local?.requirements || 'An account with the service provider in the supported region.',
     variants: dedupeVariants(row.variants || []).map((v) => ({ ...v, interval: v.billingInterval || v.interval, stock: v.stockMode === 'on_demand' ? null : Number(v.stock) || 0 })),
-    rating: Number(row.rating) || 0, ratingsCount: Number(row.ratingsCount) || 0,
+    rating: Number(row.rating) || local?.rating || 0, ratingsCount: Number(row.ratingsCount) || local?.ratingsCount || 0,
     isPreview: false,
   }
 }
@@ -76,7 +83,11 @@ async function loadCatalogue() {
         const products = Array.isArray(data?.products) ? data.products : []
         if (products.length === 0) return PRODUCTS
         const liveProducts = products.map(normalize).filter((product) => product.variants.length)
-        return liveProducts.length > 0 ? liveProducts : PRODUCTS
+        const liveIds = new Set(liveProducts.map((p) => p.id))
+        const liveSlugs = new Set(liveProducts.map((p) => p.slug))
+        const missingStatic = PRODUCTS.filter((p) => !liveIds.has(p.id) && !liveSlugs.has(p.slug))
+        const merged = [...liveProducts, ...missingStatic]
+        return merged.length > 0 ? merged : PRODUCTS
       })
       .catch((error) => {
         catalogueError = error.message
@@ -148,7 +159,7 @@ export async function getProductBySlug(slug) {
     'adobe-creative-cloud': ['adobe-creative-cloud', 'adobe', 'p-adobe-creative-cloud'],
     'nordvpn': ['nordvpn', 'p-nordvpn'],
     'ea-play': ['ea-play', 'p-ea-play'],
-    'discord-nitro': ['discord-nitro', 'p-discord-nitro'],
+    'discord-nitro': ['discord-nitro', 'p-discord-nitro', 'discord-boost', 'boost', 'nitro'],
     'nintendo-switch-online': ['nintendo-switch-online', 'p-nintendo-switch-online'],
   }
 
