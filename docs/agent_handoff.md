@@ -10,7 +10,7 @@
 | Repository / Workstream | Path / Scope | Status | Verification & Gates |
 | :--- | :--- | :--- | :--- |
 | **GameVault Marketplace** | `c:\Users\waiya\Downloads\GameValut` | Official Brand SVGs, SW Cache v5, Auto-Busting | 33/33 client tests, 64/64 server tests passing, Vite production clean (2.45s) |
-| **Teddy Qyuon Portfolio** | `c:\Users\waiya\Downloads\TeddyQyuonPortfolio` | Sourced Tech Icons, Live Case Study | 10/10 tests passing, Vite clean, synced on `origin/main` |
+| **Teddy Qyuon Portfolio** | `c:\Users\waiya\Downloads\TeddyQyuonPortfolio` | Feature Bloat Removed · Clean UI Kept | 10/10 tests passing, Vite clean |
 | **Antigravity Mobile Coder** | `c:\Users\waiya\Downloads\AntigravityMobileCoder` | Mobile PWA & Google Account Pool | 6/6 tests passing, Vercel production live (`https://antigravity-mobile-coder.vercel.app`) |
 
 ---
