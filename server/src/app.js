@@ -1,3 +1,6 @@
+import path from 'path'
+import fs from 'fs'
+import { fileURLToPath } from 'url'
 import express from 'express'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
@@ -136,5 +139,12 @@ export function createApp({ cfg, models, sequelize, stripe }) {
     if (status >= 500) console.error('api error:', err?.message || err)
     res.status(status).json({ error: { code, message, details: err?.details } })
   })
+  const __dirname = path.dirname(fileURLToPath(import.meta.url))
+  const distPath = path.resolve(__dirname, '../../dist')
+  if (fs.existsSync(distPath)) {
+    app.use(express.static(distPath))
+    app.get('*', (_req, res) => res.sendFile(path.join(distPath, 'index.html')))
+  }
+
   return app
 }

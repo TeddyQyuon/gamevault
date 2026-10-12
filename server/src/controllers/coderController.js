@@ -21,7 +21,7 @@ export const REPOSITORIES = {
     name: 'Teddy Qyuon Portfolio',
     path: path.resolve('c:/Users/waiya/Downloads/TeddyQyuonPortfolio'),
     type: 'frontend',
-    testCmd: 'npm run build',
+    testCmd: 'npm run build && npm run test:security',
     description: 'Personal Developer Portfolio (Vite + React + Tailwind CSS)'
   },
   meterwise: {
@@ -29,7 +29,8 @@ export const REPOSITORIES = {
     name: 'MeterWise AI Energy',
     path: path.resolve('c:/Users/waiya/Downloads/meterwise'),
     type: 'python-ml',
-    testCmd: 'npm run build',
+    testCmd: 'npm test',
+    fullTestCmd: 'npm run build && npm test',
     cloudTestCmd: 'npm run build && pytest',
     description: 'AI/ML Smart Energy Intelligence (FastAPI + LightGBM + React JS)'
   }
@@ -56,13 +57,14 @@ export function resolveRepo(repoKey) {
 }
 
 // Helper: Run command with timeout and safe buffer
-export async function runCommand(command, cwd, timeoutMs = 45000) {
+export async function runCommand(command, cwd, timeoutMs = 120000) {
   const start = Date.now()
   try {
     const { stdout, stderr } = await execAsync(command, {
       cwd,
       timeout: timeoutMs,
       maxBuffer: 10 * 1024 * 1024,
+      windowsHide: true,
       env: { ...process.env, CI: '1', PAGER: 'cat' }
     })
     return {
@@ -83,14 +85,41 @@ export async function runCommand(command, cwd, timeoutMs = 45000) {
   }
 }
 
-// Helper: Call Gemini REST API for autonomous code analysis/patch generation
+// Helper: Call Gemini / Antigravity Interactions REST API for autonomous code analysis
 export async function callGeminiApi({ prompt, apiKey, model = 'gemini-2.0-flash' }) {
   const key = apiKey || process.env.GEMINI_API_KEY
   if (!key) {
     throw new Error('GEMINI_API_KEY is not configured. Please supply an API key.')
   }
 
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`
+  // If Antigravity Managed Agent is specified, attempt Google's Interactions API first
+  const isAgentMode = model.startsWith('antigravity') || model === 'agent'
+  if (isAgentMode) {
+    const interactionsUrl = `https://generativelanguage.googleapis.com/v1beta/interactions?key=${key}`
+    try {
+      const agentRes = await fetch(interactionsUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          agent: 'antigravity-preview-05-2026',
+          input: prompt,
+          environment: 'remote'
+        })
+      })
+
+      if (agentRes.ok) {
+        const agentData = await agentRes.json()
+        const out = agentData?.output_text || agentData?.output || ''
+        if (out) return out
+      }
+    } catch {
+      // Fallback cleanly to standard Gemini model endpoint below
+    }
+  }
+
+  // Standard Generative Language model endpoint (with safe fallback if model name unrecognized)
+  const effectiveModel = isAgentMode ? 'gemini-2.0-flash' : model
+  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${effectiveModel}:generateContent?key=${key}`
   const response = await fetch(endpoint, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -133,9 +162,10 @@ export async function inspectGit(repoPath) {
 
 export function coderController() {
   return {
-    // GET /api/coder/status
-    status: async (_req, res) => {
-      const geminiConfigured = Boolean(process.env.GEMINI_API_KEY)
+    // GET or POST /api/coder/status
+    status: async (req, res) => {
+      const clientKey = req?.headers?.['x-gemini-key'] || req?.query?.apiKey || req?.body?.apiKey
+      const geminiConfigured = Boolean(process.env.GEMINI_API_KEY || clientKey)
 
       // Fetch git status for all 3 presets
       const reposWithGit = {}
@@ -151,6 +181,34 @@ export function coderController() {
         }
       }
 
+      const colab20SubagentsSnippet = `# 🚀 Antigravity 20-Subagent Autonomous Worker Cluster in Google Colab
+import asyncio
+from google import genai
+
+client = genai.Client()  # Uses GEMINI_API_KEY from Colab Secrets
+
+async def worker(agent_id, repo, task):
+    print(f"[Agent {agent_id:02d}] Booting sandbox for {repo}...")
+    try:
+        interaction = client.interactions.create(
+            agent="antigravity-preview-05-2026",
+            input=f"Agent #{agent_id}: Execute subtask on {repo}: {task}",
+            environment="remote"
+        )
+        print(f"[Agent {agent_id:02d}] Done: {interaction.output_text[:80]}...")
+        return interaction.output_text
+    except Exception as e:
+        print(f"[Agent {agent_id:02d}] Worker notice: {e}")
+        return str(e)
+
+async def main():
+    print("Launching 20 parallel Antigravity subagents in cloud...")
+    tasks = [worker(i, "GameVault", "Autonomous code & verification audit") for i in range(1, 21)]
+    results = await asyncio.gather(*tasks)
+    print(f"All 20 subagent routines complete! ({len(results)} outputs)")
+
+asyncio.run(main())`
+
       res.json({
         ok: true,
         service: 'Antigravity Mobile Autonomous Coder',
@@ -162,7 +220,9 @@ export function coderController() {
         cloudExecution: {
           githubActionAvailable: true,
           colabNotebookPath: 'c:\\Users\\waiya\\Downloads\\Get_started_managed_agents_mobile.ipynb',
-          colabDirectUrl: 'https://colab.research.google.com/'
+          colabDirectUrl: 'https://colab.research.google.com/',
+          colabManagedAgentsUrl: 'https://colab.research.google.com/github/google-gemini/cookbook/blob/main/quickstarts/Get_started_managed_agents.ipynb',
+          colab20SubagentsSnippet
         }
       })
     },

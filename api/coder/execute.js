@@ -20,13 +20,48 @@ export default async function handler(req, res) {
   let agentReport = ''
 
   if (effectiveKey) {
-    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${effectiveKey}`
-    try {
-      const geminiRes = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: `You are Antigravity, an expert autonomous lead engineer.
+    const isAgentMode = model.startsWith('antigravity') || model === 'agent'
+    let resolved = false
+
+    if (isAgentMode) {
+      try {
+        const agentRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/interactions?key=${effectiveKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            agent: 'antigravity-preview-05-2026',
+            input: `You are Antigravity, an expert autonomous lead engineer.
+Target Repository: ${repoKey}
+Task: ${task}
+
+Provide:
+1. Executive Plan
+2. File Modifications Required
+3. Verification & Test Suite Strategy
+4. Rollback and Safety Gates`,
+            environment: 'remote'
+          })
+        })
+
+        if (agentRes.ok) {
+          const agentData = await agentRes.json()
+          agentReport = agentData?.output_text || agentData?.output || ''
+          resolved = true
+        }
+      } catch {
+        // Fall back to generateContent below
+      }
+    }
+
+    if (!resolved) {
+      const effectiveModel = isAgentMode ? 'gemini-2.0-flash' : model
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${effectiveModel}:generateContent?key=${effectiveKey}`
+      try {
+        const geminiRes = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: `You are Antigravity, an expert autonomous lead engineer.
 Target Repository: ${repoKey}
 Task: ${task}
 
@@ -35,18 +70,19 @@ Provide:
 2. File Modifications Required
 3. Verification & Test Suite Strategy
 4. Rollback and Safety Gates` }] }]
+          })
         })
-      })
 
-      if (geminiRes.ok) {
-        const data = await geminiRes.json()
-        agentReport = data?.candidates?.[0]?.content?.parts?.[0]?.text || ''
-      } else {
-        const errText = await geminiRes.text()
-        agentReport = `Gemini API response error (${geminiRes.status}): ${errText}`
+        if (geminiRes.ok) {
+          const data = await geminiRes.json()
+          agentReport = data?.candidates?.[0]?.content?.parts?.[0]?.text || ''
+        } else {
+          const errText = await geminiRes.text()
+          agentReport = `Gemini API response error (${geminiRes.status}): ${errText}`
+        }
+      } catch (err) {
+        agentReport = `Gemini API connection error: ${err.message}`
       }
-    } catch (err) {
-      agentReport = `Gemini API connection error: ${err.message}`
     }
   } else {
     agentReport = `No GEMINI_API_KEY detected in cloud serverless environment. Set GEMINI_API_KEY in your settings or request payload to activate live reasoning.`
