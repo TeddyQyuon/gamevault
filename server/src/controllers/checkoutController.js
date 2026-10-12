@@ -2,6 +2,7 @@ import { ah, notFound, badRequest } from '../errors.js'
 import { getStripe } from '../services/stripeClient.js'
 import { createOneTimeCheckout, createSubscriptionCheckout, getGuestOrder, getOrderForUser, dbLoaders } from '../services/checkoutService.js'
 import { priceOneTimeCart } from '../services/pricing.js'
+import { codesForItem } from '../services/fulfilment.js'
 
 
 export function checkoutController(deps) {
@@ -103,6 +104,73 @@ export function checkoutController(deps) {
         return_url: `${cfg.clientUrl}/account/subscriptions?portal=return`,
       })
       res.json({ url: session.url })
+    }),
+
+    // POST /api/orders/:orderId/items/:itemId/reveal/:allocationId — G2A statutory waiver key reveal
+    revealKey: ah(async (req, res) => {
+      const { orderId, itemId, allocationId } = req.params
+      const sessionId = req.query?.session_id || req.query?.sessionId || req.body?.sessionId || ''
+
+      const order = await models.Order.findOne({
+        where: { id: orderId },
+        include: [{ model: models.OrderItem, include: [models.CodeAllocation] }],
+      })
+      if (!order) throw notFound('ORDER_NOT_FOUND', 'Order not found.')
+
+      if (order.userId) {
+        if (!req.userId || req.userId !== order.userId) {
+          if (!sessionId || order.stripeSessionId !== sessionId) {
+            throw notFound('ORDER_NOT_FOUND', 'Order not found.')
+          }
+        }
+      } else {
+        if (!sessionId || order.stripeSessionId !== sessionId) {
+          throw notFound('ORDER_NOT_FOUND', 'Order not found.')
+        }
+      }
+
+      if (order.payStatus !== 'paid') {
+        throw badRequest('ORDER_NOT_PAID', 'Order payment is not confirmed yet.')
+      }
+
+      let targetAllocation = null
+      let targetItem = null
+      for (const item of (order.OrderItems || [])) {
+        if (itemId && String(item.id) !== String(itemId)) continue
+        for (const alloc of (item.CodeAllocations || [])) {
+          if (String(alloc.id) === String(allocationId)) {
+            targetAllocation = alloc
+            targetItem = item
+            break
+          }
+        }
+        if (targetAllocation) break
+      }
+
+      if (!targetAllocation) {
+        throw notFound('ALLOCATION_NOT_FOUND', 'Code allocation not found.')
+      }
+
+      const ip = req.ip || req.headers['x-forwarded-for'] || req.socket?.remoteAddress || ''
+      const userAgent = req.headers['user-agent'] || ''
+      if (!targetAllocation.isRevealed) {
+        await targetAllocation.update({
+          isRevealed: true,
+          revealedAt: new Date(),
+          revealIp: String(ip).slice(0, 45),
+          revealUserAgent: String(userAgent).slice(0, 255),
+        })
+      }
+
+      const code = await codesForItem(models, targetAllocation)
+      res.json({
+        ok: true,
+        allocationId: targetAllocation.id,
+        orderItemId: targetItem?.id,
+        code,
+        isRevealed: true,
+        revealedAt: targetAllocation.revealedAt,
+      })
     }),
   }
 }

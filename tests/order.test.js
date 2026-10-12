@@ -100,6 +100,14 @@ describe('catalogue resolution & slug aliases', () => {
 
     const netflix = await getProductBySlug('netflix-premium')
     assert.ok(netflix)
+
+    const boost = await getProductBySlug('boost')
+    assert.ok(boost)
+    assert.equal(boost.title, 'Discord Nitro')
+
+    const discordBoost = await getProductBySlug('discord-boost')
+    assert.ok(discordBoost)
+    assert.equal(discordBoost.title, 'Discord Nitro')
   })
 
   it('finds variant by variantId', () => {

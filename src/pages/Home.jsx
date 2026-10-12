@@ -1,102 +1,215 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ArrowRight, Headphones, Monitor, ShieldCheck, KeyRound, Gamepad2 } from 'lucide-react'
+import { ArrowRight, Headphones, ShieldCheck, KeyRound, Zap, Percent, Gamepad2, Gift, Tv, Sparkles } from 'lucide-react'
 import { getProducts } from '../services/catalogService.js'
 import { ProductCard } from '../components/products/ProductCard.jsx'
 import { ProductGridSkeleton } from '../components/ui/feedback.jsx'
 
 const A = '/assets/storefront/'
-const CATEGORIES = [
-  { label: 'STEAM', logo: 'steam.svg', to: '/gift-cards?q=Steam' },
-  { label: 'PLAYSTATION', logo: 'playstation.svg', to: '/gift-cards?q=PlayStation' },
-  { label: 'XBOX', logo: 'xbox.svg', to: '/subscriptions?q=Xbox' },
-  { label: 'NINTENDO', logo: 'nintendo.svg', to: '/subscriptions?q=Nintendo' },
-  { label: 'APPLE', logo: 'apple.svg', to: '/gift-cards?q=Apple' },
-  { label: 'GOOGLE PLAY', logo: 'googleplay.svg', to: '/gift-cards?q=Google' },
-  { label: 'DISCORD NITRO', logo: 'discord-nitro.svg', to: '/products/discord-nitro' },
-  { label: 'SPOTIFY', logo: 'spotify.svg', to: '/subscriptions?q=Spotify' },
+
+const TRUST_BADGES = [
+  { icon: Zap, title: 'Instant Delivery', desc: 'Automated digital keys & fast delivery' },
+  { icon: ShieldCheck, title: '100% Secure', desc: 'Encrypted checkout powered by Stripe' },
+  { icon: Percent, title: 'Best Prices', desc: 'Up to 70% off retail games & codes' },
+  { icon: Headphones, title: '24/7 Support', desc: 'Dedicated customer assistance' },
 ]
-const COLLECTIONS = [
-  { label: 'PC adventures', image: 'elden-ring.jpg', to: '/gift-cards?q=Steam', logo: 'steam.svg' },
-  { label: 'Xbox Game Pass', image: 'forza-horizon-5.jpg', to: '/subscriptions?q=Xbox', logo: 'xbox-game-pass.svg' },
-  { label: 'PlayStation Plus', color: '#1658c9', to: '/subscriptions?q=PlayStation', logo: 'ps-plus.svg' },
-  { label: 'Gift cards', image: 'cyberpunk-2077.jpg', to: '/gift-cards', logo: 'razer.svg' },
-  { label: 'Music & streaming', color: '#1b744c', to: '/subscriptions?type=music', logo: 'spotify.svg' },
-  { label: 'Discord Nitro & Boost', color: '#5865F2', to: '/products/discord-nitro', logo: 'discord-nitro.svg' },
+
+const CATEGORY_PILLS = [
+  { label: 'PC Games', icon: Gamepad2, to: '/games' },
+  { label: 'Game Subscriptions', icon: KeyRound, to: '/subscriptions' },
+  { label: 'Gift Cards', icon: Gift, to: '/gift-cards' },
+  { label: 'Streaming & Video', icon: Tv, to: '/streaming' },
+  { label: 'Limited Deals', icon: Percent, to: '/deals' },
+  { label: 'Steam Keys', icon: Sparkles, to: '/games?platform=PC+(Steam)' },
+  { label: 'PlayStation', icon: Gamepad2, to: '/games?platform=PlayStation' },
 ]
 
 export default function Home() {
-  const [products,setProducts] = useState([])
-  const [loading,setLoading] = useState(true)
+  const [products, setProducts] = useState([])
+  const [loading, setLoading] = useState(true)
+
   useEffect(() => {
     let alive = true
-    getProducts().then((items) => { if(alive){setProducts(items);setLoading(false)} })
+    getProducts().then((items) => {
+      if (alive) {
+        setProducts(items)
+        setLoading(false)
+      }
+    })
     return () => { alive = false }
   }, [])
+
+  const games = products.filter((p) => p.category === 'games')
   const subscriptions = products.filter((p) => p.category === 'subscriptions')
   const gifts = products.filter((p) => p.category === 'gift-cards')
-  const games = products.filter((p) => p.category === 'games')
-  const featured = [...subscriptions, ...gifts].slice(0,6)
+  const trendingGames = games.slice(0, 6)
+
   return (
     <div className="market-home">
+      {/* Hero Banner (Mockup 1) */}
       <section className="market-hero">
-        <img className="market-hero-photo" src={`${A}gaming-photo.jpg`} alt="Friends playing video games together" />
+        <img className="market-hero-photo" src="/assets/stormlands.jpg" alt="Stormlands Action RPG" />
         <div className="container-shell market-hero-content">
-          <div>
-            <p className="market-eyebrow">YOUR NEXT GREAT EXPERIENCE</p>
-            <h1>Play more.<br />Make it yours.</h1>
-            <p>Game keys, memberships and gift cards.<br className="hidden sm:block" /> Find your next favourite in one place.</p>
-            <Link className="market-button" to="/subscriptions">Explore subscriptions <ArrowRight size={18} aria-hidden /></Link>
+          <div className="max-w-2xl">
+            <p className="market-eyebrow">YOUR NEXT ADVENTURE AWAITS</p>
+            <h1>Play more.<br /><span className="gradient-text">Make it yours.</span></h1>
+            <p className="text-base text-[var(--color-muted)]">
+              Digital PC game keys, gaming memberships, and instant gift cards. Verified DRM activation codes delivered securely to your vault.
+            </p>
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              <Link className="market-button" to="/games">
+                Browse PC Games <ArrowRight size={18} aria-hidden />
+              </Link>
+              <Link to="/subscriptions" className="inline-flex items-center gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-5 py-3 text-sm font-bold text-[var(--color-text)] hover:border-[var(--color-cyan)] transition-colors">
+                View Subscriptions
+              </Link>
+            </div>
           </div>
-          <Link to="/products/xbox-game-pass-ultimate" className="hero-feature">
-            <img src={`${A}game-pass.jpg`} alt="Xbox Game Pass Ultimate" />
-            <div><span>MORE WAYS TO PLAY</span><strong>Xbox Game Pass Ultimate</strong><p>Email delivery within 1 hour</p><b>Buy now · From S$19.58 <ArrowRight size={16} aria-hidden /></b></div>
+          <Link to="/products/stormlands" className="hero-feature">
+            <img src="/assets/stormlands.jpg" alt="Stormlands Featured Game" />
+            <div>
+              <span>FEATURED RELEASE</span>
+              <strong>Stormlands</strong>
+              <p>PC Steam Key · Open World RPG</p>
+              <b>From S$29.99 · Save 50% <ArrowRight size={16} aria-hidden /></b>
+            </div>
           </Link>
         </div>
       </section>
 
+      {/* 4 Trust Badges */}
+      <div className="container-shell mb-8">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+          {TRUST_BADGES.map((b) => {
+            const Icon = b.icon
+            return (
+              <div key={b.title} className="flex items-center gap-3.5 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-3.5 shadow-sm">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[var(--color-primary)]/10 text-[var(--color-cyan)]">
+                  <Icon size={20} />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-[var(--color-text)]">{b.title}</h4>
+                  <p className="text-[11px] text-[var(--color-muted)]">{b.desc}</p>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+
       <div className="container-shell market-content">
-        <nav className="campaign-grid" aria-label="Featured collections">
-          {COLLECTIONS.map((c) => <Link key={c.label} to={c.to} className="campaign-tile" style={{backgroundColor:c.color || '#172131'}}>
-            {c.image && <img className="campaign-photo" src={`${A}${c.image}`} alt="" />}
-            {c.logo && <img className="campaign-logo" src={`${A}${c.logo}`} alt="" />}
-            <span>{c.label}</span>
-          </Link>)}
-        </nav>
+        {/* Category Pills Nav */}
+        <div className="mb-8 flex gap-2.5 overflow-x-auto pb-2 scrollbar-none">
+          {CATEGORY_PILLS.map((c) => {
+            const Icon = c.icon
+            return (
+              <Link
+                key={c.label}
+                to={c.to}
+                className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2 text-xs font-semibold text-[var(--color-text)] hover:border-[var(--color-cyan)] hover:text-[var(--color-cyan)] transition-all"
+              >
+                <Icon size={14} className="text-[var(--color-cyan)]" /> {c.label}
+              </Link>
+            )
+          })}
+        </div>
 
-        <nav className="platform-grid" aria-label="Shop by category">
-          {CATEGORIES.map(({label,logo,Icon,to}) => <Link className="platform-tile" key={label} to={to}>
-            {logo ? <img src={`${A}${logo}`} alt="" /> : <Icon strokeWidth={1.6} aria-hidden />}
-            <span>{label}</span>
-          </Link>)}
-        </nav>
-
+        {/* Trending Right Now (Top PC Games) */}
         <section className="market-section">
-          <SectionHead title="Subscriptions & digital essentials" subtitle="Gaming, streaming, music and software. One-time payment, delivered by email within 1 hour." to="/subscriptions" />
-          {loading ? <ProductGridSkeleton count={6}/> : featured.length ? <ProductRow products={featured}/> : <EmptyOffers/>}
+          <SectionHead
+            title="Trending Right Now"
+            subtitle="Top-rated PC game keys with instant digital delivery and verified DRM activation."
+            to="/games"
+          />
+          {loading ? (
+            <ProductGridSkeleton count={6} />
+          ) : trendingGames.length ? (
+            <ProductRow products={trendingGames} />
+          ) : (
+            <EmptyOffers />
+          )}
         </section>
 
+        {/* Popular Subscriptions */}
         <section className="market-section">
-          <SectionHead title="Top gift cards" subtitle="A little credit. A lot of possibilities. Find the right gift for every player." to="/gift-cards" />
-          {loading ? <ProductGridSkeleton count={6}/> : gifts.length ? <ProductRow products={gifts.slice(0,6)}/> : <EmptyOffers/>}
+          <SectionHead
+            title="Game Subscriptions & Memberships"
+            subtitle="Prepaid gaming passes and memberships with one-time checkout."
+            to="/subscriptions"
+          />
+          {loading ? (
+            <ProductGridSkeleton count={6} />
+          ) : subscriptions.length ? (
+            <ProductRow products={subscriptions.slice(0, 6)} />
+          ) : (
+            <EmptyOffers />
+          )}
         </section>
 
-        {games.length > 0 && <section className="market-section"><SectionHead title="Discover your next game" subtitle="Explore available game keys and editions." to="/games"/><ProductRow products={games.slice(0,6)}/></section>}
+        {/* Gift Cards */}
+        <section className="market-section">
+          <SectionHead
+            title="Gaming & Digital Gift Cards"
+            subtitle="Wallet top-ups for Steam, PlayStation Network, Xbox, Nintendo eShop, and more."
+            to="/gift-cards"
+          />
+          {loading ? (
+            <ProductGridSkeleton count={6} />
+          ) : gifts.length ? (
+            <ProductRow products={gifts.slice(0, 6)} />
+          ) : (
+            <EmptyOffers />
+          )}
+        </section>
 
+        {/* Callout Card */}
         <section className="membership-callout">
           <img className="plus-brand-image" src={`${A}ps-plus.svg`} alt="PlayStation Plus" />
-          <div><p className="market-eyebrow">YOUR FAVOURITE SERVICES.</p><h2>More entertainment,<br />one simple checkout.</h2><p>Choose your membership and make a one-time payment. We'll email your subscription details within 1 hour after confirmed payment.</p><Link className="market-button" to="/subscriptions">Find your membership <ArrowRight size={18} aria-hidden /></Link></div>
+          <div>
+            <p className="market-eyebrow">YOUR FAVOURITE SERVICES</p>
+            <h2>More games,<br /><span className="gradient-text">one simple checkout.</span></h2>
+            <p>
+              Choose your membership, check regional compatibility, and pay securely. Digital activation codes are securely stored in your personal GameVault library.
+            </p>
+            <Link className="market-button" to="/subscriptions">
+              Explore Subscriptions <ArrowRight size={18} aria-hidden />
+            </Link>
+          </div>
         </section>
-
-        <div className="market-benefits">
-          {[{Icon:KeyRound,title:'Email delivery',copy:'Membership details within 1 hour after confirmed payment.'},{Icon:ShieldCheck,title:'Secure checkout',copy:'Payment details stay with Stripe.'},{Icon:Monitor,title:'Choose your platform',copy:'Check region and compatibility.'},{Icon:Headphones,title:'Help when you need it',copy:'Redemption guidance and support.'}].map(({Icon,title,copy}) => <div key={title}><Icon size={28} strokeWidth={1.6} aria-hidden/><span><strong>{title}</strong><p>{copy}</p></span></div>)}
-        </div>
       </div>
     </div>
   )
 }
-function SectionHead({title,subtitle,to}) {
-  return <div className="market-section-head"><div><h2>{title}</h2><p>{subtitle}</p></div><Link to={to}>View all <ArrowRight size={16} aria-hidden/></Link></div>
+
+function SectionHead({ title, subtitle, to }) {
+  return (
+    <div className="market-section-head">
+      <div>
+        <h2>{title}</h2>
+        <p>{subtitle}</p>
+      </div>
+      <Link to={to}>View all <ArrowRight size={16} aria-hidden /></Link>
+    </div>
+  )
 }
-function ProductRow({products}) {return <div className="market-product-grid">{products.map(p=><ProductCard key={p.id} product={p}/>)}</div>}
-function EmptyOffers(){return <div className="market-empty"><Gamepad2 size={30} aria-hidden/><h3>New offers are on the way</h3><p>Browse popular services and memberships.</p><Link to="/support">Get in touch <ArrowRight size={15} aria-hidden/></Link></div>}
+
+function ProductRow({ products }) {
+  return (
+    <div className="market-product-grid">
+      {products.map((p) => (
+        <ProductCard key={p.id} product={p} />
+      ))}
+    </div>
+  )
+}
+
+function EmptyOffers() {
+  return (
+    <div className="market-empty">
+      <Gamepad2 size={30} aria-hidden />
+      <h3>New offers are on the way</h3>
+      <p>Browse popular services and memberships.</p>
+      <Link to="/games">Explore Games <ArrowRight size={15} aria-hidden /></Link>
+    </div>
+  )
+}

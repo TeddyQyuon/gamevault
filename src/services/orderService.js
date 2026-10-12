@@ -109,6 +109,13 @@ export async function getMySubscriptions() {
   return data.subscriptions || []
 }
 
+/** Reveal encrypted key with statutory waiver audit trail */
+export async function revealOrderKey({ orderId, itemId, allocationId, sessionId }) {
+  const qs = sessionId ? `?session_id=${encodeURIComponent(sessionId)}` : ''
+  const itemPath = itemId ? `/items/${encodeURIComponent(itemId)}` : ''
+  return apiPost(`/api/orders/${encodeURIComponent(orderId)}${itemPath}/reveal/${encodeURIComponent(allocationId)}${qs}`, { sessionId })
+}
+
 // Test seam: reset the in-flight flag between tests.
 export function __resetSessionGuard() {
   sessionInFlight = false

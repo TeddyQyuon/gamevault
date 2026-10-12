@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
-import { Copy, Check, ExternalLink } from 'lucide-react'
+import { Copy, Check, ExternalLink, ShieldCheck } from 'lucide-react'
 import AccountSidebar from '../../components/account/AccountSidebar.jsx'
 import { Badge, Button, Field } from '../../components/ui/controls.jsx'
 import { EmptyState } from '../../components/ui/feedback.jsx'
+import { KeyRevealCard } from '../../components/keys/KeyRevealCard.jsx'
 import { useSession, useStripeMode } from '../../context/SessionContext.jsx'
 import { useOrders } from '../../context/OrdersContext.jsx'
 import { useWishlist } from '../../context/WishlistContext.jsx'
@@ -20,9 +21,9 @@ export function AccountLayout({ children }) {
   return (
     <div>
       <section className="card mb-5 overflow-hidden">
-        <div className="p-6 md:p-8 bg-white">
-          <h1 className="text-3xl font-extrabold">Welcome Back, {user?.name?.split(' ')[0] || 'Gamer'}!</h1>
-          <p className="text-[var(--color-muted)]">Manage your games, subscriptions, orders and more — all in one place.</p>
+        <div className="p-6 md:p-8 bg-[var(--color-surface)]">
+          <h1 className="text-3xl font-extrabold text-[var(--color-text)]">Welcome Back, {user?.name?.split(' ')[0] || 'Gamer'}!</h1>
+          <p className="text-[var(--color-muted)]">Manage your games, subscriptions, orders and key vault — all in one place.</p>
         </div>
       </section>
       <div className="grid gap-5 lg:grid-cols-[250px_1fr]">
@@ -168,8 +169,24 @@ export function OrderDetail() {
               <span><strong>{it.productTitle}</strong> <span className="text-[var(--color-muted)]">({it.variantLabel}) × {it.qty}</span></span>
               <span className="font-bold">{formatPrice(it.lineTotalCents)}</span>
             </div>
-            {it.fulfilment === 'manual' && <p className="mt-2 text-sm text-[var(--color-muted)]">{it.region} ? {it.deliveredAt ? `Emailed on ${new Date(it.deliveredAt).toLocaleString()} to ${order.contact.email}` : order.payStatus === 'paid' ? `Email delivery to ${order.contact.email} within ${it.deliveryWindowMinutes || 60} minutes after confirmed payment` : 'Email delivery starts after confirmed payment'}</p>}
-            {it.codes?.length > 0 && <p className="mt-1 font-mono text-xs text-[#9db4ff]">{it.codes.join(' · ')}</p>}
+            {it.fulfilment === 'manual' && <p className="mt-2 text-sm text-[var(--color-muted)]">{it.region} · {it.deliveredAt ? `Emailed on ${new Date(it.deliveredAt).toLocaleString()} to ${order.contact.email}` : order.payStatus === 'paid' ? `Email delivery to ${order.contact.email} within ${it.deliveryWindowMinutes || 60} minutes after confirmed payment` : 'Email delivery starts after confirmed payment'}</p>}
+            {it.allocations && it.allocations.length > 0 ? (
+              <div className="mt-3 space-y-2">
+                {it.allocations.map((alloc) => (
+                  <KeyRevealCard
+                    key={alloc.id}
+                    orderId={order.id}
+                    itemId={it.id}
+                    allocation={alloc}
+                    productTitle={it.productTitle}
+                    platform={it.variantLabel}
+                    onRevealed={() => getOrderById(orderId).then((o) => o && setOrder(o))}
+                  />
+                ))}
+              </div>
+            ) : it.codes?.length > 0 ? (
+              <p className="mt-1 font-mono text-xs text-[#9db4ff]">{it.codes.join(' · ')}</p>
+            ) : null}
           </li>
         ))}
       </ul>
@@ -231,31 +248,71 @@ export function SubscriptionsTab() {
 
 export function Library() {
   const [orders, setOrders] = useState([])
-  const [copied, setCopied] = useState('')
-  const { notify } = useToast()
   const { ordersVersion } = useOrders()
   useEffect(() => { getOrders().then(setOrders).catch(() => setOrders([])) }, [ordersVersion])
-  const codes = orders.flatMap((o) => o.items.flatMap((it) => (it.codes || []).map((c) => ({ code: c, title: it.productTitle, order: o.id }))))
-  if (!codes.length) return <div className="card p-5"><EmptyState title="No codes yet" hint="Subscription details are delivered by email. Track delivery in My Orders. Activation codes appear here when purchased as code offers." action={<Button to="/account/orders">View my orders</Button>} /></div>
+
+  const allocationsList = orders.flatMap((o) =>
+    (o.items || []).flatMap((it) =>
+      (it.allocations && it.allocations.length > 0)
+        ? it.allocations.map((alloc) => ({
+            allocation: alloc,
+            orderId: o.id,
+            itemId: it.id,
+            productTitle: it.productTitle,
+            platform: it.variantLabel,
+          }))
+        : (it.codes || []).map((c, idx) => ({
+            allocation: {
+              id: `${o.id}-${it.id}-${idx}`,
+              code: c,
+              isRevealed: true,
+              revealedAt: o.paidAt || o.date,
+            },
+            orderId: o.id,
+            itemId: it.id,
+            productTitle: it.productTitle,
+            platform: it.variantLabel,
+          }))
+    )
+  )
+
+  if (!allocationsList.length) {
+    return (
+      <div className="card p-5">
+        <EmptyState
+          title="Your Key Vault is empty"
+          hint="Purchased game keys and activation codes appear here. Digital keys are securely masked until revealed."
+          action={<Button to="/games">Explore Game Keys</Button>}
+        />
+      </div>
+    )
+  }
+
   return (
-    <div className="card p-5">
-      <h2 className="font-extrabold">Your activation codes <span className="text-xs font-normal text-[var(--color-muted)]">(yours only — keep them private)</span></h2>
-      <ul className="mt-3 grid gap-2 md:grid-cols-2">
-        {codes.map((c) => (
-          <li key={c.code} className="rounded-xl border border-[var(--color-border)] p-3 text-sm">
-            <p className="font-bold">{c.title}</p>
-            <p className="font-mono text-xs text-[#9db4ff]">{c.code}</p>
-            <p className="text-xs text-[var(--color-muted)]">Order {c.order}</p>
-            <button
-              onClick={async () => { try { await navigator.clipboard.writeText(c.code) } catch { /* clipboard may be unavailable */ } setCopied(c.code); notify('Code copied.', 'success'); setTimeout(() => setCopied(''), 1500) }}
-              className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-[var(--color-border)] px-2.5 py-1.5 text-xs font-semibold hover:border-[var(--color-cyan)]"
-              aria-label={`Copy code ${c.code}`}
-            >
-              {copied === c.code ? <Check size={13} aria-hidden /> : <Copy size={13} aria-hidden />}{copied === c.code ? 'Copied!' : 'Copy'}
-            </button>
-          </li>
+    <div className="card p-5 space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--color-border)] pb-3">
+        <div>
+          <h2 className="text-xl font-extrabold text-[var(--color-text)]">
+            Digital Key Vault <span className="ml-2 rounded-full bg-[var(--color-cyan)]/10 px-2.5 py-0.5 text-xs font-semibold text-[var(--color-cyan)]">{allocationsList.length} Items</span>
+          </h2>
+          <p className="mt-1 text-xs text-[var(--color-muted)]">
+            Manage and reveal your purchased activation keys. Unrevealed keys are masked for security and chargeback protection.
+          </p>
+        </div>
+      </div>
+      <div className="grid gap-3 md:grid-cols-2">
+        {allocationsList.map((item) => (
+          <KeyRevealCard
+            key={item.allocation.id}
+            orderId={item.orderId}
+            itemId={item.itemId}
+            allocation={item.allocation}
+            productTitle={item.productTitle}
+            platform={item.platform}
+            onRevealed={() => getOrders().then(setOrders)}
+          />
         ))}
-      </ul>
+      </div>
     </div>
   )
 }

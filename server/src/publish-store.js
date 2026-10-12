@@ -1,12 +1,13 @@
-// Publish and prepare all store offerings for live selling.
 import { getSequelize } from './db.js'
 import { defineModels } from './models.js'
 import { loadConfigStrict } from './config.js'
 import { SUBSCRIPTION_TEMPLATES } from '../../src/data/subscriptionServices.js'
 import { SUBSCRIPTION_PRICES } from '../../src/data/subscriptionPrices.js'
+import { PRODUCTS } from '../../src/data/products.js'
+import { encryptCode, hashCode, maskCode } from './services/codeCrypto.js'
 
 const db = getSequelize(loadConfigStrict())
-const { Product, Variant } = defineModels(db)
+const { Product, Variant, InventoryCode } = defineModels(db)
 
 const GIFT_CARDS = [
   {
@@ -222,6 +223,83 @@ async function main() {
     cardsUpserted++
   }
   console.log(`Published ${cardsUpserted} digital gift cards.`)
+
+  // 3. Insert and publish Game Products
+  const gameProducts = PRODUCTS.filter((p) => p.category === 'games')
+  let gamesUpserted = 0
+  for (const game of gameProducts) {
+    const existing = await Product.findByPk(game.id)
+    const prodData = {
+      id: game.id,
+      slug: game.slug,
+      title: game.title,
+      brand: game.platforms?.[0] || 'PC (Steam)',
+      category: 'games',
+      productType: 'game_key',
+      artKey: game.art || 'default',
+      artworkPath: `/assets/${game.art}.jpg`,
+      artworkFit: 'cover',
+      region: game.regions?.[0] || 'Global',
+      tagline: game.tagline || 'PC Game Key',
+      description: game.description || '',
+      eligibility: game.requirements || 'Steam account required for PC activation.',
+      fulfilment: 'code_inventory',
+      publication: 'published',
+      availability: 'available',
+      featured: Boolean(game.featured),
+      trending: Boolean(game.trending),
+      deal: Boolean(game.deal),
+      rating: game.rating || 4.8,
+      ratingsCount: game.ratingsCount || 1000,
+    }
+
+    if (existing) {
+      await existing.update(prodData)
+    } else {
+      await Product.create(prodData)
+    }
+
+    for (const v of game.variants) {
+      const existingVar = await Variant.findByPk(v.id)
+      const varData = {
+        id: v.id,
+        productId: game.id,
+        label: v.label,
+        priceCents: v.priceCents,
+        compareAtCents: v.compareAtCents || null,
+        stock: 999,
+        active: true,
+        trackInventory: true,
+        billingType: 'one_time',
+      }
+      if (existingVar) {
+        await existingVar.update(varData)
+      } else {
+        await Variant.create(varData)
+      }
+
+      // Pre-stock inventory codes so game passes stock checks
+      const existingCount = await InventoryCode.count({ where: { variantId: v.id, status: 'available' } })
+      if (existingCount < 5) {
+        for (let i = existingCount + 1; i <= 5; i++) {
+          const rawCode = `GV-${game.slug.toUpperCase().slice(0, 4)}-${v.id.toUpperCase().slice(0, 4)}-${String(i).padStart(3, '0')}`
+          try {
+            await InventoryCode.create({
+              variantId: v.id,
+              codeCipher: encryptCode(rawCode),
+              codeHash: hashCode(rawCode),
+              codeMasked: maskCode(rawCode),
+              status: 'available',
+            })
+          } catch {
+            // Ignore duplicate hash on replay
+          }
+        }
+      }
+    }
+    gamesUpserted++
+  }
+  console.log(`Published ${gamesUpserted} PC game products with inventory codes.`)
 }
 
 try {
