@@ -43,6 +43,7 @@ asyncio.run(main())`
       gamevault: {
         key: 'gamevault',
         name: 'GameVault Marketplace',
+        githubRepo: 'TeddyQyuon/gamevault',
         path: 'c:/Users/waiya/Downloads/GameValut',
         type: 'fullstack',
         testCmd: 'npm test && npm run build',
@@ -51,6 +52,7 @@ asyncio.run(main())`
       portfolio: {
         key: 'portfolio',
         name: 'Teddy Qyuon Portfolio',
+        githubRepo: 'TeddyQyuon/TeddyQyuonPortfolio',
         path: 'c:/Users/waiya/Downloads/TeddyQyuonPortfolio',
         type: 'frontend',
         testCmd: 'npm run build && npm run test:security',
@@ -59,6 +61,7 @@ asyncio.run(main())`
       meterwise: {
         key: 'meterwise',
         name: 'MeterWise AI Energy',
+        githubRepo: 'TeddyQyuon/meterwise',
         path: 'c:/Users/waiya/Downloads/meterwise',
         type: 'python-ml',
         testCmd: 'npm test',

@@ -84,3 +84,15 @@ test('Repository presets: all 3 target repositories are defined with verified pa
     assert.ok(fs.existsSync(p), `Path exists: ${p}`)
   }
 })
+
+test('GitHub repository configuration: TeddyQyuon mappings verified and zero wai-yan-hein references', () => {
+  const mobileCoderCode = fs.readFileSync(path.resolve('src/pages/MobileCoder.jsx'), 'utf8')
+  assert.equal(mobileCoderCode.includes('wai-yan-hein'), false, 'MobileCoder.jsx has zero wai-yan-hein occurrences')
+  assert.ok(mobileCoderCode.includes('TeddyQyuon/gamevault'), 'MobileCoder.jsx references TeddyQyuon/gamevault')
+  assert.ok(mobileCoderCode.includes('TeddyQyuon/TeddyQyuonPortfolio'), 'MobileCoder.jsx references TeddyQyuon/TeddyQyuonPortfolio')
+  assert.ok(mobileCoderCode.includes('TeddyQyuon/meterwise'), 'MobileCoder.jsx references TeddyQyuon/meterwise')
+
+  const dispatchCode = fs.readFileSync(path.resolve('api/coder/github-dispatch.js'), 'utf8')
+  assert.equal(dispatchCode.includes('wai-yan-hein'), false, 'github-dispatch.js has zero wai-yan-hein occurrences')
+  assert.ok(dispatchCode.includes('TeddyQyuon/gamevault'), 'github-dispatch.js references TeddyQyuon/gamevault')
+})

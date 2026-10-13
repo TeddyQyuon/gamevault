@@ -48,7 +48,12 @@ export default async function handler(req, res) {
     }
   }
 
-  const defaultRepo = 'wai-yan-hein/GameVault'
+  const repoMapping = {
+    gamevault: 'TeddyQyuon/gamevault',
+    portfolio: 'TeddyQyuon/TeddyQyuonPortfolio',
+    meterwise: 'TeddyQyuon/meterwise'
+  }
+  const defaultRepo = (repoOwner && repoName) ? `${repoOwner}/${repoName}` : (repoMapping[repoKey] || 'TeddyQyuon/gamevault')
   const encodedTitle = encodeURIComponent(title)
   const encodedBody = encodeURIComponent(body)
   const mobileIssueUrl = `https://github.com/${defaultRepo}/issues/new?title=${encodedTitle}&body=${encodedBody}`
