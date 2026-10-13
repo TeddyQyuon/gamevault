@@ -27,6 +27,7 @@ const REPOSITORIES = [
   {
     key: 'gamevault',
     name: 'GameVault Marketplace',
+    githubRepo: 'TeddyQyuon/gamevault',
     tag: 'Vite + React + Node',
     path: 'c:\\Users\\waiya\\Downloads\\GameValut',
     testCmd: 'npm test && npm run build',
@@ -37,6 +38,7 @@ const REPOSITORIES = [
   {
     key: 'portfolio',
     name: 'Teddy Qyuon Portfolio',
+    githubRepo: 'TeddyQyuon/TeddyQyuonPortfolio',
     tag: 'Vite + React + Tailwind',
     path: 'c:\\Users\\waiya\\Downloads\\TeddyQyuonPortfolio',
     testCmd: 'npm run build && npm run test:security',
@@ -47,6 +49,7 @@ const REPOSITORIES = [
   {
     key: 'meterwise',
     name: 'MeterWise AI Energy',
+    githubRepo: 'TeddyQyuon/meterwise',
     tag: 'FastAPI + LightGBM + React',
     path: 'c:\\Users\\waiya\\Downloads\\meterwise',
     testCmd: 'npm test',
@@ -290,7 +293,7 @@ export default function MobileCoder() {
       } catch (err) {
         // Laptop server is offline! Fall back to client browser direct dispatch
         console.warn('Local server offline, using direct mobile browser cloud trigger:', err.message)
-        const defaultRepo = selectedRepo === 'portfolio' ? 'wai-yan-hein/TeddyQyuonPortfolio' : selectedRepo === 'meterwise' ? 'wai-yan-hein/meterwise' : 'wai-yan-hein/GameVault'
+        const defaultRepo = selectedRepo === 'portfolio' ? 'TeddyQyuon/TeddyQyuonPortfolio' : selectedRepo === 'meterwise' ? 'TeddyQyuon/meterwise' : 'TeddyQyuon/gamevault'
         const title = `feat(mobile): ${taskPrompt.slice(0, 50)}`
         const body = `Autonomous task triggered from mobile phone PWA while laptop is offline.\n\nTarget Repo: ${selectedRepo}\nPrompt: ${taskPrompt}\nTimestamp: ${new Date().toISOString()}`
         const mobileIssueUrl = `https://github.com/${defaultRepo}/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`

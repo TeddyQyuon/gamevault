@@ -10,6 +10,7 @@ export const REPOSITORIES = {
   gamevault: {
     key: 'gamevault',
     name: 'GameVault Marketplace',
+    githubRepo: 'TeddyQyuon/gamevault',
     path: path.resolve('c:/Users/waiya/Downloads/GameValut'),
     type: 'fullstack',
     testCmd: 'npm test && npm run build',
@@ -19,6 +20,7 @@ export const REPOSITORIES = {
   portfolio: {
     key: 'portfolio',
     name: 'Teddy Qyuon Portfolio',
+    githubRepo: 'TeddyQyuon/TeddyQyuonPortfolio',
     path: path.resolve('c:/Users/waiya/Downloads/TeddyQyuonPortfolio'),
     type: 'frontend',
     testCmd: 'npm run build && npm run test:security',
@@ -27,6 +29,7 @@ export const REPOSITORIES = {
   meterwise: {
     key: 'meterwise',
     name: 'MeterWise AI Energy',
+    githubRepo: 'TeddyQyuon/meterwise',
     path: path.resolve('c:/Users/waiya/Downloads/meterwise'),
     type: 'python-ml',
     testCmd: 'npm test',
@@ -502,7 +505,12 @@ Diagnose the exact failure, provide the fix, and explain how to recover to green
       }
 
       // If no token, return pre-configured 1-tap Issue creation URL for GitHub Mobile App / Web
-      const defaultRepo = 'wai-yan-hein/GameVault' // or relevant repo
+      const repoMapping = {
+        gamevault: 'TeddyQyuon/gamevault',
+        portfolio: 'TeddyQyuon/TeddyQyuonPortfolio',
+        meterwise: 'TeddyQyuon/meterwise'
+      }
+      const defaultRepo = (repoOwner && repoName) ? `${repoOwner}/${repoName}` : (repoMapping[repoKey] || 'TeddyQyuon/gamevault')
       const encodedTitle = encodeURIComponent(title)
       const encodedBody = encodeURIComponent(body)
       const mobileIssueUrl = `https://github.com/${defaultRepo}/issues/new?title=${encodedTitle}&body=${encodedBody}`

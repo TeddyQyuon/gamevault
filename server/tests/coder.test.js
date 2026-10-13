@@ -144,18 +144,39 @@ test('coder controller: githubDispatch URL generation', async () => {
     }
   }
 
-  const mockReq = {
+  // 1. Meterwise
+  const mockReqMw = {
     body: {
       repoKey: 'meterwise',
       issueTitle: 'feat(mobile): add cyclical diurnal solar temperature feature'
     }
   }
 
-  await coder.githubDispatch(mockReq, mockRes)
+  await coder.githubDispatch(mockReqMw, mockRes)
   assert.ok(jsonResult)
   assert.equal(jsonResult.ok, true)
   assert.equal(jsonResult.method, 'direct_url')
-  assert.match(jsonResult.mobileIssueUrl, /github\.com/)
+  assert.match(jsonResult.mobileIssueUrl, /github\.com\/TeddyQyuon\/meterwise\/issues\/new/)
   assert.match(jsonResult.mobileIssueUrl, /feat\(mobile\)/)
   assert.equal(jsonResult.workflowFile, '.github/workflows/agent-mobile-coder.yml')
+
+  // 2. Default GameVault
+  const mockReqGv = {
+    body: {
+      repoKey: 'gamevault',
+      issueTitle: 'feat(mobile): autonomous verify'
+    }
+  }
+  await coder.githubDispatch(mockReqGv, mockRes)
+  assert.match(jsonResult.mobileIssueUrl, /github\.com\/TeddyQyuon\/gamevault\/issues\/new/)
+
+  // 3. Portfolio
+  const mockReqPf = {
+    body: {
+      repoKey: 'portfolio',
+      issueTitle: 'feat(mobile): portfolio update'
+    }
+  }
+  await coder.githubDispatch(mockReqPf, mockRes)
+  assert.match(jsonResult.mobileIssueUrl, /github\.com\/TeddyQyuon\/TeddyQyuonPortfolio\/issues\/new/)
 })
