@@ -70,20 +70,19 @@
 
 ## 6. Verification Summary
 - **Antigravity Mobile Coder:**
-  - `npm test`: **21 / 21 tests passing** (96ms).
-  - `npm run build`: Clean build in 2.01s (`dist/assets/index-DNwR-za6.js`, 316.02 kB).
-  - GitHub integration: All presets (`TeddyQyuon/gamevault`, `TeddyQyuon/TeddyQyuonPortfolio`, `TeddyQyuon/meterwise`), browser navigation, and session vault updated to `TeddyQyuon`. Zero `wai-yan-hein` 404 references remaining.
-  - Vercel Production: Deployed live to [https://antigravity-mobile-coder.vercel.app](https://antigravity-mobile-coder.vercel.app).
+  - `npm test`: **22 / 22 tests passing** (97ms) including new regression suite verifying zero `wai-yan-hein` references and live TeddyQyuon repository bindings.
+  - `npm run build`: Clean production build (`dist/assets/index-DiLJXuA5.js`, 316.15 kB).
+  - GitHub integration: All presets (`TeddyQyuon/gamevault`, `TeddyQyuon/TeddyQyuonPortfolio`, `TeddyQyuon/meterwise`), browser navigation, and session vault verified. Zero `wai-yan-hein` 404 references remaining.
 - **GameVault Marketplace:**
-  - `npm test`: **34 / 34 tests passing** (164ms) including new regression suite verifying zero `wai-yan-hein` links and valid `TeddyQyuon` repo bindings.
-  - `npm --prefix server test`: **64 / 64 server tests passing** (1045ms) with full `githubDispatch` URL routing tests.
-  - `npm run build`: Clean build in 2.21s (`dist/assets/index-DdVt7D67.js`, 407.91 kB).
+  - `npm test`: **35 / 35 tests passing** (181ms) including regression suite for zero `wai-yan-hein` links, valid `TeddyQyuon` repo bindings, and direct `api/coder/github-dispatch` handler tests.
+  - `npm --prefix server test`: **64 / 64 server tests passing** (4500ms) with full `githubDispatch` URL routing tests covering case-insensitivity, full slugs, and default fallbacks.
+  - `npm run build`: Clean Vite build in 2.35s (`dist/assets/index-DdVt7D67.js`, 407.91 kB).
 - **Teddy Qyuon Portfolio:**
   - `npm test`: **10 / 10 tests passing** (1940ms).
 
 ---
 
 ## 7. Next Actions
-1. **Push to Remote Git:** Push commits to `origin/main` for GameVault and `origin/master` for AntigravityMobileCoder to trigger automatic Vercel CI/CD deployments.
-2. **Monitor Cloud Runner Dispatch:** Verify incoming GitHub Issues on `https://github.com/TeddyQyuon/gamevault/issues` triggered from mobile shortcuts.
+1. **GitHub Cloud Issue Dispatch:** Opening `https://github.com/TeddyQyuon/gamevault/issues/new?title=...` verified to return HTTP 200 (redirecting to GitHub issue creator form) instead of 404.
+2. **Push to Remote Git:** Push commits to `origin/main` for GameVault to update deployed production Vercel instance.
 3. **PWA Cache Refresh:** Trigger Service Worker update (`v6`) if offline mobile clients have stale cached scripts.

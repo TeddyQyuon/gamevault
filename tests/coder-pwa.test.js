@@ -85,6 +85,8 @@ test('Repository presets: all 3 target repositories are defined with verified pa
   }
 })
 
+import githubDispatchHandler from '../api/coder/github-dispatch.js'
+
 test('GitHub repository configuration: TeddyQyuon mappings verified and zero wai-yan-hein references', () => {
   const mobileCoderCode = fs.readFileSync(path.resolve('src/pages/MobileCoder.jsx'), 'utf8')
   assert.equal(mobileCoderCode.includes('wai-yan-hein'), false, 'MobileCoder.jsx has zero wai-yan-hein occurrences')
@@ -95,4 +97,52 @@ test('GitHub repository configuration: TeddyQyuon mappings verified and zero wai
   const dispatchCode = fs.readFileSync(path.resolve('api/coder/github-dispatch.js'), 'utf8')
   assert.equal(dispatchCode.includes('wai-yan-hein'), false, 'github-dispatch.js has zero wai-yan-hein occurrences')
   assert.ok(dispatchCode.includes('TeddyQyuon/gamevault'), 'github-dispatch.js references TeddyQyuon/gamevault')
+})
+
+test('api/coder/github-dispatch handler generates verified TeddyQyuon issue URLs', async () => {
+  const createMockRes = () => {
+    let statusCode = 200
+    let sentData = null
+    return {
+      setHeader: () => {},
+      status: (code) => {
+        statusCode = code
+        return {
+          json: (data) => {
+            sentData = data
+            return data
+          }
+        }
+      },
+      json: (data) => {
+        sentData = data
+        return data
+      },
+      getData: () => sentData,
+      getCode: () => statusCode
+    }
+  }
+
+  // 1. GameVault default
+  const res1 = createMockRes()
+  await githubDispatchHandler({ method: 'POST', body: { repoKey: 'gamevault' } }, res1)
+  assert.equal(res1.getCode(), 200)
+  assert.match(res1.getData().mobileIssueUrl, /github\.com\/TeddyQyuon\/gamevault\/issues\/new/)
+
+  // 2. MeterWise uppercase
+  const res2 = createMockRes()
+  await githubDispatchHandler({ method: 'POST', body: { repoKey: 'METERWISE' } }, res2)
+  assert.equal(res2.getCode(), 200)
+  assert.match(res2.getData().mobileIssueUrl, /github\.com\/TeddyQyuon\/meterwise\/issues\/new/)
+
+  // 3. Portfolio
+  const res3 = createMockRes()
+  await githubDispatchHandler({ method: 'POST', body: { repoKey: 'portfolio' } }, res3)
+  assert.equal(res3.getCode(), 200)
+  assert.match(res3.getData().mobileIssueUrl, /github\.com\/TeddyQyuon\/TeddyQyuonPortfolio\/issues\/new/)
+
+  // 4. Method not allowed
+  const res4 = createMockRes()
+  await githubDispatchHandler({ method: 'GET' }, res4)
+  assert.equal(res4.getCode(), 405)
 })
