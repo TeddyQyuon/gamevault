@@ -179,4 +179,33 @@ test('coder controller: githubDispatch URL generation', async () => {
   }
   await coder.githubDispatch(mockReqPf, mockRes)
   assert.match(jsonResult.mobileIssueUrl, /github\.com\/TeddyQyuon\/TeddyQyuonPortfolio\/issues\/new/)
+
+  // 4. Case-insensitivity check (e.g. METERWISE uppercase)
+  const mockReqUpper = {
+    body: {
+      repoKey: 'METERWISE',
+      issueTitle: 'feat(mobile): uppercase test'
+    }
+  }
+  await coder.githubDispatch(mockReqUpper, mockRes)
+  assert.match(jsonResult.mobileIssueUrl, /github\.com\/TeddyQyuon\/meterwise\/issues\/new/)
+
+  // 5. Explicit full repository slug check
+  const mockReqSlug = {
+    body: {
+      repoKey: 'TeddyQyuon/gamevault',
+      issueTitle: 'feat(mobile): full slug test'
+    }
+  }
+  await coder.githubDispatch(mockReqSlug, mockRes)
+  assert.match(jsonResult.mobileIssueUrl, /github\.com\/TeddyQyuon\/gamevault\/issues\/new/)
+
+  // 6. Empty repoKey fallback to default TeddyQyuon/gamevault
+  const mockReqDefault = {
+    body: {
+      issueTitle: 'feat(mobile): default test'
+    }
+  }
+  await coder.githubDispatch(mockReqDefault, mockRes)
+  assert.match(jsonResult.mobileIssueUrl, /github\.com\/TeddyQyuon\/gamevault\/issues\/new/)
 })

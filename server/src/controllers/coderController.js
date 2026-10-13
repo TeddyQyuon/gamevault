@@ -458,16 +458,40 @@ Diagnose the exact failure, provide the fix, and explain how to recover to green
 
     // POST /api/coder/github-dispatch
     githubDispatch: async (req, res) => {
-      const { repoKey, issueTitle, issueBody, githubToken, repoOwner, repoName } = req.body || {}
+      const { repoKey = 'gamevault', issueTitle, issueBody, githubToken, repoOwner, repoName } = req.body || {}
       const targetRepo = resolveRepo(repoKey)
 
       const title = issueTitle || `feat(mobile): Autonomous task via phone PWA`
       const body = issueBody || `Task triggered from Antigravity Mobile Browser App shortcut.\n\nTarget Repo: ${targetRepo.name}\nTimestamp: ${new Date().toISOString()}`
 
-      // If GitHub Token and Repo are provided, trigger via REST API
-      if (githubToken && repoOwner && repoName) {
+      const repoMapping = {
+        gamevault: 'TeddyQyuon/gamevault',
+        portfolio: 'TeddyQyuon/TeddyQyuonPortfolio',
+        meterwise: 'TeddyQyuon/meterwise'
+      }
+
+      const cleanKey = (repoKey || '').trim().toLowerCase()
+      let defaultRepo = targetRepo.githubRepo || 'TeddyQyuon/gamevault'
+      if (repoOwner && repoName) {
+        defaultRepo = `${repoOwner}/${repoName}`
+      } else if (cleanKey.includes('/')) {
+        defaultRepo = repoKey.trim()
+      } else if (repoMapping[cleanKey]) {
+        defaultRepo = repoMapping[cleanKey]
+      } else if (cleanKey.includes('portfolio')) {
+        defaultRepo = 'TeddyQyuon/TeddyQyuonPortfolio'
+      } else if (cleanKey.includes('meterwise')) {
+        defaultRepo = 'TeddyQyuon/meterwise'
+      }
+
+      const [targetOwner, targetRepoName] = defaultRepo.split('/')
+      const effectiveOwner = repoOwner || targetOwner
+      const effectiveRepo = repoName || targetRepoName
+
+      // If GitHub Token is provided, trigger via REST API
+      if (githubToken && effectiveOwner && effectiveRepo) {
         try {
-          const ghRes = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/issues`, {
+          const ghRes = await fetch(`https://api.github.com/repos/${effectiveOwner}/${effectiveRepo}/issues`, {
             method: 'POST',
             headers: {
               Authorization: `Bearer ${githubToken}`,
@@ -505,12 +529,6 @@ Diagnose the exact failure, provide the fix, and explain how to recover to green
       }
 
       // If no token, return pre-configured 1-tap Issue creation URL for GitHub Mobile App / Web
-      const repoMapping = {
-        gamevault: 'TeddyQyuon/gamevault',
-        portfolio: 'TeddyQyuon/TeddyQyuonPortfolio',
-        meterwise: 'TeddyQyuon/meterwise'
-      }
-      const defaultRepo = (repoOwner && repoName) ? `${repoOwner}/${repoName}` : (repoMapping[repoKey] || 'TeddyQyuon/gamevault')
       const encodedTitle = encodeURIComponent(title)
       const encodedBody = encodeURIComponent(body)
       const mobileIssueUrl = `https://github.com/${defaultRepo}/issues/new?title=${encodedTitle}&body=${encodedBody}`

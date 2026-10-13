@@ -9,9 +9,33 @@ export default async function handler(req, res) {
   const title = issueTitle || `feat(mobile): Autonomous task via phone PWA`
   const body = issueBody || `Task triggered from Antigravity Mobile Browser App shortcut.\n\nTarget Repo: ${repoKey}\nTimestamp: ${new Date().toISOString()}`
 
-  if (githubToken && repoOwner && repoName) {
+  const repoMapping = {
+    gamevault: 'TeddyQyuon/gamevault',
+    portfolio: 'TeddyQyuon/TeddyQyuonPortfolio',
+    meterwise: 'TeddyQyuon/meterwise'
+  }
+
+  const cleanKey = (repoKey || '').trim().toLowerCase()
+  let defaultRepo = 'TeddyQyuon/gamevault'
+  if (repoOwner && repoName) {
+    defaultRepo = `${repoOwner}/${repoName}`
+  } else if (cleanKey.includes('/')) {
+    defaultRepo = repoKey.trim()
+  } else if (repoMapping[cleanKey]) {
+    defaultRepo = repoMapping[cleanKey]
+  } else if (cleanKey.includes('portfolio')) {
+    defaultRepo = 'TeddyQyuon/TeddyQyuonPortfolio'
+  } else if (cleanKey.includes('meterwise')) {
+    defaultRepo = 'TeddyQyuon/meterwise'
+  }
+
+  const [targetOwner, targetRepoName] = defaultRepo.split('/')
+  const effectiveOwner = repoOwner || targetOwner
+  const effectiveRepo = repoName || targetRepoName
+
+  if (githubToken && effectiveOwner && effectiveRepo) {
     try {
-      const ghRes = await fetch(`https://api.github.com/repos/${repoOwner}/${repoName}/issues`, {
+      const ghRes = await fetch(`https://api.github.com/repos/${effectiveOwner}/${effectiveRepo}/issues`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${githubToken}`,
@@ -48,12 +72,6 @@ export default async function handler(req, res) {
     }
   }
 
-  const repoMapping = {
-    gamevault: 'TeddyQyuon/gamevault',
-    portfolio: 'TeddyQyuon/TeddyQyuonPortfolio',
-    meterwise: 'TeddyQyuon/meterwise'
-  }
-  const defaultRepo = (repoOwner && repoName) ? `${repoOwner}/${repoName}` : (repoMapping[repoKey] || 'TeddyQyuon/gamevault')
   const encodedTitle = encodeURIComponent(title)
   const encodedBody = encodeURIComponent(body)
   const mobileIssueUrl = `https://github.com/${defaultRepo}/issues/new?title=${encodedTitle}&body=${encodedBody}`

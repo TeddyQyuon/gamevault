@@ -293,7 +293,11 @@ export default function MobileCoder() {
       } catch (err) {
         // Laptop server is offline! Fall back to client browser direct dispatch
         console.warn('Local server offline, using direct mobile browser cloud trigger:', err.message)
-        const defaultRepo = selectedRepo === 'portfolio' ? 'TeddyQyuon/TeddyQyuonPortfolio' : selectedRepo === 'meterwise' ? 'TeddyQyuon/meterwise' : 'TeddyQyuon/gamevault'
+        const matchedRepo = REPOSITORIES.find((r) => r.key === selectedRepo || r.githubRepo === selectedRepo)
+        const defaultRepo = matchedRepo ? matchedRepo.githubRepo : (
+          String(selectedRepo).toLowerCase().includes('portfolio') ? 'TeddyQyuon/TeddyQyuonPortfolio' :
+          String(selectedRepo).toLowerCase().includes('meterwise') ? 'TeddyQyuon/meterwise' : 'TeddyQyuon/gamevault'
+        )
         const title = `feat(mobile): ${taskPrompt.slice(0, 50)}`
         const body = `Autonomous task triggered from mobile phone PWA while laptop is offline.\n\nTarget Repo: ${selectedRepo}\nPrompt: ${taskPrompt}\nTimestamp: ${new Date().toISOString()}`
         const mobileIssueUrl = `https://github.com/${defaultRepo}/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`
