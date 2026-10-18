@@ -1,7 +1,7 @@
 # Agent Handoff Checkpoint — Multi-Workspace Ecosystem
 
-**Timestamp:** 2026-10-14 00:41 (Local)  
-**Status:** Live Google Antigravity Desktop quota synchronization (Weekly 43%, 5-Hour 57%, resets in 2h 20m) integrated and verified; 21/21 automated tests passing, clean Vite production build.
+**Timestamp:** 2026-10-16 00:25 (Local)  
+**Status:** Verification complete: Teddy Qyuon Portfolio confirmed rolled back to original responsive light theme prior to night mode and boost mode; all automated tests passing, clean production Vite builds, and live Vercel deployments verified.
 
 ---
 
@@ -11,7 +11,7 @@
 | :--- | :--- | :--- | :--- | :--- |
 | **Antigravity Mobile Coder** | `c:\Users\waiya\Downloads\AntigravityMobileCoder` | **Google Antigravity Native Mode (Zero API Key), Cloud Browser Engine, Session Vault, SSRF Defense** | **21/21 tests passing**, Vite build clean (2.25s), Vercel production deployed | [https://antigravity-mobile-coder.vercel.app](https://antigravity-mobile-coder.vercel.app) |
 | **GameVault Marketplace** | `c:\Users\waiya\Downloads\GameValut` | Official Brand SVGs, SW Cache v5, Auto-Busting, Stripe Elements | 33/33 client tests, 64/64 server tests passing, clean Vite build | [https://gamevault-alpha-ten.vercel.app](https://gamevault-alpha-ten.vercel.app) |
-| **Teddy Qyuon Portfolio** | `c:\Users\waiya\Downloads\TeddyQyuonPortfolio` | Linear / Vercel minimalist Dark Mode, zero FOUC, mobile-first responsive | 10/10 tests passing, Vite clean (2.05s), pushed to `main` | [https://teddy-qyuon-portfolio.vercel.app](https://teddy-qyuon-portfolio.vercel.app) |
+| **Teddy Qyuon Portfolio** | `c:\Users\waiya\Downloads\TeddyQyuonPortfolio` | Original clean responsive light portfolio restored (night mode & boost mode rolled back) | 8/8 tests passing, Vite clean (2.22s), pushed to `main` | [https://teddy-qyuon-portfolio.vercel.app](https://teddy-qyuon-portfolio.vercel.app) |
 
 ---
 
@@ -78,11 +78,21 @@
   - `npm --prefix server test`: **64 / 64 server tests passing** (4500ms) with full `githubDispatch` URL routing tests covering case-insensitivity, full slugs, and default fallbacks.
   - `npm run build`: Clean Vite build in 2.35s (`dist/assets/index-DdVt7D67.js`, 407.91 kB).
 - **Teddy Qyuon Portfolio:**
-  - `npm test`: **10 / 10 tests passing** (1940ms).
+  - `npm test`: **8 / 8 tests passing** (2493ms) covering security audits and responsive layouts.
+  - `npm run build`: Clean production Vite build in 2.22s with zero runtime or compilation errors.
+  - **Rollback Verification**: Night mode (`ThemeModeContext.jsx`, `themeTokens.js`, `theme-init.js`, `.dark` CSS tokens, navbar theme switch) and Boost Mode entries reverted to match `c0e0a02` exactly. Committed (`f715e4c`) and pushed to `origin/main`. Live Vercel returns HTTP 200 OK.
+- **NYP Internship Portfolio PDF Refinement:**
+  - `scripts/generate_portfolio_pdf.py` updated and re-executed.
+  - **ScamDar project removed completely** as requested.
+  - Refined Page 5 to prominently feature NYP Coursework: **Annual Leave Management System** (Module Grade: A) and **Gym Calories Predictive ML Analysis** (Module Grade: A), alongside Year 2 Semester 1 GPA of **3.70** (Cumulative 3.18) and Matriculation 5 Distinctions.
+  - Output PDF generated: `C:\Users\waiya\Downloads\Wai_Yan_Hpone_Lat_Portfolio.pdf` (2.17 MB, exactly 5 A4 pages, fully styled).
+  - Synced to `docs/Wai_Yan_Hpone_Lat_Portfolio.pdf` and `TeddyQyuonPortfolio/public/resume/`.
 
 ---
 
 ## 7. Next Actions
-1. **GitHub Cloud Issue Dispatch:** Opening `https://github.com/TeddyQyuon/gamevault/issues/new?title=...` verified to return HTTP 200 (redirecting to GitHub issue creator form) instead of 404.
-2. **Push to Remote Git:** Push commits to `origin/main` for GameVault to update deployed production Vercel instance.
-3. **PWA Cache Refresh:** Trigger Service Worker update (`v6`) if offline mobile clients have stale cached scripts.
+1. **Upload to NYP Portal:** In `internship.nyp.edu.sg`, tap `[+ Add File]` under "Upload additional documents such as Portfolio, Transcripts etc." and select `C:\Users\waiya\Downloads\Wai_Yan_Hpone_Lat_Portfolio.pdf`.
+2. **Review PDF Pages:** Open the 5-page PDF in your preferred viewer to confirm all screenshots, Grade A coursework, and contact links look perfect.
+3. **Commit & Push:** Push updated portfolio assets and generator script to remote git.
+
+
