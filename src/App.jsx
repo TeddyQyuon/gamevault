@@ -30,11 +30,11 @@ export default function App() {
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<Home />} />
-        <Route path="games" element={<Catalogue category="games" title="Browse Games" subtitle="Discover your next adventure across all platforms." heroArt="starborne" />} />
+        <Route path="games" element={<Catalogue category="games" title="Browse Games" subtitle="Discover your next adventure across all platforms." heroArt="elden-ring" />} />
         <Route path="gift-cards" element={<Catalogue category="gift-cards" title="Browse Gift Cards" subtitle="Shop prepaid gift cards. Check the supported region and redemption requirements before buying." heroArt="default" />} />
         <Route path="streaming" element={<Navigate to="/subscriptions?type=video" replace />} />
-        <Route path="deals" element={<Catalogue dealsOnly title="Browse Deals" subtitle="Compare currently available offers and prices." heroArt="rivals-arena" />} />
-        <Route path="search" element={<Catalogue title="Search Results" subtitle="Find products across the store." heroArt="emberfall" />} />
+        <Route path="deals" element={<Catalogue dealsOnly title="Browse Deals" subtitle="Compare currently available offers and prices." heroArt="cyberpunk-2077" />} />
+        <Route path="search" element={<Catalogue title="Search Results" subtitle="Find products across the store." heroArt="black-myth-wukong" />} />
         <Route path="products/:slug" element={<ProductDetails />} />
         <Route path="boost" element={<Navigate to="/products/discord-nitro" replace />} />
         <Route path="discord-boost" element={<Navigate to="/products/discord-nitro" replace />} />
