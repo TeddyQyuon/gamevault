@@ -5,7 +5,6 @@ import { SUBSCRIPTION_TEMPLATES } from '../data/subscriptionServices.js'
 import { PRODUCTS } from '../data/products.js'
 
 const BASE_ARTWORK_FILES = {
-  ...Object.fromEntries(['stormlands','neon-drift','shadow-realm','galaxy-frontiers','rivals-arena','mythic-tales','emberfall','neon-circuit','starborne','valkyrie-protocol','pixel-quest','ironclad-tactics','drift-horizon','cursed-hollow'].map(key => [key, `/assets/${key}.jpg`])),
   'game-pass-ultimate': '/assets/storefront/xbox-game-pass.svg',
   'playstation-plus': '/assets/storefront/ps-plus.svg',
   netflix: '/assets/storefront/netflix.svg',
@@ -67,20 +66,20 @@ export const ARTWORK_STYLES = {
 }
 
 const BASE_ARTWORK_THEMES = {
-  stormlands: { from: '#2855FF', to: '#0ea5e9', icon: 'mountain', tag: 'Open World RPG' },
-  'neon-drift': { from: '#d946ef', to: '#2855FF', icon: 'car', tag: 'Neon Racing' },
-  'shadow-realm': { from: '#7c3aed', to: '#0f172a', icon: 'ghost', tag: 'Dark Fantasy' },
-  'galaxy-frontiers': { from: '#0ea5e9', to: '#6366f1', icon: 'rocket', tag: 'Space Epic' },
-  'rivals-arena': { from: '#f59e0b', to: '#ef4444', icon: 'swords', tag: 'Arena Shooter' },
-  'mythic-tales': { from: '#10b981', to: '#2855FF', icon: 'castle', tag: 'Fantasy Adventure' },
-  emberfall: { from: '#f97316', to: '#7c2d12', icon: 'flame', tag: 'Action RPG' },
-  'neon-circuit': { from: '#ec4899', to: '#4f46e5', icon: 'zap', tag: 'Arcade Racing' },
-  starborne: { from: '#38bdf8', to: '#1e1b4b', icon: 'sparkles', tag: 'Space Adventure' },
-  'valkyrie-protocol': { from: '#ef4444', to: '#1f2937', icon: 'shield', tag: 'Tactical Shooter' },
-  'pixel-quest': { from: '#22c55e', to: '#a16207', icon: 'gamepad', tag: 'Indie Adventure' },
-  'ironclad-tactics': { from: '#f97316', to: '#334155', icon: 'bot', tag: 'Mech Strategy' },
-  'drift-horizon': { from: '#8b5cf6', to: '#ec4899', icon: 'car', tag: 'Street Racing' },
-  'cursed-hollow': { from: '#6d28d9', to: '#020617', icon: 'moon', tag: 'Survival Horror' },
+  'elden-ring': { from: '#b8860b', to: '#1c1917', icon: 'swords', tag: 'Open World RPG' },
+  'cyberpunk-2077': { from: '#fcee0a', to: '#0f0f23', icon: 'zap', tag: 'Open-World RPG' },
+  'grand-theft-auto-v': { from: '#0a9b4a', to: '#0b0f0c', icon: 'car', tag: 'Open World Action' },
+  'baldurs-gate-3': { from: '#c19a6b', to: '#2a1a0f', icon: 'sparkles', tag: 'Party RPG' },
+  'hogwarts-legacy': { from: '#7c0a02', to: '#1c1917', icon: 'castle', tag: 'Wizarding RPG' },
+  'red-dead-redemption-2': { from: '#8b0000', to: '#201a19', icon: 'mountain', tag: 'Western Epic' },
+  'the-witcher-3': { from: '#4a5d23', to: '#1a1a10', icon: 'swords', tag: 'Monster Slayer RPG' },
+  sekiro: { from: '#7a1f1f', to: '#111111', icon: 'swords', tag: 'Shinobi Action' },
+  hades: { from: '#d7263d', to: '#1a0505', icon: 'flame', tag: 'Roguelike' },
+  'dead-by-daylight': { from: '#3b0d0d', to: '#0a0a0a', icon: 'ghost', tag: 'Asymmetric Horror' },
+  'helldivers-2': { from: '#f5b301', to: '#14213d', icon: 'shield', tag: 'Co-op Shooter' },
+  'black-myth-wukong': { from: '#d4a017', to: '#101418', icon: 'sparkles', tag: 'Mythic Action' },
+  'resident-evil-4': { from: '#5c0e0e', to: '#0d0d0d', icon: 'ghost', tag: 'Survival Horror' },
+  'doom-eternal': { from: '#ff2a00', to: '#1a0a00', icon: 'flame', tag: 'Slayer Shooter' },
   // Brand & subscription plans fallback themes
   'game-pass-ultimate': { from: '#107C10', to: '#041f04', icon: 'gamepad', tag: 'Games Membership' },
   'playstation-plus': { from: '#0070D1', to: '#0c1a3a', icon: 'swords', tag: 'Online Multiplayer' },

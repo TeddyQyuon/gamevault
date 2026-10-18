@@ -40,7 +40,7 @@ function artFor(title) {
   const service = SUBSCRIPTION_TEMPLATES.find(item => name.includes(item.query.toLowerCase()))
   if (service) return service.art
 
-  const gameKeys = ['stormlands', 'neon-drift', 'shadow-realm', 'galaxy-frontiers', 'rivals-arena', 'mythic-tales', 'emberfall', 'neon-circuit', 'starborne', 'valkyrie-protocol', 'pixel-quest', 'ironclad-tactics', 'drift-horizon', 'cursed-hollow']
+  const gameKeys = ['elden-ring', 'cyberpunk-2077', 'grand-theft-auto-v', 'baldurs-gate-3', 'hogwarts-legacy', 'red-dead-redemption-2', 'the-witcher-3', 'sekiro', 'hades', 'dead-by-daylight', 'helldivers-2', 'black-myth-wukong', 'resident-evil-4', 'doom-eternal']
   for (const k of gameKeys) {
     if (name.includes(k.replace('-', ' ')) || name.includes(k)) return k
   }

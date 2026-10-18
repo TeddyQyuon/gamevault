@@ -18,7 +18,7 @@ const SORTS = [
 
 // Reused by /games, /gift-cards, /streaming, /deals, /search —
 // callers pass a fixed category / dealsOnly / title instead of duplicating code.
-export default function Catalogue({ category, dealsOnly, title, subtitle, heroArt = 'starborne' }) {
+export default function Catalogue({ category, dealsOnly, title, subtitle, heroArt = 'elden-ring' }) {
   const [params, setParams] = useSearchParams()
   const [items, setItems] = useState([])
   const [recent, setRecent] = useState([])

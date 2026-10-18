@@ -48,7 +48,7 @@ export default function Home() {
     <div className="market-home">
       {/* Hero Banner (Mockup 1) */}
       <section className="market-hero">
-        <img className="market-hero-photo" src="/assets/stormlands.jpg" alt="Stormlands Action RPG" />
+        <img className="market-hero-photo" src="https://cdn.cloudflare.steamstatic.com/steam/apps/1091500/header.jpg" alt="Cyberpunk 2077 Night City skyline" />
         <div className="container-shell market-hero-content">
           <div className="max-w-2xl">
             <p className="market-eyebrow">YOUR NEXT ADVENTURE AWAITS</p>
@@ -65,12 +65,12 @@ export default function Home() {
               </Link>
             </div>
           </div>
-          <Link to="/products/stormlands" className="hero-feature">
-            <img src="/assets/stormlands.jpg" alt="Stormlands Featured Game" />
+          <Link to="/products/cyberpunk-2077" className="hero-feature">
+            <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1091500/header.jpg" alt="Cyberpunk 2077 Featured Game" />
             <div>
               <span>FEATURED RELEASE</span>
-              <strong>Stormlands</strong>
-              <p>PC Steam Key · Open World RPG</p>
+              <strong>Cyberpunk 2077</strong>
+              <p>PC Steam Key · Open-World RPG</p>
               <b>From S$29.99 · Save 50% <ArrowRight size={16} aria-hidden /></b>
             </div>
           </Link>

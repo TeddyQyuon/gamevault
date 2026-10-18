@@ -9,18 +9,18 @@ import { findVariant, PRODUCTS } from '../src/data/products.js'
 // Focused tests: cart math, variant identity, promo rules, subscription math.
 describe('cart calculations (integer cents)', () => {
   it('sums line totals from data, not from copies', () => {
-    const t = cartTotals([{ variantId: 'stormlands-standard', qty: 2 }])
-    assert.equal(t.subtotal, 2999 * 2)
-    assert.equal(t.total, 5998)
+    const t = cartTotals([{ variantId: 'elden-ring-standard', qty: 2 }])
+    assert.equal(t.subtotal, 5999 * 2)
+    assert.equal(t.total, 11998)
   })
 
   it('keeps different editions as separate lines', () => {
     const lines = priceLines([
-      { variantId: 'stormlands-standard', qty: 1 },
-      { variantId: 'stormlands-deluxe', qty: 1 },
+      { variantId: 'elden-ring-standard', qty: 1 },
+      { variantId: 'elden-ring-deluxe', qty: 1 },
     ])
     assert.equal(lines.length, 2)
-    assert.equal(lines[0].lineTotal + lines[1].lineTotal, 2999 + 4999)
+    assert.equal(lines[0].lineTotal + lines[1].lineTotal, 5999 + 7999)
   })
 
   it('drops unknown variants instead of crashing', () => {
@@ -29,7 +29,7 @@ describe('cart calculations (integer cents)', () => {
   })
 
   it('clamps quantity to 1..5', () => {
-    const t = cartTotals([{ variantId: 'stormlands-standard', qty: 99 }])
+    const t = cartTotals([{ variantId: 'elden-ring-standard', qty: 99 }])
     assert.equal(t.priced[0].qty, 5)
   })
 })
@@ -43,9 +43,9 @@ describe('promo GAMER10 rules', () => {
     assert.equal(applyPromo(5000, 'GAMER10').ok, true)
   })
   it('takes S$10 off and never goes negative', () => {
-    const t = cartTotals([{ variantId: 'stormlands-standard', qty: 2 }], 'GAMER10')
+    const t = cartTotals([{ variantId: 'elden-ring-standard', qty: 2 }], 'GAMER10')
     assert.equal(t.discount, 1000)
-    assert.equal(t.total, 5998 - 1000)
+    assert.equal(t.total, 11998 - 1000)
     assert.ok(t.total >= 0)
   })
 })

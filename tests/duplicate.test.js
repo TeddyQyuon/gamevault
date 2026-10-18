@@ -24,7 +24,7 @@ describe('checkout double-submit guard', () => {
     })
     try {
       const payload = {
-        items: [{ variantId: 'stormlands-standard', qty: 1 }],
+        items: [{ variantId: 'elden-ring-standard', qty: 1 }],
         contact: { firstName: 'T', lastName: 'U', email: 't@x.co', country: 'SG' },
       }
       const [a, b] = await Promise.allSettled([createOneTimeSession(payload), createOneTimeSession(payload)])
@@ -45,7 +45,7 @@ describe('checkout double-submit guard', () => {
     })
     try {
       const payload = {
-        items: [{ variantId: 'stormlands-standard', qty: 1 }],
+        items: [{ variantId: 'elden-ring-standard', qty: 1 }],
         contact: { firstName: 'T', lastName: 'U', email: 't@x.co', country: 'SG' },
       }
       await createOneTimeSession(payload)
