@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import App from './App.jsx'
+import PortfolioDemoBadge from './PortfolioDemoBadge.jsx'
 import './styles/index.css'
 import './styles/marketplace.css'
 import { ToastProvider } from './context/ToastContext.jsx'
@@ -27,6 +28,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         </SessionProvider>
       </ToastProvider>
     </BrowserRouter>
+    <PortfolioDemoBadge />
   </React.StrictMode>,
 )
 
