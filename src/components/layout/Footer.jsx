@@ -1,24 +1,55 @@
+import { ArrowUpRight, Clock3 } from 'lucide-react'
 import { Link } from 'react-router-dom'
-export default function Footer() {
-  return <footer className="store-footer"><div className="container-shell footer-grid">
-    <div>
-      <Link className="store-brand" to="/">
-        <img src="/assets/storefront/gamevault-logo.svg" alt="" width="32" height="32" />
-        Game<span>Vault</span><i>.</i>
-      </Link>
-      <p>Games, memberships and digital essentials.<br/>Find your next favourite.</p>
-      <div className="footer-payments" style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '14px', flexWrap: 'wrap' }}>
-        <img src="/assets/storefront/visa.svg" alt="Visa" width="38" height="25" />
-        <img src="/assets/storefront/mastercard.svg" alt="Mastercard" width="38" height="25" />
-        <img src="/assets/storefront/apple-pay.svg" alt="Apple Pay" width="38" height="25" />
-        <img src="/assets/storefront/google-pay.svg" alt="Google Pay" width="38" height="25" />
-        <img src="/assets/storefront/stripe.svg" alt="Stripe" width="48" height="20" />
-      </div>
-      <small style={{ display: 'block', marginTop: '12px' }}>© {new Date().getFullYear()} GameVault · All rights reserved</small>
-    </div>
-    <nav aria-label="Shop"><h2>Explore</h2>{[['/games','Games'],['/subscriptions','Subscriptions'],['/gift-cards','Gift cards'],['/deals','Deals']].map(([to,label])=><Link key={to} to={to}>{label}</Link>)}</nav>
-    <nav aria-label="Help"><h2>Here to help</h2><Link to="/support">Help & delivery</Link><Link to="/account/orders">Your orders</Link><Link to="/account">Your account</Link></nav>
-    <div><h2>Before you buy</h2><p>Check the region, term and account requirements on each offer. Subscription details are emailed within 1 hour after confirmed payment.</p><p>All product names and logos belong to their respective owners.</p></div>
-  </div></footer>
-}
 
+const PAYMENTS = [
+  ['visa.svg', 'Visa', 38, 25],
+  ['mastercard.svg', 'Mastercard', 38, 25],
+  ['apple-pay.svg', 'Apple Pay', 38, 25],
+  ['google-pay.svg', 'Google Pay', 38, 25],
+  ['stripe.svg', 'Stripe', 48, 25],
+]
+
+export default function Footer() {
+  return (
+    <footer className="store-footer">
+      <div className="container-shell footer-grid">
+        <div className="footer-intro">
+          <Link className="store-brand" to="/" aria-label="GameVault home">
+            <img src="/assets/storefront/gamevault-logo.svg" alt="" width="32" height="32" loading="lazy" decoding="async" />
+            <span className="store-brand-wordmark">Game<span>Vault</span></span>
+          </Link>
+          <p>Games, memberships and digital essentials.<br />Find your next favourite.</p>
+          <div className="footer-delivery"><Clock3 size={18} aria-hidden="true" /><span>Email delivery within 1 hour<br /><small>For manual offers, after confirmed payment.</small></span></div>
+        </div>
+        <nav aria-label="Shop">
+          <h2>Explore</h2>
+          {[['/games', 'Games'], ['/subscriptions', 'Subscriptions'], ['/gift-cards', 'Gift cards'], ['/streaming', 'Streaming'], ['/deals', 'Deals']].map(([to, label]) => <Link key={to} to={to}>{label}</Link>)}
+        </nav>
+        <nav aria-label="Help">
+          <h2>Here to help</h2>
+          <Link to="/support">Help & delivery</Link>
+          <Link to="/account/orders">Your orders</Link>
+          <Link to="/account">Your account</Link>
+          <Link to="/support#contact-support" className="footer-contact">Contact support <ArrowUpRight size={14} aria-hidden="true" /></Link>
+        </nav>
+        <div className="footer-before-buy">
+          <h2>Before you buy</h2>
+          <p>Check the supported region, membership term, account requirements and delivery method on each listing.</p>
+          <p>Code-inventory offers are delivered to your vault after payment confirmation. Manual offers are emailed within 1 hour.</p>
+        </div>
+      </div>
+      <div className="container-shell footer-bottom">
+        <div>
+          <small>© {new Date().getFullYear()} GameVault. All rights reserved.</small>
+          <p>All product names and logos belong to their respective owners.</p>
+        </div>
+        <div className="footer-payment-group">
+          <span>Checkout with Stripe</span>
+          <div className="footer-payments" aria-label="Payment brands">
+            {PAYMENTS.map(([file, label, width, height]) => <span className="footer-payment-logo" key={file}><img src={`/assets/storefront/${file}`} alt={label} width={width} height={height} loading="lazy" decoding="async" /></span>)}
+          </div>
+        </div>
+      </div>
+    </footer>
+  )
+}

@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Copy, Check, ExternalLink, Eye, ShieldAlert, Key, Lock } from 'lucide-react'
 import { revealOrderKey } from '../../services/orderService.js'
 import { useToast } from '../../context/ToastContext.jsx'
+import useFocusTrap from '../../hooks/useFocusTrap.js'
 
 export function getLauncherLink(platform = '', code = '') {
   const p = (platform || '').toLowerCase()
@@ -33,6 +34,8 @@ export function KeyRevealCard({ orderId, itemId, allocation, productTitle, platf
   const [busy, setBusy] = useState(false)
   const [copied, setCopied] = useState(false)
   const [currentAlloc, setCurrentAlloc] = useState(allocation)
+  const modalRef = useRef(null)
+  useFocusTrap({ open: modalOpen, onClose: () => { if (!busy) setModalOpen(false) }, ref: modalRef })
 
   const isRevealed = Boolean(currentAlloc.isRevealed && currentAlloc.code)
   const displayCode = isRevealed ? currentAlloc.code : (currentAlloc.codeMasked || '•••••-•••••-•••••')
@@ -88,17 +91,17 @@ export function KeyRevealCard({ orderId, itemId, allocation, productTitle, platf
     <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-4 shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="min-w-0">
-          <p className="text-xs font-bold uppercase tracking-wider text-[var(--color-cyan)]">{productTitle}</p>
-          <div className="mt-1 flex items-center gap-2">
-            <code className="select-all rounded-lg bg-[#080c14] px-3 py-1.5 font-mono text-sm font-semibold tracking-wider text-[var(--color-text)] border border-[var(--color-border)]">
+          <p className="text-xs font-bold uppercase tracking-wider text-[var(--color-primary)]">{productTitle}</p>
+          <div className="mt-1 flex flex-wrap items-center gap-2">
+            <code className="key-reveal-code select-all rounded-lg bg-[var(--color-elevated)] px-3 py-1.5 font-mono text-sm font-semibold tracking-wider text-[var(--color-text)] border border-[var(--color-border)]">
               {displayCode}
             </code>
             {!isRevealed ? (
-              <span className="inline-flex items-center gap-1 rounded-md bg-amber-500/10 px-2 py-0.5 text-xs font-medium text-amber-400">
+              <span className="inline-flex items-center gap-1 rounded-md bg-[var(--color-warning-soft)] px-2 py-0.5 text-xs font-medium text-[var(--color-warning)]">
                 <Lock size={12} /> Masked
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-400">
+              <span className="inline-flex items-center gap-1 rounded-md bg-[var(--color-success-soft)] px-2 py-0.5 text-xs font-medium text-[var(--color-success)]">
                 <Key size={12} /> Revealed
               </span>
             )}
@@ -109,7 +112,7 @@ export function KeyRevealCard({ orderId, itemId, allocation, productTitle, platf
           {!isRevealed ? (
             <button
               onClick={() => { setAgreed(false); setModalOpen(true) }}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--color-primary)] px-3.5 py-2 text-xs font-bold text-white shadow-md hover:bg-[var(--color-primary-hover)] transition-all"
+              className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--color-primary)] min-h-[44px] px-3.5 py-2 text-xs font-bold text-[var(--color-on-primary)] shadow-md hover:bg-[var(--color-primary-hover)] transition-all"
             >
               <Eye size={14} /> Display Key
             </button>
@@ -117,17 +120,17 @@ export function KeyRevealCard({ orderId, itemId, allocation, productTitle, platf
             <>
               <button
                 onClick={handleCopy}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-elevated)] px-3 py-1.5 text-xs font-semibold text-[var(--color-text)] hover:border-[var(--color-cyan)] transition-colors"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-elevated)] min-h-[44px] px-3 py-1.5 text-xs font-semibold text-[var(--color-text)] hover:border-[var(--color-primary)] transition-colors"
                 title="Copy Key"
               >
-                {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
+                {copied ? <Check size={14} className="text-[var(--color-success)]" /> : <Copy size={14} />}
                 {copied ? 'Copied' : 'Copy'}
               </button>
               <a
                 href={launcher.url}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--color-cyan)]/30 bg-[var(--color-cyan)]/10 px-3 py-1.5 text-xs font-semibold text-[var(--color-cyan)] hover:bg-[var(--color-cyan)]/20 transition-colors"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-[var(--color-border)] bg-[var(--color-primary-soft)] min-h-[44px] px-3 py-1.5 text-xs font-semibold text-[var(--color-primary)] hover:bg-[var(--color-primary-soft)] transition-colors"
               >
                 <ExternalLink size={14} /> {launcher.label}
               </a>
@@ -144,29 +147,29 @@ export function KeyRevealCard({ orderId, itemId, allocation, productTitle, platf
 
       {/* Statutory Waiver Modal (EU Directive 2011/83/EU Art. 16(m)) */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6 shadow-2xl text-left">
+        <div className="key-reveal-modal" role="dialog" aria-modal="true" aria-labelledby="key-reveal-title">
+          <div className="key-reveal-dialog" ref={modalRef} tabIndex={-1}>
             <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/10 text-amber-400">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[var(--color-warning-soft)] text-[var(--color-warning)]">
                 <ShieldAlert size={22} />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-[var(--color-text)]">Statutory Right of Withdrawal Waiver</h3>
+                <h3 id="key-reveal-title" className="text-lg font-bold text-[var(--color-text)]">Statutory Right of Withdrawal Waiver</h3>
                 <p className="mt-1 text-xs text-[var(--color-muted)]">EU Directive 2011/83/EU Art. 16(m) & Digital Product Terms</p>
               </div>
             </div>
 
-            <div className="mt-4 rounded-xl border border-[var(--color-border)] bg-[#080c14] p-4 text-xs leading-relaxed text-[var(--color-muted)]">
+            <div className="mt-4 rounded-xl border border-[var(--color-border)] bg-[var(--color-elevated)] p-4 text-xs leading-relaxed text-[var(--color-muted)]">
               <p className="font-semibold text-[var(--color-text)] mb-2">Important Notice on Key Revelation:</p>
               <p>
                 By clicking <strong>“Confirm & Reveal Key”</strong>, you expressly request immediate performance of this digital contract and acknowledge that you lose your statutory 14-day right of withdrawal and refund once the activation key has been displayed.
               </p>
-              <p className="mt-2 text-amber-400/90">
+              <p className="mt-2 text-[var(--color-warning)]">
                 A permanent audit record of this revelation (including timestamp, IP address, and browser signature) will be created for dispute prevention.
               </p>
             </div>
 
-            <label className="mt-4 flex cursor-pointer items-start gap-3 rounded-lg border border-[var(--color-border)] p-3 hover:bg-[var(--color-elevated)]/50 transition-colors">
+            <label className="mt-4 flex cursor-pointer items-start gap-3 rounded-lg border border-[var(--color-border)] p-3 hover:bg-[var(--color-elevated)] transition-colors">
               <input
                 type="checkbox"
                 checked={agreed}
@@ -183,7 +186,7 @@ export function KeyRevealCard({ orderId, itemId, allocation, productTitle, platf
                 type="button"
                 onClick={() => setModalOpen(false)}
                 disabled={busy}
-                className="rounded-lg border border-[var(--color-border)] px-4 py-2 text-xs font-semibold text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-elevated)] transition-colors"
+                className="rounded-lg border border-[var(--color-border)] min-h-[44px] px-4 py-2 text-xs font-semibold text-[var(--color-muted)] hover:text-[var(--color-text)] hover:bg-[var(--color-elevated)] transition-colors"
               >
                 Cancel
               </button>
@@ -191,7 +194,7 @@ export function KeyRevealCard({ orderId, itemId, allocation, productTitle, platf
                 type="button"
                 onClick={handleReveal}
                 disabled={!agreed || busy}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--color-primary)] px-4 py-2 text-xs font-bold text-white shadow-md hover:bg-[var(--color-primary-hover)] disabled:opacity-50 transition-all"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-[var(--color-primary)] min-h-[44px] px-4 py-2 text-xs font-bold text-[var(--color-on-primary)] shadow-md hover:bg-[var(--color-primary-hover)] disabled:opacity-50 transition-all"
               >
                 {busy ? 'Decrypting…' : 'Confirm & Reveal Key'}
               </button>

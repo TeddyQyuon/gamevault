@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { Heart, ShoppingCart, Zap } from 'lucide-react'
+import { Check, Clock3, Globe2, Heart, KeyRound, Mail, ShieldCheck, ShoppingCart } from 'lucide-react'
 import { getProductBySlug, getRelated, pushRecent } from '../services/catalogService.js'
 import { VARIANT_ALIASES } from '../data/products.js'
 import Artwork from '../components/ui/Artwork.jsx'
@@ -8,6 +8,10 @@ import { Badge, Breadcrumbs, Button } from '../components/ui/controls.jsx'
 import { Price, QtySelector } from '../components/ui/displays.jsx'
 import { EmptyState, ProductGridSkeleton, Tabs } from '../components/ui/feedback.jsx'
 import { ProductCard } from '../components/products/ProductCard.jsx'
+import BrandLogo from '../components/ui/BrandLogo.jsx'
+import { platformBrandsFor } from '../data/brands.js'
+import Rail from '../components/ui/Rail.jsx'
+import SectionHeader from '../components/ui/SectionHeader.jsx'
 import { useCart } from '../context/CartContext.jsx'
 import { useWishlist } from '../context/WishlistContext.jsx'
 import { useToast } from '../context/ToastContext.jsx'
@@ -60,11 +64,12 @@ export default function ProductDetails() {
     })
   }, [product?.variants])
 
-  if (loading) return <div><ProductGridSkeleton count={4} /></div>
+  if (loading) return <div><h1 className="sr-only">Loading product</h1><ProductGridSkeleton count={4} /></div>
   if (!product) {
     return (
       <div>
         <Breadcrumbs trail={[{ label: 'Home', to: '/' }, { label: 'Product not found' }]} />
+        <h1 className="customer-page-title">Product not found</h1>
         <EmptyState title="We couldn't find that product" hint={`No product matches “${slug}”. It may have been removed from the catalogue.`} action={<Button to="/games">Browse games</Button>} />
       </div>
     )
@@ -84,113 +89,96 @@ export default function ProductDetails() {
     if (add(variant.id, qty)) nav('/checkout')
   }
 
+  const fulfilment = variant.fulfilment || product.fulfilment
+  const manual = fulfilment === 'manual'
+  const coded = fulfilment === 'code_inventory'
+  const DeliveryIcon = manual ? Mail : coded ? KeyRound : Clock3
+  const deliveryTitle = manual ? 'Email delivery within 1 hour' : coded ? 'Instant code delivery' : 'Digital delivery'
+  const deliveryCopy = manual
+    ? 'Your subscription details and activation instructions are emailed within 1 hour after confirmed payment.'
+    : coded
+      ? 'Your activation code is available in your order vault after confirmed payment.'
+      : 'Check the redemption instructions and supported region for this offer before purchasing.'
+  const platforms = platformBrandsFor(product)
+  const isGame = product.category === 'games'
+  const redeemSteps = product.redemption.map(step => coded ? step : step.replace(/instantly/gi, 'after confirmed payment'))
+
   return (
-    <div>
+    <div className="product-page">
       <Breadcrumbs trail={[{ label: 'Home', to: '/' }, { label: product.category === 'subscriptions' ? 'Subscriptions' : 'Catalogue', to: product.category === 'subscriptions' ? '/subscriptions' : '/search' }, { label: product.title }]} />
-      <div className="grid gap-5 lg:grid-cols-[1.15fr_.85fr]">
-        <div>
-          <div className="card overflow-hidden">
-            <Artwork artKey={product.art} title={product.title} src={product.artworkPath} fit={product.artworkFit} ratio="16/9" />
+      <div className="product-layout">
+        <div className="product-main-column">
+          <div className={`product-art-panel ${isGame ? 'product-art-panel--game' : 'product-art-panel--brand'}`}>
+            <Artwork artKey={product.art} title={product.title} src={product.artworkPath} fit={product.artworkFit} ratio={isGame ? '2/3' : '1/1'} eager />
           </div>
-          <div className="mt-4">
+          <section className="product-information" aria-label="Product information">
             <Tabs active={tab} onChange={setTab} tabs={[
-              { id: 'overview', label: 'Overview' }, { id: 'redeem', label: 'Redeem Steps' },
-              { id: 'region', label: 'Region Info' }, { id: 'reqs', label: 'Requirements' },
+              { id: 'overview', label: 'Overview' }, { id: 'redeem', label: 'How to redeem' },
+              { id: 'region', label: 'Region' }, { id: 'reqs', label: 'Requirements' },
             ]} />
-            <div className="card mt-2 p-5 text-sm leading-relaxed">
-              {tab === 'overview' && (<><h2 className="mb-1 text-base font-extrabold">About this product</h2><p className="text-[var(--color-muted)]">{product.description}</p>
-                <ul className="mt-3 space-y-1.5">{product.features.map((f) => <li key={f}>✓ {f}</li>)}</ul>
-</>)}
-              {tab === 'redeem' && <ol className="list-decimal space-y-1.5 pl-5">{product.redemption.map((s) => <li key={s}>{s}</li>)}</ol>}
-              {tab === 'region' && <p className="text-[var(--color-muted)]">{product.regionInfo}</p>}
-              {tab === 'reqs' && <p className="text-[var(--color-muted)]">{product.requirements}</p>}
+            <div className="card product-tab-panel" role="tabpanel" id={`product-sections-panel-${tab}`} aria-labelledby={`product-sections-tab-${tab}`} tabIndex={0}>
+              {tab === 'overview' && <>
+                <h2>About this product</h2>
+                <p>{product.description}</p>
+                <ul className="product-features">{product.features.map(feature => <li key={feature}><Check size={17} aria-hidden /><span>{feature}</span></li>)}</ul>
+              </>}
+              {tab === 'redeem' && <><h2>How to redeem</h2><ol className="product-redemption">{redeemSteps.map(step => <li key={step}>{step}</li>)}</ol></>}
+              {tab === 'region' && <><h2>Regional compatibility</h2><p>{product.regionInfo}</p><p>Check that your account region matches this offer before purchasing.</p></>}
+              {tab === 'reqs' && <><h2>Before you buy</h2><p>{product.requirements}</p></>}
             </div>
-          </div>
+          </section>
         </div>
 
-        <div className="space-y-4">
-          <div className="card p-5">
-            <div className="flex flex-wrap items-center gap-2">
-              
-              {variant.compareAtCents > variant.priceCents && <Badge tone="deal">Limited-time deal</Badge>}
-            </div>
-            <h1 className="mt-2 text-3xl font-extrabold">{product.title}</h1>
-            <p className="text-sm text-[var(--color-muted)]">{product.tagline} · {product.platforms.join(' · ')}</p>
-            <p className="mt-3 text-sm text-[var(--color-muted)]">{product.description}</p>
-
-            {variants.length > 1 && (
-              <fieldset className="mt-4">
-                <legend className="mb-1.5 text-sm font-bold text-[var(--color-text)]">Edition / Denomination</legend>
-                <div className="grid gap-2" role="radiogroup" aria-label="Choose edition">
-                  {variants.map((x) => (
-                    <label key={x.id} className={`flex cursor-pointer items-center justify-between gap-2 rounded-lg border p-3 text-sm ${x.id === variant.id ? 'border-[var(--color-cyan)] bg-[var(--color-cyan)]/10' : 'border-[var(--color-border)] bg-[var(--color-elevated)]/40'}`}>
-                      <span className="flex items-center gap-2">
-                        <input type="radio" name="variant" checked={x.id === variant.id} onChange={() => { setVariantId(x.id); setQty(1) }} className="accent-[var(--color-primary)]" />
-                        <span className="font-semibold text-[var(--color-text)]">{x.label}</span>
-                        {!variantInStock(x) && <Badge tone="warning">Unavailable</Badge>}
-                      </span>
-                      <span className="font-bold text-[var(--color-cyan)]">{`S$${(x.priceCents / 100).toFixed(2)}`}</span>
-                    </label>
-                  ))}
-                </div>
-              </fieldset>
-            )}
-
-            <div className="mt-4"><Price cents={variant.priceCents} compareAt={variant.compareAtCents} size="lg" /></div>
-            
-            {/* DRM & Region Compatibility Badges (G2A Benchmark) */}
-            <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
-              <span className="inline-flex items-center gap-1 rounded-md bg-emerald-500/10 px-2 py-0.5 font-medium text-emerald-400 border border-emerald-500/20">
-                ✓ Can activate in your region ({product.regions.join(', ')})
-              </span>
-              <span className="inline-flex items-center gap-1 rounded-md bg-[var(--color-primary)]/10 px-2 py-0.5 font-medium text-[var(--color-cyan)] border border-[var(--color-primary)]/20">
-                Official {product.platforms.join(' / ')} Key
-              </span>
-            </div>
-
-            <div className="mt-3 flex items-center gap-3">
-              <QtySelector qty={qty} max={maxQty} onChange={setQty} />
-              <span className={`text-sm font-semibold ${out ? 'text-[#f43f5e]' : 'text-[#34d399]'}`}>{out ? 'Unavailable' : product.fulfilment === 'manual' ? 'Available · Email delivery within 1 hour' : 'In stock · Instant Key Delivery'}</span>
-            </div>
-
-            <div className="mt-4 grid gap-2.5">
-              <button onClick={buyNow} disabled={out} className="btn-primary flex items-center justify-center gap-2 px-5 py-3.5 text-base font-extrabold shadow-lg shadow-[var(--color-primary)]/25 transition-transform active:scale-[0.98] disabled:opacity-50">
-                <Zap size={18} aria-hidden fill="currentColor" /> Buy Now · S${((variant.priceCents * qty) / 100).toFixed(2)}
-              </button>
-              <button onClick={doAdd} disabled={out} className="flex items-center justify-center gap-2 rounded-[10px] border border-[var(--color-border)] bg-[var(--color-elevated)] px-4 py-3 text-sm font-bold text-[var(--color-text)] transition-all hover:border-[var(--color-cyan)] disabled:opacity-50">
-                <ShoppingCart size={17} aria-hidden /> Add to Cart
-              </button>
-              <button onClick={() => { toggle(product.id); notify(wished ? 'Removed from wishlist' : 'Saved to wishlist', 'success') }} aria-pressed={wished} className="flex items-center justify-center gap-2 rounded-[10px] px-4 py-2 text-xs font-semibold text-[var(--color-muted)] transition-colors hover:text-[#fb7185]">
-                <Heart size={15} aria-hidden className={wished ? 'fill-[#fb7185] text-[#fb7185]' : ''} /> {wished ? 'Saved to Wishlist' : 'Add to Wishlist'}
-              </button>
-              {out && <p role="alert" className="text-sm font-semibold text-[#f43f5e]">This item is currently unavailable.</p>}
-            </div>
-
-            {/* Trust and Delivery Assurance Box */}
-            <div className="mt-4 space-y-2 rounded-xl border border-[var(--color-border)] bg-[#080c14] p-3.5 text-xs text-[var(--color-muted)]">
-              <div className="flex items-center gap-2">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500/20 text-emerald-400 font-bold">✓</span>
-                <span><strong className="text-[var(--color-text)]">Instant Delivery:</strong> Gated key reveal instantly in your order vault.</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-500/20 text-cyan-400 font-bold">🔒</span>
-                <span><strong className="text-[var(--color-text)]">Secure Checkout:</strong> 256-bit encrypted checkout with Stripe.</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-amber-500/20 text-amber-400 font-bold">🛡️</span>
-                <span><strong className="text-[var(--color-text)]">100% Genuine:</strong> Official publisher key guarantee.</span>
-              </div>
-            </div>
+        <aside className="product-buy-box card" aria-label="Choose your product">
+          <p className="product-category-label">{product.category === 'games' ? 'Digital game' : product.category === 'gift-cards' ? 'Digital gift card' : 'Prepaid membership'}</p>
+          <h1>{product.title}</h1>
+          <p className="product-tagline">{product.tagline}</p>
+          <div className="product-platforms" aria-label="Platforms">
+            {platforms.map(brand => <span className="product-platform-chip" key={brand.id}><BrandLogo brand={brand} size={24} tile decorative /><span>{brand.name}</span></span>)}
+            {!platforms.length && product.platforms.map(platform => <span className="product-platform-chip" key={platform}>{platform}</span>)}
           </div>
-        </div>
+          <div className="product-region"><Globe2 size={16} aria-hidden /><span>Region: <strong>{product.regions.join(', ')}</strong></span></div>
+          <p className="product-region-note">Your account must support the region shown.</p>
+
+          {variants.length > 1 && <fieldset className="product-editions">
+            <legend>Choose your edition or term</legend>
+            <div role="radiogroup" aria-label="Choose edition">
+              {variants.map(item => <label key={item.id} className={`product-edition ${item.id === variant.id ? 'is-selected' : ''}`}>
+                <input type="radio" name="variant" checked={item.id === variant.id} onChange={() => { setVariantId(item.id); setQty(1) }} />
+                <span className="product-edition-label">{item.label}{!variantInStock(item) && <Badge tone="warning">Unavailable</Badge>}</span>
+                <span className="product-edition-price">{`S$${(item.priceCents / 100).toFixed(2)}`}</span>
+              </label>)}
+            </div>
+          </fieldset>}
+
+          <div className="product-price"><Price cents={variant.priceCents} compareAt={variant.compareAtCents} size="lg" /></div>
+          <div className="product-quantity">
+            <QtySelector qty={qty} max={maxQty} onChange={setQty} />
+            <span className={`product-availability ${out ? 'is-unavailable' : ''}`}><span aria-hidden />{out ? 'Currently unavailable' : 'Available'}</span>
+          </div>
+          <div className="product-purchase-actions">
+            <button onClick={buyNow} disabled={out} className="btn-primary product-buy-button">Buy now · S${((variant.priceCents * qty) / 100).toFixed(2)}</button>
+            <Button onClick={doAdd} disabled={out} variant="secondary"><ShoppingCart size={18} aria-hidden />Add to cart</Button>
+            <button onClick={() => { toggle(product.id); notify(wished ? 'Removed from wishlist' : 'Saved to wishlist', 'success') }} aria-pressed={wished} className={`product-wishlist ${wished ? 'is-wished' : ''}`}><Heart size={18} aria-hidden />{wished ? 'Saved to wishlist' : 'Save to wishlist'}</button>
+            {out && <p role="status" className="product-unavailable-note">This offer is currently unavailable. You can save it to your wishlist.</p>}
+          </div>
+          <div className="product-delivery-box">
+            <DeliveryIcon size={23} aria-hidden />
+            <div><strong>{deliveryTitle}</strong><p>{deliveryCopy}</p></div>
+          </div>
+          <div className="product-checkout-note"><ShieldCheck size={17} aria-hidden /><span>Payment is collected on Stripe-hosted checkout.</span></div>
+        </aside>
       </div>
 
-      <section aria-label="Related products" className="mt-8">
-        <h2 className="mb-3 text-xl font-extrabold">Similar Products</h2>
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-5">
-          {related.map((p) => <ProductCard key={p.id} product={p} />)}
-        </div>
-      </section>
+      {related.length > 0 && <section className="product-related" aria-label="Related products">
+        <SectionHeader title="You may also like" subtitle="Explore similar products and memberships." />
+        <Rail label="Related products">{related.map(item => <ProductCard key={item.id} product={item} />)}</Rail>
+      </section>}
+
+      <div className="product-mobile-purchase" aria-label="Quick purchase">
+        <div><span>{variant.label}</span><strong>S${((variant.priceCents * qty) / 100).toFixed(2)}</strong></div>
+        <button onClick={buyNow} disabled={out} className="btn-primary">{out ? 'Unavailable' : 'Buy now'}</button>
+      </div>
     </div>
   )
 }

@@ -1,0 +1,34 @@
+.store-footer { margin-top: 72px; padding-bottom: env(safe-area-inset-bottom); background: var(--color-navy); color: var(--color-on-navy); }
+.footer-grid { display: grid; grid-template-columns: 1.5fr .8fr 1fr 1.25fr; gap: 48px; padding-top: 52px; padding-bottom: 44px; }
+.footer-intro > p { margin-top: 16px; }
+.footer-grid h2 { margin-bottom: 16px; font-size: 13px; font-weight: 700; color: var(--color-on-navy); }
+.footer-grid p, .footer-grid nav a { color: var(--color-on-navy-muted); font-size: 12px; line-height: 1.8; }
+.footer-grid nav a { display: flex; align-items: center; gap: 5px; min-height: 36px; width: fit-content; }
+.footer-grid nav a:hover { color: var(--color-on-navy); text-decoration: underline; text-underline-offset: 4px; }
+.footer-grid nav a.footer-contact { margin-top: 8px; }
+.footer-before-buy p + p { margin-top: 12px; }
+.footer-delivery { display: flex; align-items: center; gap: 10px; margin-top: 20px; color: var(--color-on-navy); font-size: 12px; font-weight: 600; line-height: 1.7; }
+.footer-delivery > svg { flex: none; }
+.footer-delivery small { color: var(--color-on-navy-muted); font-size: 10px; font-weight: 400; }
+.footer-bottom { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-top: 24px; padding-bottom: 28px; border-top: 1px solid color-mix(in srgb, var(--color-on-navy) 15%, transparent); color: var(--color-on-navy-muted); }
+.footer-bottom small { font-size: 11px; }
+.footer-bottom p { font-size: 10px; margin-top: 6px; }
+.footer-payment-group { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.footer-payment-group > span { font-size: 10px; }
+.footer-payments { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.footer-payment-logo { display: grid; width: 47px; min-height: 30px; place-items: center; background: var(--color-logo-surface); border-radius: var(--radius-sm); padding: 3px; }
+.footer-payment-logo img { width: auto; max-width: 38px; height: 22px; object-fit: contain; }
+@media (max-width: 1024px) {
+  .footer-grid { grid-template-columns: 1.3fr 1fr 1fr; gap: 32px; }
+  .footer-before-buy { grid-column: 1 / -1; max-width: 720px; }
+  .footer-bottom { align-items: start; flex-direction: column; }
+}
+@media (max-width: 600px) {
+  .store-footer { margin-top: 48px; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 24px; padding-top: 32px; padding-bottom: 28px; }
+  .footer-intro, .footer-before-buy { grid-column: 1 / -1; }
+  .footer-grid nav a { min-height: 44px; }
+  .footer-grid h2 { margin-bottom: 8px; }
+  .footer-payment-group { gap: 10px; }
+  .footer-bottom { padding-bottom: 32px; gap: 20px; }
+}

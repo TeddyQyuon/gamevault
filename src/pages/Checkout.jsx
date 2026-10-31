@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Lock } from 'lucide-react'
+import { KeyRound, Lock, Mail, ShieldCheck } from 'lucide-react'
 import { useCart } from '../context/CartContext.jsx'
 import { useSession, useStripeMode } from '../context/SessionContext.jsx'
 import { useToast } from '../context/ToastContext.jsx'
@@ -80,8 +80,9 @@ export default function Checkout() {
   if (!ready) return <p role="status" className="card p-8">Loading checkout…</p>
   if (!lines.length) {
     return (
-      <div>
+      <div className="customer-page checkout-page">
         <Breadcrumbs trail={[{ label: 'Home', to: '/' }, { label: 'Checkout' }]} />
+        <h1 className="customer-page-title">Checkout</h1>
         <EmptyState title="Nothing to check out" hint="Your cart is empty. Add a product first." action={<Link to="/subscriptions" className="btn-primary px-4 py-2.5 text-sm">Browse subscriptions</Link>} />
       </div>
     )
@@ -143,20 +144,20 @@ export default function Checkout() {
   }
 
   return (
-    <div>
+    <div className="customer-page checkout-page">
       <Breadcrumbs trail={[{ label: 'Home', to: '/' }, { label: 'Checkout' }]} />
-      <h1 className="text-3xl font-extrabold md:text-4xl text-[var(--color-text)]">Secure <span className="gradient-text">Checkout</span></h1>
-      <p className="mt-2 rounded-xl bg-[var(--color-primary)]/10 border border-[var(--color-primary)]/25 p-3 text-sm font-semibold text-[var(--color-cyan)]">
+      <h1 className="customer-page-title">Checkout</h1>
+      <p className="checkout-payment-note">
         {testMode
           ? 'Test mode — you pay on Stripe-hosted Checkout (card 4242 4242 4242 4242). No real charges. We never see or store card numbers.'
           : 'You pay on Stripe-hosted Checkout. You will be charged the total shown. We never see or store card numbers.'}
       </p>
 
-      {/* 3-Step Dark Stepper */}
-      <ol className="mt-5 flex flex-wrap items-center gap-3 text-sm" aria-label="Checkout steps">
-        {['Review Cart', 'Payment Details', 'Key Delivery & Vault'].map((s, i) => (
-          <li key={s} className={`flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs font-bold ${i === 0 ? 'border-[var(--color-cyan)] bg-[var(--color-primary)] text-white shadow-md shadow-[var(--color-primary)]/20' : 'border-[var(--color-border)] text-[var(--color-muted)] bg-[var(--color-surface)]'}`}>
-            <span className="flex h-4 w-4 items-center justify-center rounded-full bg-white/20 text-[10px]">{i + 1}</span>
+      {/* Calm review stepper; payment takes place on Stripe. */}
+      <ol className="checkout-steps" aria-label="Checkout steps">
+        {['Review order', 'Payment', 'Digital delivery'].map((s, i) => (
+          <li key={s} className={i === 0 ? 'is-current' : ''} aria-current={i === 0 ? 'step' : undefined}>
+            <span className="checkout-step-number">{i + 1}</span>
             {s}
           </li>
         ))}
@@ -165,11 +166,11 @@ export default function Checkout() {
       {status !== 'authed' && (
         <p className="card mt-4 p-4 text-sm" role="note">
           Checking out as <strong>guest</strong> — no account needed. Digital keys and order receipts are delivered to your contact email.{' '}
-          <span className="text-[var(--color-muted)]">Want order history in one place? <Link to="/login?next=/checkout" className="font-bold text-[var(--color-cyan)] hover:underline">Log in</Link> or <Link to="/register?next=/checkout" className="underline text-[var(--color-cyan)]">create an account</Link> (optional).</span>
+          <span className="text-[var(--color-muted)]">Want order history in one place? <Link to="/login?next=/checkout" className="font-bold text-[var(--color-primary)] hover:underline">Log in</Link> or <Link to="/register?next=/checkout" className="underline text-[var(--color-primary)]">create an account</Link> (optional).</span>
         </p>
       )}
 
-      <div className="mt-5 grid gap-5 lg:grid-cols-[1.4fr_.9fr]">
+      <div className="customer-columns checkout-columns">
         <div className="space-y-4">
           <section className="card p-5" aria-label="Contact details">
             <h2 className="font-extrabold text-[var(--color-text)]">Contact & Delivery Information</h2>
@@ -185,7 +186,7 @@ export default function Checkout() {
           </section>
 
           {recurring.length > 0 && (
-            <section className="card border-[#fbbf24]/40 p-5" aria-label="Subscriptions check out separately">
+            <section className="card checkout-recurring p-5" aria-label="Subscriptions check out separately">
               <h2 className="font-extrabold">Subscriptions check out separately</h2>
               <p className="text-sm text-[var(--color-muted)]">
                 Recurring plans use Stripe <em>subscription</em> Checkout — one plan at a time. Buying a plan here never touches your other cart items.
@@ -210,8 +211,8 @@ export default function Checkout() {
           {oneTime.length > 0 && (
             <section className="card p-5" aria-label="Membership and activation requirements">
               <h2 className="font-extrabold text-[var(--color-text)]">Review your order items</h2>
-              <ul className="mt-3 space-y-3 text-sm">{oneTime.map(line => <li key={line.variantId} className="rounded-xl border border-[var(--color-border)] bg-[var(--color-elevated)]/40 p-3">
-                <Link to={`/products/${line.product.slug}`} className="font-bold text-[var(--color-text)] hover:text-[var(--color-cyan)]">{line.product.title}</Link>
+              <ul className="mt-3 space-y-3 text-sm">{oneTime.map(line => <li key={line.variantId} className="rounded-xl border border-[var(--color-border)] bg-[var(--color-elevated)] p-3">
+                <Link to={`/products/${line.product.slug}`} className="font-bold text-[var(--color-text)] hover:text-[var(--color-primary)]">{line.product.title}</Link>
                 <p className="mt-1 text-xs text-[var(--color-muted)]">{line.variant.label} · Quantity: {line.qty}</p>
                 <p className="mt-1 text-xs text-[var(--color-muted)]"><strong>Region:</strong> {line.product.regions.join(', ')}</p>
                 <p className="mt-1 text-xs text-[var(--color-muted)]"><strong>Platform:</strong> {line.product.platforms?.join(', ') || 'Digital'}</p>
@@ -235,42 +236,36 @@ export default function Checkout() {
           )}
         </div>
 
-        <div className="space-y-3">
+        <div className="customer-summary">
           {oneTime.length > 0 && (
             <>
               <OrderSummary
                 priced={estimate.priced} subtotal={shown.subtotal} discount={shown.discount} total={shown.total}
                 promoMessage={applied ? `${applied} validated by the server.` : ''}
               />
-              <div className="rounded-xl border border-emerald-500/25 bg-emerald-500/10 p-3.5 text-xs leading-relaxed text-emerald-400">
-                <strong>⚡ Instant Key Delivery:</strong> Activation keys and codes will be available in your secure GameVault immediately after Stripe payment confirmation.
+              <div className="checkout-delivery-note">
+                {oneTime.some(line => line.product.fulfilment === 'manual' || line.variant.fulfilment === 'manual') ? <>
+                  <Mail size={22} aria-hidden /><div><strong>Email delivery within 1 hour</strong><p>Manual offers are emailed within 1 hour after confirmed payment. Code-inventory items, where included, are available in your order vault after confirmation.</p></div>
+                </> : <>
+                  <KeyRound size={22} aria-hidden /><div><strong>Check your order for delivery</strong><p>Code-inventory items are available in your order vault after confirmed payment. Follow the redemption instructions for each item.</p></div>
+                </>}
               </div>
               {paymentsReady === false && <p role="status" className="text-sm text-[var(--color-muted)]">Payments are temporarily unavailable. Please try again later.</p>}
-              <button onClick={payOnce} disabled={busy !== null || paymentsReady === false} className="btn-primary flex w-full items-center justify-center gap-2 px-4 py-3.5 text-sm font-bold shadow-lg shadow-[var(--color-primary)]/25 disabled:opacity-50">
+              <button onClick={payOnce} disabled={busy !== null || paymentsReady === false} className="btn-primary flex w-full items-center justify-center gap-2 px-4 py-3.5 text-sm font-bold disabled:opacity-50">
                 <Lock size={15} aria-hidden /> {busy === 'once' ? 'Starting secure payment…' : `Continue to secure payment · ${formatPrice(shown.total)}`}
               </button>
               
-              {/* Trust Seals */}
-              <div className="rounded-xl border border-[var(--color-border)] bg-[#080c14] p-3 text-xs text-[var(--color-muted)] space-y-1.5">
-                <div className="flex items-center gap-2">
-                  <span className="text-emerald-400 font-bold">🔒</span>
-                  <span><strong>256-Bit SSL:</strong> Bank-level encryption via Stripe Checkout.</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[var(--color-cyan)] font-bold">🛡️</span>
-                  <span><strong>Buyer Protection:</strong> 100% genuine keys guarantee.</span>
-                </div>
-              </div>
+              <div className="checkout-reassurance"><ShieldCheck size={18} aria-hidden /><p>Your card details are collected by Stripe. GameVault does not see or store your card number.</p></div>
 
               <div className="flex items-center justify-center gap-2 pt-1 opacity-80">
-                <img src="/assets/storefront/visa.svg" alt="Visa" width="34" height="22" />
-                <img src="/assets/storefront/mastercard.svg" alt="Mastercard" width="34" height="22" />
-                <img src="/assets/storefront/apple-pay.svg" alt="Apple Pay" width="34" height="22" />
-                <img src="/assets/storefront/google-pay.svg" alt="Google Pay" width="34" height="22" />
-                <img src="/assets/storefront/stripe.svg" alt="Stripe" width="44" height="18" />
+                <img src="/assets/storefront/visa.svg" alt="Visa" width="34" height="22" decoding="async" loading="lazy" />
+                <img src="/assets/storefront/mastercard.svg" alt="Mastercard" width="34" height="22" decoding="async" loading="lazy" />
+                <img src="/assets/storefront/apple-pay.svg" alt="Apple Pay" width="34" height="22" decoding="async" loading="lazy" />
+                <img src="/assets/storefront/google-pay.svg" alt="Google Pay" width="34" height="22" decoding="async" loading="lazy" />
+                <img src="/assets/storefront/stripe.svg" alt="Stripe" width="44" height="18" decoding="async" loading="lazy" />
               </div>
               <p className="text-center text-xs text-[var(--color-muted)]">
-                Redirects to Stripe. 256-bit SSL encrypted checkout.
+                Continue to Stripe to choose an available payment method.
               </p>
             </>
           )}

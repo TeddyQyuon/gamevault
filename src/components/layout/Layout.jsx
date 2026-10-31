@@ -5,15 +5,15 @@ import { Toasts } from '../ui/feedback.jsx'
 import CartDrawer from '../cart/CartDrawer.jsx'
 
 export default function Layout() {
-  const home = useLocation().pathname === '/'
+  const { pathname } = useLocation()
+  const home = pathname === '/'
+  const calm = pathname.startsWith('/checkout') || pathname.startsWith('/orders')
   return (
     <div className="app-backdrop min-h-screen">
-      <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-[70] focus:rounded-lg focus:bg-white focus:px-3 focus:py-2 focus:text-black">
-        Skip to content
-      </a>
+      <a href="#main" className="skip-link">Skip to content</a>
       <Header />
-      <main id="main" className={home ? '' : 'container-shell py-6'}>
-        <Outlet />
+      <main id="main" tabIndex={-1} className={`page-main${home ? ' page-main-home' : ' container-shell py-6'}`}>
+        <div key={pathname} className={calm ? 'route-static' : 'route-enter'}><Outlet /></div>
       </main>
       <Footer />
       <CartDrawer />

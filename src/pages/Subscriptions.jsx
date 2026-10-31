@@ -1,14 +1,26 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
-import { ArrowRight, Check, Gamepad2, KeyRound, Music2, Play, ShieldCheck, ShoppingBag } from 'lucide-react'
+import {
+  ArrowRight,
+  Gamepad2,
+  Globe2,
+  KeyRound,
+  Mail,
+  Music2,
+  Play,
+  ShieldCheck,
+  ShoppingBag,
+} from 'lucide-react'
 import { getProducts, getCatalogueError } from '../services/catalogService.js'
 import { SUBSCRIPTION_TEMPLATES, subscriptionServiceFor } from '../data/subscriptionServices.js'
+import { FAQS } from '../data/faqs.js'
+import { formatPrice } from '../utils/format.js'
 import { ProductCard } from '../components/products/ProductCard.jsx'
+import BrandLogo from '../components/ui/BrandLogo.jsx'
 import { Breadcrumbs } from '../components/ui/controls.jsx'
 import { ProductGridSkeleton } from '../components/ui/feedback.jsx'
+import SectionHeader from '../components/ui/SectionHeader.jsx'
 
-const ASSETS = '/assets/storefront/'
-const SERVICE_TILES = SUBSCRIPTION_TEMPLATES
 const CATEGORIES = [
   { id: 'all', label: 'All subscriptions', Icon: KeyRound },
   { id: 'gaming', label: 'Gaming', Icon: Gamepad2 },
@@ -17,9 +29,9 @@ const CATEGORIES = [
   { id: 'software', label: 'Software', Icon: ShoppingBag },
   { id: 'vpn', label: 'VPN & security', Icon: ShieldCheck },
 ]
-
-function groupFor(product) { return subscriptionServiceFor(product)?.group || 'gaming' }
-
+function groupFor(product) {
+  return subscriptionServiceFor(product)?.group || 'gaming'
+}
 function priceFor(product) {
   return Math.min(...product.variants.map((variant) => variant.priceCents))
 }
@@ -31,128 +43,233 @@ export default function Subscriptions() {
   const selectedService = params.get('q') || ''
   const selectedCategory = params.get('type') || 'all'
   const sort = params.get('sort') || 'featured'
-
   useEffect(() => {
     let alive = true
     getProducts({ category: 'subscriptions' }).then((items) => {
-      if (alive) {
-        setProducts(items)
-        setLoading(false)
-      }
+      if (!alive) return
+      setProducts(items)
+      setLoading(false)
     })
-    return () => { alive = false }
+    return () => {
+      alive = false
+    }
   }, [])
-
   const shown = useMemo(() => {
-    const filtered = products.filter((product) => {
-      const matchesService = !selectedService || product.title.toLowerCase().includes(selectedService.toLowerCase())
-      const matchesCategory = selectedCategory === 'all' || groupFor(product) === selectedCategory
-      return matchesService && matchesCategory
-    })
-
+    const filtered = products.filter(
+      (product) =>
+        (!selectedService || product.title.toLowerCase().includes(selectedService.toLowerCase())) &&
+        (selectedCategory === 'all' || groupFor(product) === selectedCategory),
+    )
     if (sort === 'price-asc') filtered.sort((a, b) => priceFor(a) - priceFor(b))
     else if (sort === 'price-desc') filtered.sort((a, b) => priceFor(b) - priceFor(a))
     else filtered.sort((a, b) => Number(b.featured || false) - Number(a.featured || false))
     return filtered
   }, [products, selectedService, selectedCategory, sort])
-
   const updateFilters = (updates) => {
     const next = new URLSearchParams(params)
-    Object.entries(updates).forEach(([key, value]) => value ? next.set(key, value) : next.delete(key))
+    Object.entries(updates).forEach(([key, value]) => (value ? next.set(key, value) : next.delete(key)))
     setParams(next)
   }
-
   const chooseCategory = (category) => updateFilters({ type: category === 'all' ? '' : category, q: '' })
 
-  return <div className="subscription-store">
-    <Breadcrumbs trail={[{ label: 'Home', to: '/' }, { label: 'Subscriptions' }]} />
-
-    <section className="subscription-hero subscription-photo-hero">
-      <img className="subscription-hero-photo" src={`${ASSETS}game-pass.jpg`} alt="Gaming Subscriptions" />
-      <div className="subscription-hero-copy">
-        <p className="market-eyebrow">GAMES · STREAMING · MUSIC</p>
-        <h1>Subscriptions<br /><span className="gradient-text">for every mood.</span></h1>
-        <p>Shop memberships for gaming, streaming, music and software. Choose your term and region. Digital membership details and codes delivered securely to your vault.</p>
-        <div className="subscription-hero-points">
-          <span><Check size={16} aria-hidden /> One-time payment</span>
-          <span><Check size={16} aria-hidden /> Instant or 1h email delivery</span>
-          <span><Check size={16} aria-hidden /> Verified global activation</span>
-        </div>
-      </div>
-      <div className="subscription-hero-product">
-        <img src={`${ASSETS}game-pass.jpg`} alt="Xbox Game Pass Ultimate" />
+  return (
+    <div className="subscription-store">
+      <Breadcrumbs trail={[{ label: 'Home', to: '/' }, { label: 'Subscriptions' }]} />
+      <header className="subscriptions-hero">
         <div>
-          <span>FEATURED MEMBERSHIP</span>
-          <strong>Xbox Game Pass Ultimate</strong>
-          <Link to="/products/xbox-game-pass-ultimate">Buy now <ArrowRight size={15} aria-hidden /></Link>
+          <p className="eyebrow">A little more of what you love</p>
+          <h1>Subscriptions for every mood.</h1>
+          <p>Games, music, movies and your everyday essentials. Compare memberships and choose your term.</p>
+          <a className="btn-primary" href="#subscription-offers">
+            Explore offers <ArrowRight size={17} aria-hidden />
+          </a>
         </div>
-      </div>
-    </section>
-
-    <section className="subscription-services" aria-labelledby="subscription-services-title">
-      <div className="subscription-services-heading"><div><p className="market-eyebrow">SHOP BY SERVICE</p><h2 id="subscription-services-title">Popular subscriptions</h2></div><span>Select any service to view offers and buy</span></div>
-      <div className="subscription-service-grid">
-        {SERVICE_TILES.map((service) => {
-          const matchingProducts = products.filter((product) => product.title.toLowerCase().includes(service.query.toLowerCase()))
-          const targetProduct = matchingProducts[0]
-          const targetSlug = targetProduct?.slug || service.id
-          const minPrice = targetProduct?.priceFromCents 
-            ? `From S$${(targetProduct.priceFromCents / 100).toFixed(2)}` 
-            : 'View offer'
-
-          return <Link key={service.id} to={`/products/${targetSlug}`} className={`subscription-service-tile ${service.tone}`} title={`Buy ${service.label}`}>
-            <span className="subscription-service-image" style={{ background: service.background }}><img src={service.icon} alt={service.label} /></span>
-            <span className="subscription-service-info"><strong>{service.label}</strong><small>{minPrice} · Buy now</small></span>
-            <ArrowRight size={16} aria-hidden />
-          </Link>
-        })}
-      </div>
-    </section>
-
-    <section className="subscription-catalogue" id="subscription-offers" aria-label="Subscription offers">
-      <aside className="subscription-sidebar" aria-label="Subscription filters">
-        <div className="subscription-sidebar-heading"><h2>Categories</h2>{(selectedService || selectedCategory !== 'all') && <button onClick={() => setParams({})}>Clear</button>}</div>
-        <nav className="subscription-category-list" aria-label="Subscription categories">
-          {CATEGORIES.map(({ id, label, Icon }) => <button key={id} className={selectedCategory === id ? 'active' : ''} aria-pressed={selectedCategory === id} onClick={() => chooseCategory(id)}><Icon size={17} aria-hidden /><span>{label}</span><span className="subscription-category-count">{id === 'all' ? products.length : products.filter((product) => groupFor(product) === id).length}</span></button>)}
-        </nav>
-        <div className="subscription-sidebar-note"><ShieldCheck size={18} aria-hidden /><p>Check the listing’s region and membership term before you buy.</p></div>
-      </aside>
-
-      <div className="subscription-results">
-        <div className="subscription-results-heading">
-          <div><p className="market-eyebrow">MEMBERSHIPS & SUBSCRIPTIONS</p><h2>{selectedService ? `${selectedService} offers` : CATEGORIES.find((category) => category.id === selectedCategory)?.label || 'All subscriptions'}</h2><p>Compare terms and supported regions. Subscription details arrive by email within 1 hour after confirmed payment.</p></div>
-          <label className="subscription-sort">Sort by <select value={sort} onChange={(event) => updateFilters({ sort: event.target.value })} aria-label="Sort subscription offers"><option value="featured">Featured</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option></select></label>
+        <div className="subscriptions-hero-brands" aria-hidden="true">
+          <BrandLogo brand="game-pass-ultimate" size={96} tile decorative />
+          <BrandLogo brand="spotify-premium" size={96} tile decorative />
+          <BrandLogo brand="netflix" size={96} tile decorative />
         </div>
-        <div className="subscription-results-count" role="status">{loading ? 'Loading offers…' : `${shown.length} ${shown.length === 1 ? 'offer' : 'offers'}`}</div>
-        {loading ? <ProductGridSkeleton count={4} /> : getCatalogueError() ? <div className="market-empty" role="alert"><h3>Could not load offers</h3><p>Please refresh to try again.</p><button onClick={() => window.location.reload()}>Refresh</button></div> : shown.length ? <div className="market-product-grid subscription-product-grid">{shown.map((product) => <ProductCard key={product.id} product={product} />)}</div> : <div className="market-empty"><KeyRound size={30} aria-hidden /><h3>No offers for this category yet</h3><p>Try another service or check back as the catalogue grows.</p><button onClick={() => setParams({})}>Show all subscriptions</button></div>}
-      </div>
-    </section>
+      </header>
+      <section className="subscriptions-delivery-strip" aria-label="Subscription purchase details">
+        <p>
+          <ShoppingBag size={18} aria-hidden />
+          <span>One-time payments for the term shown</span>
+        </p>
+        <p>
+          <Mail size={18} aria-hidden />
+          <span>Manual offers emailed within 1 hour</span>
+        </p>
+        <p>
+          <Globe2 size={18} aria-hidden />
+          <span>Check region and account requirements</span>
+        </p>
+      </section>
 
-    <section className="redeem-steps">
-      <h2>Your membership in three steps</h2>
-      <div>{[{ Icon: ShoppingBag, title: 'Choose your membership', copy: 'Select the right service, region and membership term.' }, { Icon: ShieldCheck, title: 'Complete checkout', copy: 'Make a one-time payment through secure checkout.' }, { Icon: KeyRound, title: 'Check your vault & email', copy: 'Receive your activation codes or subscription details within 1 hour after confirmed payment.' }].map(({ Icon, title, copy }, index) => <article key={title}><span>0{index + 1}</span><Icon size={28} aria-hidden /><h3>{title}</h3><p>{copy}</p></article>)}</div>
-      <p className="redeem-note">Memberships are one-time purchases for the term shown. Check the region and account requirements on each offer before buying.</p>
-    </section>
+      <section className="subscription-services" aria-label="Shop subscriptions by service">
+        <SectionHeader title="Find your service" subtitle="Your familiar favourites, in one place." />
+        <div className="subscription-service-grid">
+          {SUBSCRIPTION_TEMPLATES.map((service) => {
+            const product = products.find((item) =>
+              item.title.toLowerCase().includes(service.query.toLowerCase()),
+            )
+            return (
+              <Link
+                key={service.id}
+                to={`/products/${product?.slug || service.id}`}
+                className="subscription-service-tile"
+              >
+                <BrandLogo brand={service.art} size={48} tile decorative />
+                <span>
+                  <strong>{service.label}</strong>
+                  <small>{product ? `From ${formatPrice(priceFor(product))}` : 'View offer'}</small>
+                </span>
+                <ArrowRight size={16} aria-hidden />
+              </Link>
+            )
+          })}
+        </div>
+      </section>
 
-    {/* Frequently Asked Questions Accordion */}
-    <section className="mt-12 rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] p-6 md:p-8">
-      <h2 className="text-2xl font-extrabold text-[var(--color-text)]">Frequently Asked Questions</h2>
-      <div className="mt-6 space-y-4">
-        {[
-          { q: 'How quickly will I receive my subscription code?', a: 'Prepaid code offers deliver activation keys instantly to your Key Vault after payment. Manual fulfillment offers deliver credentials to your email within 1 hour.' },
-          { q: 'Do these subscriptions auto-renew?', a: 'No. All GameVault subscription offers are strictly one-time payments for the duration selected (1 month, 3 months, 12 months). You will never be charged recurring fees without consent.' },
-          { q: 'What happens if a code does not work in my country?', a: 'Every product listing explicitly specifies the supported regional compatibility (e.g., Global, North America, Singapore). Please check the region indicator before checking out.' },
-          { q: 'How do I redeem my key after checkout?', a: 'Visit your Account Key Vault or your Order Success page. Click "Display Key" to decrypt your code, then click the 1-click launcher link to activate on Steam, Xbox, or PlayStation.' },
-        ].map((item) => (
-          <details key={item.q} className="group rounded-xl border border-[var(--color-border)] bg-[#080c14] p-4 [&_summary::-webkit-details-marker]:hidden">
-            <summary className="flex cursor-pointer items-center justify-between font-bold text-sm text-[var(--color-text)]">
-              <span>{item.q}</span>
-              <span className="text-[var(--color-cyan)] transition-transform group-open:rotate-180">▾</span>
-            </summary>
-            <p className="mt-3 text-xs leading-relaxed text-[var(--color-muted)]">{item.a}</p>
-          </details>
-        ))}
-      </div>
-    </section>
-  </div>
+      <section className="subscription-catalogue" id="subscription-offers" aria-label="Subscription offers">
+        <aside className="subscription-sidebar" aria-label="Subscription filters">
+          <div className="subscription-sidebar-heading">
+            <h2>Categories</h2>
+            {(selectedService || selectedCategory !== 'all') && (
+              <button onClick={() => setParams({})}>Clear</button>
+            )}
+          </div>
+          <nav className="subscription-category-list" aria-label="Subscription categories">
+            {CATEGORIES.map(({ id, label, Icon }) => (
+              <button
+                key={id}
+                className={selectedCategory === id ? 'active' : ''}
+                aria-pressed={selectedCategory === id}
+                onClick={() => chooseCategory(id)}
+              >
+                <Icon size={18} aria-hidden />
+                <span>{label}</span>
+                <span className="subscription-category-count">
+                  {id === 'all'
+                    ? products.length
+                    : products.filter((product) => groupFor(product) === id).length}
+                </span>
+              </button>
+            ))}
+          </nav>
+          <p className="subscription-sidebar-note">
+            <ShieldCheck size={20} aria-hidden />
+            <span>Match the listing’s region and membership term to your account before buying.</span>
+          </p>
+        </aside>
+        <div className="subscription-results">
+          <div className="subscription-results-heading">
+            <div>
+              <p className="eyebrow">Make it yours</p>
+              <h2>
+                {selectedService
+                  ? `${selectedService} offers`
+                  : CATEGORIES.find((category) => category.id === selectedCategory)?.label ||
+                    'All subscriptions'}
+              </h2>
+              <p>Check each offer’s delivery method, term and supported region.</p>
+            </div>
+            <label className="subscription-sort">
+              <span>Sort by</span>
+              <select
+                className="input"
+                value={sort}
+                onChange={(event) => updateFilters({ sort: event.target.value })}
+                aria-label="Sort subscription offers"
+              >
+                <option value="featured">Featured</option>
+                <option value="price-asc">Price: low to high</option>
+                <option value="price-desc">Price: high to low</option>
+              </select>
+            </label>
+          </div>
+          <p className="subscription-results-count" role="status" aria-live="polite">
+            {loading ? 'Loading offers…' : `${shown.length} ${shown.length === 1 ? 'offer' : 'offers'}`}
+          </p>
+          {loading ? (
+            <ProductGridSkeleton count={8} />
+          ) : getCatalogueError() ? (
+            <div className="subscription-empty" role="alert">
+              <h3>Could not load offers</h3>
+              <p>Please refresh to try again.</p>
+              <button className="btn-primary" onClick={() => window.location.reload()}>
+                Refresh
+              </button>
+            </div>
+          ) : shown.length ? (
+            <div className="product-grid subscription-product-grid">
+              {shown.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          ) : (
+            <div className="subscription-empty">
+              <KeyRound size={36} aria-hidden />
+              <h3>No offers for this category yet</h3>
+              <p>Try another service or explore the full subscription collection.</p>
+              <button className="btn-primary" onClick={() => setParams({})}>
+                Show all subscriptions
+              </button>
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section className="subscription-steps" aria-label="Membership purchase steps">
+        <SectionHeader
+          title="A membership in three steps"
+          subtitle="A few checks now. A smoother start later."
+        />
+        <div className="subscription-steps-grid">
+          {[
+            {
+              Icon: ShoppingBag,
+              title: 'Choose your membership',
+              copy: 'Check the service, term, supported region and account requirements.',
+            },
+            {
+              Icon: ShieldCheck,
+              title: 'Complete checkout',
+              copy: 'Review your order and make a one-time payment through Stripe Checkout.',
+            },
+            {
+              Icon: Mail,
+              title: 'Follow the delivery details',
+              copy: 'Manual offers arrive by email within 1 hour after confirmed payment. Allocated inventory codes appear in your order.',
+            },
+          ].map(({ Icon, title, copy }, index) => (
+            <article key={title}>
+              <span className="subscription-step-number">0{index + 1}</span>
+              <Icon size={26} strokeWidth={1.7} aria-hidden />
+              <h3>{title}</h3>
+              <p>{copy}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+      <section className="subscription-faqs" aria-labelledby="subscription-faqs-title">
+        <h2 id="subscription-faqs-title">Useful to know</h2>
+        <div>
+          {FAQS.slice(0, 4).map((item) => (
+            <details key={item.q} className="faq-item">
+              <summary>
+                {item.q}
+                <span aria-hidden>+</span>
+              </summary>
+              <div className="faq-answer">
+                <p>{item.a}</p>
+              </div>
+            </details>
+          ))}
+        </div>
+        <Link to="/support">
+          More help & delivery answers <ArrowRight size={16} aria-hidden />
+        </Link>
+      </section>
+    </div>
+  )
 }
