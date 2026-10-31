@@ -2,7 +2,7 @@
 
 Date: 31 October 2026 (Singapore)
 Branch: feat/storefront-marketplace-redesign
-Status: the owner explicitly authorized committing, pushing and redeploying GameVault on 31 October 2026, after reviewing the reported verification limitations. Prior push authorization blocker is resolved. Production release is in progress; the three legacy test conflicts and performance target remain open. No real payment has been performed. The saved redesign commits and release handoff will be pushed to TeddyQyuon/gamevault and the production deployment verified in the owner's signed-in cloud browser.
+Status: owner-authorized redesign published to GitHub main and production verified in the signed-in cloud browser on 31 October 2026. The three legacy test conflicts and performance target remain open; this is a deployed UI update, not a claim that all original Definition of Done gates pass. No real payment was performed.
 
 ## Objective and boundaries
 
@@ -42,3 +42,11 @@ npm install succeeded. npm test: 34/35 (existing Windows directory assertion fai
 1. Resolve the PWA/preset and Xbox asset-test decisions with the owner, keeping existing coverage meaningful.
 2. Profile carousel LCP and remaining unused/render-blocking CSS, then repeat mobile Lighthouse under stable conditions until the required threshold is met.
 3. Verify the owner-authorized production release in Vercel and the public storefront, then address the remaining test and performance work separately.
+
+## Published release verification
+
+- Published seven phase/documentation commits to feat/storefront-marketplace-redesign and fast-forwarded main from 8b91fc8. Remote commit 649f5b9f20281d72abd14c51937cb6e389d607d2 has an identical tree to the saved local release; all 110 uploaded file objects and each phase tree were hash-verified.
+- Vercel production deployment 2rDXaPuMZBYaD6xp9NT86jPT5DMG is Ready, built in 11 seconds from main/649f5b9.
+- Public storefront https://gamevault-alpha-ten.vercel.app/ verified in cloud browser: new light homepage, games catalogue (14 results), product artwork/edition controls and truthful delivery copy render. No checkout was submitted.
+- Lint and production build pass. Automated tests remain 35/38 for the explicitly recorded conflicts above. Performance target remains open.
+- Local Git had no terminal authentication; the connected GitHub integration published the exact saved content after explicit owner authorization. No security settings, environment variables, payment configuration or protected business logic changed.
