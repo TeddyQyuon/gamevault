@@ -1,71 +1,90 @@
 [
   {
     "file": "/assets/storefront/steam.svg",
-    "source": "https://cdn.simpleicons.org/steam"
+    "source": "https://cdn.simpleicons.org/steam",
+    "reviewedAt": "2026-10-31"
   },
   {
     "file": "/assets/storefront/playstation.svg",
-    "source": "https://cdn.simpleicons.org/playstation"
+    "source": "https://cdn.simpleicons.org/playstation",
+    "reviewedAt": "2026-10-31"
   },
   {
     "file": "/assets/storefront/spotify.svg",
-    "source": "https://cdn.simpleicons.org/spotify"
+    "source": "https://cdn.simpleicons.org/spotify",
+    "reviewedAt": "2026-10-31"
   },
   {
     "file": "/assets/storefront/elden-ring.jpg",
-    "source": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1245620/f0b19c231f86fa0e633ff88a1a63459443017728/header_alt_assets_3.jpg?t=1790290043"
+    "source": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1245620/f0b19c231f86fa0e633ff88a1a63459443017728/header_alt_assets_3.jpg?t=1790290043",
+    "reviewedAt": "2026-10-31"
   },
   {
     "file": "/assets/storefront/forza-horizon-5.jpg",
-    "source": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1551360/header.jpg?t=1788546569"
+    "source": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1551360/header.jpg?t=1788546569",
+    "reviewedAt": "2026-10-31"
   },
   {
     "file": "/assets/storefront/cyberpunk-2077.jpg",
-    "source": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1091500/e9047d8ec47ae3d94bb8b464fb0fc9e9972b4ac7/header.jpg?t=1784714077"
+    "source": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1091500/e9047d8ec47ae3d94bb8b464fb0fc9e9972b4ac7/header.jpg?t=1784714077",
+    "reviewedAt": "2026-10-31"
   },
   {
     "file": "/assets/storefront/baldurs-gate-3.jpg",
-    "source": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1086940/48a2fcbda8565bb45025e98fd8ebde8a7203f6a0/header.jpg?t=1777363040"
+    "source": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1086940/48a2fcbda8565bb45025e98fd8ebde8a7203f6a0/header.jpg?t=1777363040",
+    "reviewedAt": "2026-10-31"
   },
   {
     "file": "/assets/storefront/game-pass.jpg",
-    "source": "https://cms-assets.xboxservices.com/assets/35/4b/354b3ddf-1b39-48c2-92d7-44e5fda75dc4.jpg?n=RE2TAjc.jpg"
+    "source": "https://cms-assets.xboxservices.com/assets/35/4b/354b3ddf-1b39-48c2-92d7-44e5fda75dc4.jpg?n=RE2TAjc.jpg",
+    "reviewedAt": "2026-10-31"
   },
   {
     "file": "/assets/storefront/psplus.png",
-    "source": "https://gmedia.playstation.com/is/image/SIEPDC/ps-plus-black-badge-01-22sep20?$native--t$"
+    "source": "https://gmedia.playstation.com/is/image/SIEPDC/ps-plus-black-badge-01-22sep20?$native--t$",
+    "reviewedAt": "2026-10-31"
   },
   {
     "file": "/assets/storefront/ps-plus.jpg",
-    "source": "https://gmedia.playstation.com/is/image/SIEPDC/E922082D-377E-4135-A38E-8B8FA3B8EB64-ps-plus-interactive-wizard-essential-desktop-25sep26_en"
+    "source": "https://gmedia.playstation.com/is/image/SIEPDC/E922082D-377E-4135-A38E-8B8FA3B8EB64-ps-plus-interactive-wizard-essential-desktop-25sep26_en",
+    "reviewedAt": "2026-10-31"
   },
   {
     "file": "/assets/storefront/gaming-photo.jpg",
-    "source": "https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?auto=format&fit=crop&w=2000&q=90"
+    "source": "https://images.unsplash.com/photo-1493711662062-fa541adb3fc8?auto=format&fit=crop&w=2000&q=90",
+    "reviewedAt": "2026-10-31"
   },
   {
     "file": "/assets/storefront/xbox.svg",
-    "source": "https://upload.wikimedia.org/wikipedia/commons/f/f9/Xbox_one_logo.svg"
+    "source": "https://upload.wikimedia.org/wikipedia/commons/f/f9/Xbox_one_logo.svg",
+    "reviewedAt": "2026-10-31"
   },
   {
     "file": "/assets/storefront/nintendo.svg",
-    "source": "https://upload.wikimedia.org/wikipedia/commons/5/5d/Nintendo_Switch_Logo.svg"
+    "source": "https://www.nintendo.co.jp/common/v2/img/ncommon/_common/logo/switch.svg",
+    "reviewedAt": "2026-10-31",
+    "note": "Native white-on-red logo; accessibility title added, vector paths/colors unchanged.",
+    "downloadedAt": "2026-10-31"
   },
   {
     "file": "/assets/storefront/apple.svg",
-    "source": "https://cdn.simpleicons.org/apple"
+    "source": "https://cdn.simpleicons.org/apple",
+    "reviewedAt": "2026-10-31"
   },
   {
     "file": "/assets/storefront/googleplay.svg",
-    "source": "https://cdn.simpleicons.org/googleplay"
+    "source": "https://cdn.simpleicons.org/googleplay",
+    "reviewedAt": "2026-10-31"
   },
   {
     "file": "/assets/storefront/roblox.svg",
-    "source": "https://cdn.simpleicons.org/roblox"
+    "source": "https://cdn.simpleicons.org/roblox",
+    "reviewedAt": "2026-10-31"
   },
   {
     "file": "/assets/storefront/razer.svg",
-    "source": "https://cdn.simpleicons.org/razer"
+    "source": "https://cdn.simpleicons.org/razer",
+    "reviewedAt": "2026-10-31"
   },
   {
     "file": "/assets/storefront/netflix.svg",
@@ -126,5 +145,245 @@
     "file": "/assets/storefront/youtube.svg",
     "source": "https://cdn.simpleicons.org/youtube/FF0000",
     "downloadedAt": "2026-10-08"
+  },
+  {
+    "file": "/assets/storefront/games/baldurs-gate-3.jpg",
+    "source": "https://cdn.cloudflare.steamstatic.com/steam/apps/1086940/library_600x900.jpg",
+    "downloadedAt": "2026-10-31",
+    "format": "portrait"
+  },
+  {
+    "file": "/assets/storefront/games/grand-theft-auto-v.jpg",
+    "source": "https://cdn.cloudflare.steamstatic.com/steam/apps/271590/library_600x900.jpg",
+    "downloadedAt": "2026-10-31",
+    "format": "portrait"
+  },
+  {
+    "file": "/assets/storefront/games/elden-ring.jpg",
+    "source": "https://cdn.cloudflare.steamstatic.com/steam/apps/1245620/library_600x900.jpg",
+    "downloadedAt": "2026-10-31",
+    "format": "portrait"
+  },
+  {
+    "file": "/assets/storefront/games/baldurs-gate-3-header.jpg",
+    "source": "https://cdn.cloudflare.steamstatic.com/steam/apps/1086940/header.jpg",
+    "downloadedAt": "2026-10-31",
+    "format": "landscape"
+  },
+  {
+    "file": "/assets/storefront/games/cyberpunk-2077.jpg",
+    "source": "https://cdn.cloudflare.steamstatic.com/steam/apps/1091500/library_600x900.jpg",
+    "downloadedAt": "2026-10-31",
+    "format": "portrait"
+  },
+  {
+    "file": "/assets/storefront/games/grand-theft-auto-v-header.jpg",
+    "source": "https://cdn.cloudflare.steamstatic.com/steam/apps/271590/header.jpg",
+    "downloadedAt": "2026-10-31",
+    "format": "landscape"
+  },
+  {
+    "file": "/assets/storefront/games/elden-ring-header.jpg",
+    "source": "https://cdn.cloudflare.steamstatic.com/steam/apps/1245620/header.jpg",
+    "downloadedAt": "2026-10-31",
+    "format": "landscape"
+  },
+  {
+    "file": "/assets/storefront/games/red-dead-redemption-2.jpg",
+    "source": "https://cdn.cloudflare.steamstatic.com/steam/apps/1174180/library_600x900.jpg",
+    "downloadedAt": "2026-10-31",
+    "format": "portrait"
+  },
+  {
+    "file": "/assets/storefront/games/hogwarts-legacy.jpg",
+    "source": "https://cdn.cloudflare.steamstatic.com/steam/apps/990080/library_600x900.jpg",
+    "downloadedAt": "2026-10-31",
+    "format": "portrait"
+  },
+  {
+    "file": "/assets/storefront/games/cyberpunk-2077-header.jpg",
+    "source": "https://cdn.cloudflare.steamstatic.com/steam/apps/1091500/header.jpg",
+    "downloadedAt": "2026-10-31",
+    "format": "landscape"
+  },
+  {
+    "file": "/assets/storefront/games/the-witcher-3.jpg",
+    "source": "https://cdn.cloudflare.steamstatic.com/steam/apps/292030/library_600x900.jpg",
+    "downloadedAt": "2026-10-31",
+    "format": "portrait"
+  },
+  {
+    "file": "/assets/storefront/games/red-dead-redemption-2-header.jpg",
+    "source": "https://cdn.cloudflare.steamstatic.com/steam/apps/1174180/header.jpg",
+    "downloadedAt": "2026-10-31",
+    "format": "landscape"
+  },
+  {
+    "file": "/assets/storefront/games/hades.jpg",
+    "source": "https://cdn.cloudflare.steamstatic.com/steam/apps/1145360/library_600x900.jpg",
+    "downloadedAt": "2026-10-31",
+    "format": "portrait"
+  },
+  {
+    "file": "/assets/storefront/games/hogwarts-legacy-header.jpg",
+    "source": "https://cdn.cloudflare.steamstatic.com/steam/apps/990080/header.jpg",
+    "downloadedAt": "2026-10-31",
+    "format": "landscape"
+  },
+  {
+    "file": "/assets/storefront/games/sekiro.jpg",
+    "source": "https://cdn.cloudflare.steamstatic.com/steam/apps/814380/library_600x900.jpg",
+    "downloadedAt": "2026-10-31",
+    "format": "portrait"
+  },
+  {
+    "file": "/assets/storefront/games/the-witcher-3-header.jpg",
+    "source": "https://cdn.cloudflare.steamstatic.com/steam/apps/292030/header.jpg",
+    "downloadedAt": "2026-10-31",
+    "format": "landscape"
+  },
+  {
+    "file": "/assets/storefront/games/helldivers-2.jpg",
+    "source": "https://cdn.cloudflare.steamstatic.com/steam/apps/553850/library_600x900.jpg",
+    "downloadedAt": "2026-10-31",
+    "format": "portrait"
+  },
+  {
+    "file": "/assets/storefront/games/hades-header.jpg",
+    "source": "https://cdn.cloudflare.steamstatic.com/steam/apps/1145360/header.jpg",
+    "downloadedAt": "2026-10-31",
+    "format": "landscape"
+  },
+  {
+    "file": "/assets/storefront/games/dead-by-daylight.jpg",
+    "source": "https://cdn.cloudflare.steamstatic.com/steam/apps/381210/library_600x900.jpg",
+    "downloadedAt": "2026-10-31",
+    "format": "portrait"
+  },
+  {
+    "file": "/assets/storefront/games/sekiro-header.jpg",
+    "source": "https://cdn.cloudflare.steamstatic.com/steam/apps/814380/header.jpg",
+    "downloadedAt": "2026-10-31",
+    "format": "landscape"
+  },
+  {
+    "file": "/assets/storefront/games/helldivers-2-header.jpg",
+    "source": "https://cdn.cloudflare.steamstatic.com/steam/apps/553850/header.jpg",
+    "downloadedAt": "2026-10-31",
+    "format": "landscape"
+  },
+  {
+    "file": "/assets/storefront/games/dead-by-daylight-header.jpg",
+    "source": "https://cdn.cloudflare.steamstatic.com/steam/apps/381210/header.jpg",
+    "downloadedAt": "2026-10-31",
+    "format": "landscape"
+  },
+  {
+    "file": "/assets/storefront/games/black-myth-wukong.jpg",
+    "source": "https://cdn.cloudflare.steamstatic.com/steam/apps/2358720/library_600x900.jpg",
+    "downloadedAt": "2026-10-31",
+    "format": "portrait"
+  },
+  {
+    "file": "/assets/storefront/games/doom-eternal.jpg",
+    "source": "https://cdn.cloudflare.steamstatic.com/steam/apps/782330/library_600x900.jpg",
+    "downloadedAt": "2026-10-31",
+    "format": "portrait"
+  },
+  {
+    "file": "/assets/storefront/games/doom-eternal-header.jpg",
+    "source": "https://cdn.cloudflare.steamstatic.com/steam/apps/782330/header.jpg",
+    "downloadedAt": "2026-10-31",
+    "format": "landscape"
+  },
+  {
+    "file": "/assets/storefront/games/resident-evil-4.jpg",
+    "source": "https://cdn.cloudflare.steamstatic.com/steam/apps/2050650/library_600x900.jpg",
+    "downloadedAt": "2026-10-31",
+    "format": "portrait"
+  },
+  {
+    "file": "/assets/storefront/games/black-myth-wukong-header.jpg",
+    "source": "https://cdn.cloudflare.steamstatic.com/steam/apps/2358720/header.jpg",
+    "downloadedAt": "2026-10-31",
+    "format": "landscape"
+  },
+  {
+    "file": "/assets/storefront/games/resident-evil-4-header.jpg",
+    "source": "https://cdn.cloudflare.steamstatic.com/steam/apps/2050650/header.jpg",
+    "downloadedAt": "2026-10-31",
+    "format": "landscape"
+  },
+  {
+    "file": "/assets/storefront/discord-nitro.svg",
+    "source": "https://cdn.simpleicons.org/discord/5865F2",
+    "reviewedAt": "2026-10-31",
+    "note": "Original Discord brand logo retained in native blurple, replacing an approximate Nitro illustration."
+  },
+  {
+    "file": "/assets/storefront/discord-boost.svg",
+    "source": "https://cdn.simpleicons.org/discord/5865F2",
+    "reviewedAt": "2026-10-31",
+    "note": "Original Discord brand logo retained in native blurple, replacing an approximate Boost illustration."
+  },
+  {
+    "file": "/assets/storefront/ea-play.svg",
+    "source": "https://www.ea.com/ea-play",
+    "reviewedAt": "2026-10-31",
+    "note": "Existing provider-native wordmark retained."
+  },
+  {
+    "file": "/assets/storefront/canva.svg",
+    "source": "https://www.canva.com/",
+    "reviewedAt": "2026-10-31",
+    "note": "Existing provider-native wordmark retained."
+  },
+  {
+    "file": "/assets/storefront/ps-plus.svg",
+    "source": "https://www.playstation.com/en-sg/ps-plus/",
+    "reviewedAt": "2026-10-31",
+    "note": "Existing provider-native badge retained."
+  },
+  {
+    "file": "/assets/storefront/gamevault-logo.svg",
+    "source": "https://github.com/TeddyQyuon/gamevault",
+    "reviewedAt": "2026-10-31",
+    "note": "Existing GameVault brand asset."
+  },
+  {
+    "file": "/assets/storefront/visa.svg",
+    "source": "https://www.visa.com/",
+    "reviewedAt": "2026-10-31",
+    "note": "Existing native payment provider mark."
+  },
+  {
+    "file": "/assets/storefront/mastercard.svg",
+    "source": "https://www.mastercard.com/",
+    "reviewedAt": "2026-10-31",
+    "note": "Existing native payment provider mark."
+  },
+  {
+    "file": "/assets/storefront/apple-pay.svg",
+    "source": "https://developer.apple.com/apple-pay/marketing/",
+    "reviewedAt": "2026-10-31",
+    "note": "Existing native payment provider mark."
+  },
+  {
+    "file": "/assets/storefront/google-pay.svg",
+    "source": "https://developers.google.com/pay/api/web/guides/brand-guidelines",
+    "reviewedAt": "2026-10-31",
+    "note": "Existing native payment provider mark."
+  },
+  {
+    "file": "/assets/storefront/stripe.svg",
+    "source": "https://stripe.com/newsroom/brand-assets",
+    "reviewedAt": "2026-10-31",
+    "note": "Existing native payment provider mark."
+  },
+  {
+    "file": "/assets/storefront/xbox-game-pass.svg",
+    "source": "https://upload.wikimedia.org/wikipedia/commons/f/f9/Xbox_one_logo.svg",
+    "reviewedAt": "2026-10-31",
+    "note": "Native parent Xbox logo used for Game Pass. Specific Game Pass Ultimate lockup remains a review decision; no reconstructed wordmark."
   }
 ]
