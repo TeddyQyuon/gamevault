@@ -2,9 +2,16 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import App from './App.jsx'
+import UpdateNotice from './components/ui/UpdateNotice.jsx'
 import PortfolioDemoBadge from './PortfolioDemoBadge.jsx'
 import './styles/index.css'
-import './styles/marketplace.css'
+import './styles/header.css'
+import './styles/hero.css'
+import './styles/product-card.css'
+import './styles/customer.css'
+import './styles/footer.css'
+import './styles/motion.css'
+import './styles/pwa.css'
 import { ToastProvider } from './context/ToastContext.jsx'
 import { CartProvider } from './context/CartContext.jsx'
 import { WishlistProvider } from './context/WishlistContext.jsx'
@@ -22,6 +29,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <WishlistProvider>
               <OrdersProvider>
                 <App />
+                <UpdateNotice />
               </OrdersProvider>
             </WishlistProvider>
           </CartProvider>
@@ -31,30 +39,4 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <PortfolioDemoBadge />
   </React.StrictMode>,
 )
-
-// Register PWA Service Worker for standalone browser app shortcut & offline shell
-if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker
-      .register('/sw.js')
-      .then((reg) => {
-        // Actively check for service worker updates on page load
-        reg.update().catch(() => {})
-        reg.onupdatefound = () => {
-          const installingWorker = reg.installing
-          if (installingWorker) {
-            installingWorker.onstatechange = () => {
-              if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                console.log('[PWA] New version activated, refreshing...')
-                window.location.reload()
-              }
-            }
-          }
-        }
-      })
-      .catch((err) => {
-        console.warn('[PWA] Service worker registration failed:', err)
-      })
-  })
-}
 

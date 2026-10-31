@@ -1,3 +1,4 @@
+import '../styles/catalogue.css'
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { ArrowRight, SearchX, SlidersHorizontal, X } from 'lucide-react'
