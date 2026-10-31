@@ -3,6 +3,7 @@
   --color-page: #f4f6fb;
   --color-surface: #ffffff;
   --color-elevated: #eef2f8;
+  --color-artwork: #e9edf5;
   --color-text: #0f172a;
   --color-muted: #526077;
   --color-placeholder: #64748b;
@@ -23,6 +24,8 @@
   --color-logo-surface: #ffffff;
   --color-navy: #0f172a;
   --color-navy-elevated: #1c2940;
+  --color-header: var(--color-navy);
+  --color-on-header: var(--color-on-navy);
   --color-on-navy: #ffffff;
   --color-on-navy-muted: #c2ccdc;
   --color-on-dark: var(--color-on-navy);
@@ -74,6 +77,7 @@
   --z-drawer: 60;
   --z-toast: 80;
   --z-purchase: 20;
+  --z-notice: 25;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --dur-fast: 150ms;
   --dur: 250ms;
@@ -84,6 +88,7 @@
   --color-page: #111827;
   --color-surface: #1b2535;
   --color-elevated: #263246;
+  --color-artwork: #263246;
   --color-text: #f1f5fb;
   --color-muted: #b7c4d7;
   --color-placeholder: #a3b3ca;

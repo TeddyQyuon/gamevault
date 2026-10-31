@@ -1,0 +1,25 @@
+@media (prefers-reduced-motion: no-preference) {
+  .ui-button, .btn-primary, .market-button, .quantity-button, .rail-arrow { transition: transform var(--dur-fast) var(--ease-out); }
+  .ui-button:active:not(:disabled), .btn-primary:active:not(:disabled), .market-button:active { transform: scale(0.98); }
+  .rail-track { scroll-behavior: smooth; }
+  .reveal { opacity: 0; transform: translateY(16px); transition: opacity var(--dur) var(--ease-out), transform var(--dur) var(--ease-out); transition-delay: var(--reveal-delay, 0ms); }
+  .reveal[data-visible='true'] { opacity: 1; transform: none; }
+  .ui-skeleton::after { animation: skeleton-shimmer 1.4s var(--ease-out) infinite; }
+  .route-enter { animation: route-fade var(--dur) var(--ease-out) both; }
+  .route-static { animation: none; }
+  .cart-count-pop { animation: badge-pop var(--dur) var(--ease-out); }
+  .ui-toast { animation: toast-in var(--dur) var(--ease-out) both; }
+  .ui-modal { animation: toast-in var(--dur) var(--ease-out); }
+  .ui-drawer { animation: drawer-in var(--dur) var(--ease-out); }
+}
+@keyframes skeleton-shimmer { to { transform: translateX(100%); } }
+@keyframes route-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes badge-pop { 0% { transform: scale(0.8); } 45% { transform: scale(1.16); } 100% { transform: scale(1); } }
+@keyframes toast-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes drawer-in { from { transform: translateX(-100%); opacity: 0.5; } to { transform: translateX(0); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  .reveal { opacity: 1; transform: none; }
+  .ui-skeleton::after { display: none; }
+}

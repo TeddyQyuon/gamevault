@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 
-const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+const FOCUSABLE = 'a[href], summary, [contenteditable="true"], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
 let scrollLocks = 0
 let originalOverflow = ''
 const activeTraps = []
