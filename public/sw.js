@@ -1,135 +1,35 @@
-// Antigravity Mobile PWA Service Worker
-const CACHE_NAME = 'antigravity-coder-v5'
-const PRECACHE_ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.webmanifest',
-  '/manifest.json',
-  '/favicon.svg',
-  '/icons/icon-192.png',
-  '/icons/icon-512.png',
-  '/icons/icon-maskable.png',
-  '/icons/icon.svg'
-]
-
-// Precache essential assets on install and force immediate activation
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(async (cache) => {
-      await Promise.allSettled(
-        PRECACHE_ASSETS.map((asset) =>
-          cache.add(asset).catch((err) => {
-            console.warn(`[SW] Pre-cache skipped for ${asset}:`, err?.message || err)
-          })
-        )
-      )
-    }).then(() => self.skipWaiting())
-  )
+// GameVault offline storefront. API responses and private order data are never cached.
+const CACHE_NAME = 'gamevault-v6'
+const PRECACHE_ASSETS = ['/', '/index.html', '/manifest.webmanifest', '/favicon.svg', '/icons/icon-192.png', '/icons/icon-512.png', '/icons/icon-maskable.png']
+self.addEventListener('install', event => {
+  event.waitUntil(caches.open(CACHE_NAME).then(cache => Promise.allSettled(PRECACHE_ASSETS.map(asset => cache.add(asset)))))
+  // Updated workers wait for the visitor to choose Refresh.
 })
-
-// Clean up old caches on activate and immediately claim all open clients
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys.filter((key) => key !== CACHE_NAME).map((key) => {
-          console.log(`[SW] Purging stale cache: ${key}`)
-          return caches.delete(key)
-        })
-      )
-    }).then(() => self.clients.claim())
-  )
+self.addEventListener('activate', event => {
+  event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE_NAME && /^(gamevault-|antigravity-coder-)/.test(key)).map(key => caches.delete(key)))).then(() => self.clients.claim()))
 })
-
-// Intercept requests
-self.addEventListener('fetch', (event) => {
+self.addEventListener('fetch', event => {
   const { request } = event
   const url = new URL(request.url)
-
-  // Skip non-GET requests
-  if (request.method !== 'GET') {
-    return
-  }
-
-  // API calls: Network-first with offline JSON fallback
+  if (request.method !== 'GET' || url.origin !== self.location.origin) return
   if (url.pathname.startsWith('/api/')) {
-    event.respondWith(
-      fetch(request).catch(() => {
-        return new Response(
-          JSON.stringify({
-            ok: false,
-            offline: true,
-            error: {
-              code: 'NETWORK_OFFLINE',
-              message: 'Device is offline or server is unreachable. Use Laptop-Offline Cloud Mode.'
-            }
-          }),
-          {
-            status: 503,
-            headers: { 'Content-Type': 'application/json' }
-          }
-        )
-      })
-    )
+    event.respondWith(fetch(request).catch(() => new Response(JSON.stringify({ error: { code: 'NETWORK_OFFLINE', message: 'You are offline. Reconnect to check your order or complete checkout.' } }), { status: 503, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } })))
     return
   }
-
-  // Navigation requests: Network-first, fallback to cached index.html
   if (request.mode === 'navigate') {
-    event.respondWith(
-      fetch(request)
-        .catch(async () => {
-          const cache = await caches.open(CACHE_NAME)
-          const cachedIndex = await cache.match('/index.html') || await cache.match('/')
-          return cachedIndex || new Response('Offline - Antigravity Mobile Coder', {
-            headers: { 'Content-Type': 'text/html' }
-          })
-        })
-    )
+    event.respondWith(fetch(request).catch(async () => (await caches.match('/index.html')) || new Response('Offline — GameVault. Reconnect to continue shopping.', { headers: { 'Content-Type': 'text/plain' } })))
     return
   }
-
-  // Brand images & SVGs: Always Network-First so updated brand assets load immediately without stale cache
-  if (url.pathname.includes('/assets/') || url.pathname.endsWith('.svg') || url.pathname.endsWith('.jpg') || url.pathname.endsWith('.png')) {
-    event.respondWith(
-      fetch(request)
-        .then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200 && (networkResponse.type === 'basic' || networkResponse.type === 'cors')) {
-            const responseToCache = networkResponse.clone()
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(request, responseToCache)
-            })
-          }
-          return networkResponse
-        })
-        .catch(() => caches.match(request))
-    )
-    return
-  }
-
-  // Other static assets: Stale-while-revalidate
-  event.respondWith(
-    caches.match(request).then((cachedResponse) => {
-      const fetchPromise = fetch(request)
-        .then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200 && (networkResponse.type === 'basic' || networkResponse.type === 'cors')) {
-            const responseToCache = networkResponse.clone()
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(request, responseToCache)
-            })
-          }
-          return networkResponse
-        })
-        .catch(() => cachedResponse)
-
-      return cachedResponse || fetchPromise
-    })
-  )
+  if (!/\.(?:js|css|svg|png|jpe?g|webp|woff2)$/.test(url.pathname)) return
+  event.respondWith(caches.open(CACHE_NAME).then(async cache => {
+    const cached = await cache.match(request)
+    const fromNetwork = fetch(request).then(response => {
+      if (response.ok) cache.put(request, response.clone())
+      return response
+    }).catch(() => cached || Response.error())
+    return cached || fromNetwork
+  }))
 })
-
-// Allow clients to trigger skipWaiting
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting()
-  }
+self.addEventListener('message', event => {
+  if (event.data?.type === 'SKIP_WAITING') self.skipWaiting()
 })

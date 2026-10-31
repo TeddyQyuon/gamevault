@@ -1,3 +1,4 @@
+import '../styles/product-page.css'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { Check, Clock3, Globe2, Heart, KeyRound, Mail, ShieldCheck, ShoppingCart } from 'lucide-react'

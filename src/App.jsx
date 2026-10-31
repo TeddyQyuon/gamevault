@@ -1,19 +1,35 @@
+import { lazy, Suspense } from 'react'
 import { Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom'
 import Layout from './components/layout/Layout.jsx'
 import Home from './pages/Home.jsx'
-import Catalogue from './pages/Catalogue.jsx'
-import ProductDetails from './pages/ProductDetails.jsx'
-import Subscriptions from './pages/Subscriptions.jsx'
-import Cart from './pages/Cart.jsx'
-import Checkout from './pages/Checkout.jsx'
-import OrderSuccess from './pages/OrderSuccess.jsx'
-import OrderCancel from './pages/OrderCancel.jsx'
-import { Login, Register } from './pages/Auth.jsx'
-import { AccountLayout, Dashboard, Orders, OrderDetail, SubscriptionsTab, Library, WishlistTab, SettingsTab, NotificationsTab } from './pages/account/Account.jsx'
-import Admin from './pages/Admin.jsx'
-import Support from './pages/Support.jsx'
-import NotFound from './pages/NotFound.jsx'
+const Catalogue = lazy(() => import('./pages/Catalogue.jsx'))
+const ProductDetails = lazy(() => import('./pages/ProductDetails.jsx'))
+const Subscriptions = lazy(() => import('./pages/Subscriptions.jsx'))
+const Cart = lazy(() => import('./pages/Cart.jsx'))
+const Checkout = lazy(() => import('./pages/Checkout.jsx'))
+const OrderSuccess = lazy(() => import('./pages/OrderSuccess.jsx'))
+const OrderCancel = lazy(() => import('./pages/OrderCancel.jsx'))
+const Login = lazy(() => import('./pages/Auth.jsx').then(module => ({ default: module.Login })))
+const Register = lazy(() => import('./pages/Auth.jsx').then(module => ({ default: module.Register })))
+const Support = lazy(() => import('./pages/Support.jsx'))
+const NotFound = lazy(() => import('./pages/NotFound.jsx'))
 import { useSession } from './context/SessionContext.jsx'
+
+const Admin = lazy(() => import('./pages/Admin.jsx'))
+const accountView = name => lazy(() => import('./pages/account/Account.jsx').then(module => ({ default: module[name] })))
+const AccountLayout = accountView('AccountLayout')
+const Dashboard = accountView('Dashboard')
+const Orders = accountView('Orders')
+const OrderDetail = accountView('OrderDetail')
+const SubscriptionsTab = accountView('SubscriptionsTab')
+const Library = accountView('Library')
+const WishlistTab = accountView('WishlistTab')
+const SettingsTab = accountView('SettingsTab')
+const NotificationsTab = accountView('NotificationsTab')
+
+function Deferred({ children }) {
+  return <Suspense fallback={<p className="card p-8" role="status">Loading your workspace…</p>}>{children}</Suspense>
+}
 
 // Redirects guests to /login?next=... (UX convenience — the API enforces
 // ownership on every customer route regardless).
@@ -27,6 +43,7 @@ function RequireAuth() {
 
 export default function App() {
   return (
+    <Suspense fallback={<p className="container-shell py-8" role="status">Loading GameVault…</p>}>
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<Home />} />
@@ -47,7 +64,7 @@ export default function App() {
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route element={<RequireAuth />}>
-          <Route path="account" element={<AccountLayout><Outlet /></AccountLayout>}>
+          <Route path="account" element={<Deferred><AccountLayout><Outlet /></AccountLayout></Deferred>}>
             <Route index element={<Dashboard />} />
             <Route path="orders" element={<Orders />} />
             <Route path="orders/:orderId" element={<OrderDetail />} />
@@ -57,11 +74,12 @@ export default function App() {
             <Route path="settings" element={<SettingsTab />} />
             <Route path="notifications" element={<NotificationsTab />} />
           </Route>
-          <Route path="admin" element={<Admin />} />
+          <Route path="admin" element={<Deferred><Admin /></Deferred>} />
         </Route>
         <Route path="support" element={<Support />} />
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
+    </Suspense>
   )
 }

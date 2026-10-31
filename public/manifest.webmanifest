@@ -1,14 +1,18 @@
 {
-  "name": "Antigravity Mobile Coder",
-  "short_name": "Antigravity",
-  "description": "Mobile autonomous coding interface for Antigravity & Gemini. Code and test repos anytime, even when laptop is offline.",
-  "start_url": "/coder",
+  "id": "/",
+  "name": "GameVault",
+  "short_name": "GameVault",
+  "description": "Games, memberships and digital gift cards. Check each offer\u2019s region and delivery method before buying.",
+  "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "orientation": "portrait",
-  "background_color": "#0f172a",
+  "background_color": "#f4f6fb",
   "theme_color": "#0f172a",
-  "categories": ["developer", "productivity", "utilities"],
+  "categories": [
+    "shopping",
+    "games",
+    "entertainment"
+  ],
   "icons": [
     {
       "src": "/icons/icon-192.png",
@@ -31,30 +35,22 @@
     {
       "src": "/icons/icon.svg",
       "sizes": "any",
-      "type": "image/svg+xml"
+      "type": "image/svg+xml",
+      "purpose": "any"
     }
   ],
   "shortcuts": [
     {
-      "name": "GameVault Agent",
-      "short_name": "GameVault",
-      "description": "Autonomous coder for GameVault marketplace",
-      "url": "/coder?repo=gamevault",
-      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+      "name": "Browse games",
+      "url": "/games"
     },
     {
-      "name": "MeterWise Agent",
-      "short_name": "MeterWise",
-      "description": "Autonomous coder for MeterWise AI energy platform",
-      "url": "/coder?repo=meterwise",
-      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+      "name": "Subscriptions",
+      "url": "/subscriptions"
     },
     {
-      "name": "Portfolio Agent",
-      "short_name": "Portfolio",
-      "description": "Autonomous coder for Personal Portfolio",
-      "url": "/coder?repo=portfolio",
-      "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
+      "name": "Your orders",
+      "url": "/account/orders"
     }
   ]
 }
