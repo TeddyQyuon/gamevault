@@ -1,98 +1,44 @@
-# Agent Handoff Checkpoint — Multi-Workspace Ecosystem
+# GameVault storefront redesign handoff
 
-**Timestamp:** 2026-10-16 00:25 (Local)  
-**Status:** Verification complete: Teddy Qyuon Portfolio confirmed rolled back to original responsive light theme prior to night mode and boost mode; all automated tests passing, clean production Vite builds, and live Vercel deployments verified.
+Date: 31 October 2026 (Singapore)
+Branch: feat/storefront-marketplace-redesign
+Status: implemented locally for review; release gates remain unresolved. Six phase/documentation commits are retained locally. No production merge or real payment performed. GitHub push was rejected by automatic approval review as insufficiently authorized external export; do not bypass this rejection. Explicit user approval is required before pushing branch feat/storefront-marketplace-redesign to TeddyQyuon/gamevault. No PR has been created.
 
----
+## Objective and boundaries
 
-## 1. Summary of Repositories & Execution Status
+Redesign the existing React/Vite storefront into a light, professional marketplace with GameVault identity, native brand artwork, accessible mobile browsing and truthful fulfilment copy. Server, API, pricing, stock, cart/order services, authentication handlers and MobileCoder are untouched. Existing route paths and guard behavior are preserved; route components are lazy-loaded. Admin only received two shared semantic color-class substitutions. tailwind.config.js is included under the explicit Phase 1a instruction.
 
-| Repository / Workstream | Path / Scope | Status | Verification & Gates | Live URL |
-| :--- | :--- | :--- | :--- | :--- |
-| **Antigravity Mobile Coder** | `c:\Users\waiya\Downloads\AntigravityMobileCoder` | **Google Antigravity Native Mode (Zero API Key), Cloud Browser Engine, Session Vault, SSRF Defense** | **21/21 tests passing**, Vite build clean (2.25s), Vercel production deployed | [https://antigravity-mobile-coder.vercel.app](https://antigravity-mobile-coder.vercel.app) |
-| **GameVault Marketplace** | `c:\Users\waiya\Downloads\GameValut` | Official Brand SVGs, SW Cache v5, Auto-Busting, Stripe Elements | 33/33 client tests, 64/64 server tests passing, clean Vite build | [https://gamevault-alpha-ten.vercel.app](https://gamevault-alpha-ten.vercel.app) |
-| **Teddy Qyuon Portfolio** | `c:\Users\waiya\Downloads\TeddyQyuonPortfolio` | Original clean responsive light portfolio restored (night mode & boost mode rolled back) | 8/8 tests passing, Vite clean (2.22s), pushed to `main` | [https://teddy-qyuon-portfolio.vercel.app](https://teddy-qyuon-portfolio.vercel.app) |
+## Changes
 
----
+- Light and dark token themes, unified 1440px container, inputs and semantic primitives; split header, hero, product-card, catalogue, product-page, subscriptions, customer, footer and motion CSS; removed obsolete marketplace.css.
+- Native brand registry drives existing artwork exports and subscription presentation metadata. Fourteen official Steam portrait covers and landscape fallbacks are self-hosted. Provenance and dates recorded. Native Nintendo and Discord parent marks replace reconstructed artwork. Game Pass uses the native Xbox parent mark; its exact approved Ultimate lockup remains a review item.
+- Sticky navy header, mobile drawer, keyboard search suggestions, rails, carousel with 6-second rotation/pause/swipe/reduced-motion handling, brand tiles, filters/chips/12-item pagination, product buy box/mobile bar, and coherent customer screens.
+- Truthful manual-email versus code-inventory delivery copy; removed displayed unverified ratings, claims and emoji trust seals. Existing stored product metadata/prices remain unchanged.
+- Reduced motion, keyboard focus traps and return focus, accessible tabs/rails, shimmer/reveal, native payment marks and local Inter variable WOFF2 plus OFL license. No application dependencies added. External tools used only in scratch for QA.
+- One GameVault manifest and gamevault-v6 offline cache; explicit optional update notice suppressed on checkout/order routes; no automatic reload on worker install. PWA icons use existing GameVault artwork. Admin, Account and other secondary routes split into chunks; page CSS loaded with corresponding routes.
 
-## 2. Deep Dive Architectural Learning (`/learn`)
-### How ChatGPT Work / Cloud Browser in Plus Plan Works Under the Hood:
-1. **Isolated Cloud Sandboxes**:
-   - ChatGPT Plus provisions ephemeral microVMs (AWS Firecracker / gVisor) running Chromium instances via Chrome DevTools Protocol (CDP) and Playwright.
-   - Network requests route through secured egress proxies to prevent SSRF while allowing access to public services like GitHub, Vercel, Supabase, and Stripe.
-2. **Interactive Screencasting & Viewport Streaming**:
-   - Real-time video/canvas streaming (WebRTC or CDP WebSocket screencast at 15–30 FPS) streams the browser canvas to the client.
-   - User mouse clicks, coordinate navigation, and keystrokes are forwarded into CDP (`Input.dispatchMouseEvent`, `Input.dispatchKeyEvent`) for seamless Human-in-the-Loop interaction (e.g. solving 2FA/MFA or passkeys).
-3. **Session Vault & Persistent Profile Storage**:
-   - Cookies and `storageState` (`userDataDir`) are captured and stored in an encrypted session vault.
-   - Rehydrating these cookies on subsequent sessions keeps users permanently logged into GitHub, Vercel, etc., without re-entering credentials.
-4. **Autonomous AI Operator Execution Loop**:
-   - **Observe:** Captures DOM accessibility tree and screenshot with bounding-box markers.
-   - **Reason:** Multimodal LLM decomposes user intent into atomic actions (`navigate`, `click`, `type`, `extract`).
-   - **Execute:** Dispatches actions into the browser driver and awaits DOM quiet/network idle.
-   - **Verify:** Checks output telemetry, extracts tokens/deployments, and yields human takeover if required.
+## Baseline
 
----
+npm install succeeded. npm test: 34/35 (existing Windows directory assertion fails). npm run lint: no errors, three unused Account imports. npm run build: passes, initial JS 412.87 kB.
 
-## 3. Real-World Engineering Plan (`/plan`)
-1. **Workspace Navigation Tab**: Add `[🌐 Cloud Browser]` alongside `[💻 AI Coder]`, `[⌨️ Live Terminal]`, and `[🔑 Google Accounts]`, with bidirectional `?tab=browser` URL synchronization.
-2. **Cloud Browser Chrome & Omnibox**: Full navigation toolbar with Back, Forward, Reload, Home, HTTPS SSL lock, Omnibox address bar, Desktop (1280x800) vs Mobile (390x844) viewport switcher, and live latency HUD.
-3. **Direct In-Viewport Interactive Sign-In**: Realistic authentication forms in the browser canvas for GitHub, Vercel, Supabase, and Google AI Studio that allow users to enter credentials directly in the canvas and auto-persist sessions into the Session Vault.
-4. **Session Vault Modal Drawer**: Persistent credential storage with support for disconnecting sessions, editing keys, and adding custom external providers (AWS, GitLab, Netlify).
-5. **SSRF Guarded Serverless API**: `/api/browser` endpoint hardened with SSRF protection blocking loopback (`127.0.0.1`), private RFC1918 subnets, and cloud instance metadata addresses (`169.254.169.254`).
-6. **Progressive AI Operator Runner**: Multi-step operator runner with animated async interval (`stepDelayMs: 220`) providing realistic step transparency and extracted telemetry.
-7. **In-App Work Guide Modal**: Dedicated `/learn`, `/plan`, `/goal`, and `/boost` interactive educational modal accessible directly from the browser toolbar.
+## Verification
 
----
+- Final lint: passes with zero warnings/errors. Production build: passes, initial JS about296 kB, separate page chunks and page styles. Whitespace check passes.
+- Final tests: 35/38 pass. Three existing assertions remain unresolved, none weakened: Windows machine folders; both manifests with Antigravity branding; Game Pass SVG requires the old reconstructed green/white GAME PASS ULTIMATE lockup. New complete registry/file-size/provenance/local-image tests pass.
+- Headless Chromium screenshots captured for home, games, game product, gift-card product, subscriptions, cart, checkout and account at390 and1440. Local read-only API fixtures use actual catalogue data and a synthetic account for Account screenshots; these are presentation checks, not proof of real authentication, payment or delivery.
+- Final screenshot run: one h1 per requested screen, zero broken images, no page overflow, no axe WCAG A/AA violations at390/1440. Additional layout checks cover360/768/1024/1280/1920. Mobile menu focus trap/Escape, keyboard search selection, cart drawer Escape and URL-filter rendering passed.
+- Lighthouse mobile local frontend run: performance77, accessibility100, best practices96, SEO100. Performance target90 is NOT met. Earlier runs ranged78–83. Carousel rotation creates a late largest-contentful-paint candidate; unused CSS/render-blocking work also remains. No claim of a production Lighthouse pass.
+- Protected server/API/context/services/stock/MobileCoder paths have no diff. No hardcoded hex remains in editable JSX; protected MobileCoder retains its three original literals. UI colors are tokens; native brand colors live in brands.js. Rendered image sources are local.
 
-## 4. Measurable Project Goals (`/goal`)
-- **G1 (Zero Subscription Fees):** 100% free web app eliminating the need for ChatGPT Plus ($20/month).
-- **G2 (Session Vault Persistence):** Permanent login state preservation for GitHub, Vercel, Supabase, Google, Stripe, and Cloudflare.
-- **G3 (In-Canvas Sign-In & Token Capture):** Direct browser canvas authentication seamlessly capturing cookies and tokens.
-- **G4 (Autonomous Operator Execution):** Full natural language task execution with progressive step transparency and structured data extraction.
-- **G5 (Enterprise Verification & Safety):** 20/20 automated tests passing, clean Vite build, and validated SSRF defense.
+## Blockers and decisions
 
----
+1. tests/coder-pwa.test.js is outside the allowed test-edit scope and contradicts the requested one GameVault manifest. Its Windows filesystem assertion is nonportable. Approve an explicit test migration preserving meaningful PWA/portable preset coverage before merge.
+2. Provide an approved exact Xbox Game Pass Ultimate lockup, or approve native-parent Xbox presentation with a reviewed replacement of the old asset-specific assertion. No logo was invented or recolored to satisfy a string test.
+3. Mobile performance remains below90 and requires further profiling. Do not label the release complete against the requested Definition of Done.
+4. Known pre-existing payment confirmation/readiness behavior identified before this redesign remains out of scope under the frontend-only boundary. Backend production readiness must be reviewed separately.
 
-## 5. Implementation Completed (`/boost`)
-1. **`src/services/browserManager.js`**: Core service handling session vault storage, URL navigation, history stack (back/forward), title resolution, active account persistence, custom account removal, and progressive operator execution.
-2. **`api/browser.js`**: Serverless edge handler supporting `status`, `navigate`, `interact`, and `agent_run` with SSRF protection and input sanitation.
-3. **`server/browserController.js`**: Local and cloud server execution controller with input validation.
-4. **`src/App.jsx`**:
-   - Integrated Cloud Browser workspace view with bidirectional `?tab=browser` synchronization.
-   - Interactive in-viewport login and sign-out forms for GitHub, Vercel, Supabase, and Google AI Studio.
-   - Session Vault modal drawer with custom service addition and disconnect controls.
-   - Architecture & Work Guide modal displaying `/learn`, `/plan`, `/goal`, and `/boost`.
-   - Toast notification alerts for authentication state transitions.
-5. **`tests/browser.test.js`**: 20 comprehensive automated tests covering vault persistence, navigation guards, title preservation, SSRF defenses, custom provider removal, and UI integration.
+## Next three actions
 
----
-
-## 6. Verification Summary
-- **Antigravity Mobile Coder:**
-  - `npm test`: **22 / 22 tests passing** (97ms) including new regression suite verifying zero `wai-yan-hein` references and live TeddyQyuon repository bindings.
-  - `npm run build`: Clean production build (`dist/assets/index-DiLJXuA5.js`, 316.15 kB).
-  - GitHub integration: All presets (`TeddyQyuon/gamevault`, `TeddyQyuon/TeddyQyuonPortfolio`, `TeddyQyuon/meterwise`), browser navigation, and session vault verified. Zero `wai-yan-hein` 404 references remaining.
-- **GameVault Marketplace:**
-  - `npm test`: **35 / 35 tests passing** (181ms) including regression suite for zero `wai-yan-hein` links, valid `TeddyQyuon` repo bindings, and direct `api/coder/github-dispatch` handler tests.
-  - `npm --prefix server test`: **64 / 64 server tests passing** (4500ms) with full `githubDispatch` URL routing tests covering case-insensitivity, full slugs, and default fallbacks.
-  - `npm run build`: Clean Vite build in 2.35s (`dist/assets/index-DdVt7D67.js`, 407.91 kB).
-- **Teddy Qyuon Portfolio:**
-  - `npm test`: **8 / 8 tests passing** (2493ms) covering security audits and responsive layouts.
-  - `npm run build`: Clean production Vite build in 2.22s with zero runtime or compilation errors.
-  - **Rollback Verification**: Night mode (`ThemeModeContext.jsx`, `themeTokens.js`, `theme-init.js`, `.dark` CSS tokens, navbar theme switch) and Boost Mode entries reverted to match `c0e0a02` exactly. Committed (`f715e4c`) and pushed to `origin/main`. Live Vercel returns HTTP 200 OK.
-- **NYP Internship Portfolio PDF Refinement:**
-  - `scripts/generate_portfolio_pdf.py` updated and re-executed.
-  - **ScamDar project removed completely** as requested.
-  - Refined Page 5 to prominently feature NYP Coursework: **Annual Leave Management System** (Module Grade: A) and **Gym Calories Predictive ML Analysis** (Module Grade: A), alongside Year 2 Semester 1 GPA of **3.70** (Cumulative 3.18) and Matriculation 5 Distinctions.
-  - Output PDF generated: `C:\Users\waiya\Downloads\Wai_Yan_Hpone_Lat_Portfolio.pdf` (2.17 MB, exactly 5 A4 pages, fully styled).
-  - Synced to `docs/Wai_Yan_Hpone_Lat_Portfolio.pdf` and `TeddyQyuonPortfolio/public/resume/`.
-
----
-
-## 7. Next Actions
-1. **Upload to NYP Portal:** In `internship.nyp.edu.sg`, tap `[+ Add File]` under "Upload additional documents such as Portfolio, Transcripts etc." and select `C:\Users\waiya\Downloads\Wai_Yan_Hpone_Lat_Portfolio.pdf`.
-2. **Review PDF Pages:** Open the 5-page PDF in your preferred viewer to confirm all screenshots, Grade A coursework, and contact links look perfect.
-3. **Commit & Push:** Push updated portfolio assets and generator script to remote git.
-
-
+1. Resolve the PWA/preset and Xbox asset-test decisions with the owner, keeping existing coverage meaningful.
+2. Profile carousel LCP and remaining unused/render-blocking CSS, then repeat mobile Lighthouse under stable conditions until the required threshold is met.
+3. Review screenshots and local commits, explicitly approve the branch push, then create a draft PR. Verify protected-route behavior against the real backend and release only after gates pass.
