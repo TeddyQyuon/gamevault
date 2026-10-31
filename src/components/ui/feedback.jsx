@@ -1,112 +1,92 @@
-import { useEffect } from 'react'
-import { Inbox, TriangleAlert } from 'lucide-react'
+import { useId, useRef } from 'react'
+import { Inbox, TriangleAlert, X } from 'lucide-react'
 import { useToast } from '../../context/ToastContext.jsx'
+import useFocusTrap from '../../hooks/useFocusTrap.js'
+import Skeleton from './Skeleton.jsx'
 
-// Modal / drawer with Escape-to-close + basic focus handling.
+export { Skeleton }
+
 export function Modal({ open, onClose, title, children }) {
-  useEffect(() => {
-    if (!open) return
-    const onKey = (e) => e.key === 'Escape' && onClose()
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [open, onClose])
+  const panel = useRef(null)
+  const titleId = useId()
+  useFocusTrap({ open, onClose, ref: panel })
   if (!open) return null
-  return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-4 sm:items-center" role="dialog" aria-modal="true" aria-label={title} onClick={onClose}>
-      <div className="card w-full max-w-lg p-5" onClick={(e) => e.stopPropagation()}>
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-lg font-bold">{title}</h2>
-          <button onClick={onClose} aria-label="Close dialog" className="rounded-lg border border-[var(--color-border)] px-2.5 py-1.5">✕</button>
-        </div>
-        {children}
+  return <div className="ui-overlay" onClick={onClose}>
+    <div ref={panel} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby={titleId} className="ui-modal" onClick={event => event.stopPropagation()}>
+      <div className="ui-dialog-header">
+        <h2 id={titleId}>{title}</h2>
+        <button type="button" onClick={onClose} aria-label="Close dialog" className="ui-close"><X size={20} aria-hidden="true" /></button>
       </div>
+      {children}
     </div>
-  )
+  </div>
 }
 
 export function Drawer({ open, onClose, title, children }) {
-  useEffect(() => {
-    if (!open) return
-    const onKey = (e) => e.key === 'Escape' && onClose()
-    window.addEventListener('keydown', onKey)
-    document.body.style.overflow = 'hidden'
-    return () => {
-      window.removeEventListener('keydown', onKey)
-      document.body.style.overflow = ''
-    }
-  }, [open, onClose])
+  const panel = useRef(null)
+  const titleId = useId()
+  useFocusTrap({ open, onClose, ref: panel })
   if (!open) return null
-  return (
-    <div className="fixed inset-0 z-50 bg-black/70" role="dialog" aria-modal="true" aria-label={title} onClick={onClose}>
-      <div className="absolute inset-y-0 left-0 w-[86%] max-w-sm overflow-y-auto bg-[var(--color-surface)] p-5" onClick={(e) => e.stopPropagation()}>
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-lg font-bold">{title}</h2>
-          <button onClick={onClose} aria-label="Close filters" className="rounded-lg border border-[var(--color-border)] px-2.5 py-1.5">✕</button>
-        </div>
-        {children}
+  return <div className="ui-overlay ui-drawer-overlay" onClick={onClose}>
+    <div ref={panel} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby={titleId} className="ui-drawer" onClick={event => event.stopPropagation()}>
+      <div className="ui-dialog-header">
+        <h2 id={titleId}>{title}</h2>
+        <button type="button" onClick={onClose} aria-label="Close filters" className="ui-close"><X size={20} aria-hidden="true" /></button>
       </div>
+      {children}
     </div>
-  )
+  </div>
 }
 
 export function Toasts() {
   const { toasts } = useToast()
-  return (
-    <div aria-live="polite" className="fixed bottom-4 right-4 z-[60] flex w-[min(92vw,360px)] flex-col gap-2">
-      {toasts.map((t) => (
-        <div key={t.id} className="card-elevated border-l-4 p-3 text-sm" style={{ borderLeftColor: t.kind === 'error' ? '#fb7185' : t.kind === 'success' ? '#10D9A0' : '#38bdf8' }}>
-          {t.message}
-        </div>
-      ))}
-    </div>
-  )
+  return <div aria-live="polite" aria-atomic="false" aria-relevant="additions text" className="toast-stack">
+    {toasts.map(toast => <div key={toast.id} className={`ui-toast ui-toast--${toast.kind}`}>{toast.message}</div>)}
+  </div>
 }
 
-export function Tabs({ tabs, active, onChange }) {
-  return (
-    <div role="tablist" aria-label="Sections" className="flex flex-wrap gap-1 rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] p-1">
-      {tabs.map((t) => (
-        <button key={t.id} role="tab" aria-selected={active === t.id} onClick={() => onChange(t.id)}
-          className={`rounded-lg px-3.5 py-2 text-sm font-semibold ${active === t.id ? 'bg-[#2855FF] text-white' : 'text-[var(--color-muted)] hover:text-[var(--color-text)]'}`}>
-          {t.label}
-        </button>
-      ))}
-    </div>
-  )
-}
-
-export function Skeleton({ className = '' }) {
-  return <div aria-hidden className={`animate-pulse rounded-xl bg-black/5 ${className}`} />
+export function Tabs({ tabs, active, onChange, idPrefix = 'product-sections' }) {
+  function keydown(event) {
+    const current = tabs.findIndex(tab => tab.id === active)
+    let next
+    if (event.key === 'ArrowRight') next = (current + 1) % tabs.length
+    else if (event.key === 'ArrowLeft') next = (current - 1 + tabs.length) % tabs.length
+    else if (event.key === 'Home') next = 0
+    else if (event.key === 'End') next = tabs.length - 1
+    else return
+    event.preventDefault()
+    onChange(tabs[next].id)
+    event.currentTarget.querySelectorAll('[role="tab"]')[next]?.focus()
+  }
+  return <div role="tablist" aria-label="Sections" className="ui-tabs" onKeyDown={keydown}>
+    {tabs.map(tab => <button type="button" key={tab.id} role="tab" id={`${idPrefix}-tab-${tab.id}`} aria-controls={`${idPrefix}-panel-${tab.id}`} aria-selected={active === tab.id} tabIndex={active === tab.id ? 0 : -1} onClick={() => onChange(tab.id)} className="ui-tab">{tab.label}</button>)}
+  </div>
 }
 
 export function ProductGridSkeleton({ count = 8 }) {
-  return (
-    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4" aria-label="Loading products">
-      {Array.from({ length: count }).map((_, i) => (
-        <div key={i} className="card overflow-hidden"><Skeleton className="aspect-[16/10] !rounded-none" /><div className="space-y-2 p-3"><Skeleton className="h-4 w-3/4" /><Skeleton className="h-4 w-1/3" /></div></div>
-      ))}
-    </div>
-  )
+  return <div className="product-grid" aria-label="Loading products" role="status">
+    {Array.from({ length: count }, (_, index) => <div key={index} className="card overflow-hidden">
+      <Skeleton className="aspect-[3/4] !rounded-none" />
+      <div className="space-y-3 p-4"><Skeleton className="h-4 w-3/4" /><Skeleton className="h-4 w-1/2" /><Skeleton className="h-8 w-2/3" /></div>
+    </div>)}
+    <span className="sr-only">Loading products</span>
+  </div>
 }
 
 export function EmptyState({ title, hint, action }) {
-  return (
-    <div className="card flex flex-col items-center gap-2 p-10 text-center">
-      <Inbox size={36} className="text-[var(--color-muted)]" aria-hidden />
-      <h3 className="text-lg font-bold">{title}</h3>
-      {hint && <p className="max-w-md text-sm text-[var(--color-muted)]">{hint}</p>}
-      {action}
-    </div>
-  )
+  return <div className="card ui-state">
+    <Inbox size={36} className="ui-state-icon" aria-hidden="true" />
+    <h3>{title}</h3>
+    {hint && <p>{hint}</p>}
+    {action}
+  </div>
 }
 
 export function ErrorState({ title = 'Something went wrong', hint = 'Please try again.', onRetry }) {
-  return (
-    <div className="card flex flex-col items-center gap-2 p-10 text-center">
-      <TriangleAlert size={36} className="text-[#fbbf24]" aria-hidden />
-      <h3 className="text-lg font-bold">{title}</h3>
-      {hint && <p className="max-w-md text-sm text-[var(--color-muted)]">{hint}</p>}
-      {onRetry && <button onClick={onRetry} className="btn-primary px-4 py-2 text-sm">Retry</button>}
-    </div>
-  )
+  return <div className="card ui-state ui-state--error">
+    <TriangleAlert size={36} className="ui-state-icon" aria-hidden="true" />
+    <h3>{title}</h3>
+    {hint && <p>{hint}</p>}
+    {onRetry && <button type="button" onClick={onRetry} className="ui-button btn-primary">Retry</button>}
+  </div>
 }
