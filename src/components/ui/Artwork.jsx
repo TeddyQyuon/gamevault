@@ -1,55 +1,31 @@
 import { useState } from 'react'
 import { ARTWORK_FILES, ARTWORK_STYLES } from '../../utils/artwork.js'
+import { getBrand, brandFor } from '../../data/brands.js'
+import BrandLogo from './BrandLogo.jsx'
 
-export default function Artwork({ artKey, title, ratio = '16/10', className = '', src, fit, eager = false }) {
-  const rawFile = src || ARTWORK_FILES[artKey] || ARTWORK_FILES.default
-  // Attach cache-busting version if loading from storefront assets to guarantee fresh fetch
-  const file = (rawFile && rawFile.includes('/assets/storefront/') && !rawFile.includes('?v='))
-    ? `${rawFile}?v=4`
-    : rawFile
-
-  const cleanFile = (rawFile || '').split('?')[0]
-  const cleanSrc = (src || '').split('?')[0]
-
-  const resolvedKey = (artKey && ARTWORK_STYLES[artKey])
-    ? artKey
-    : Object.entries(ARTWORK_FILES).find(([, v]) => {
-        const cleanV = (v || '').split('?')[0]
-        return cleanV && (cleanV === cleanFile || cleanV === cleanSrc)
-      })?.[0] || artKey
-
-  const theme = ARTWORK_STYLES[resolvedKey] || {}
-  const insetScale = theme.padding ? Math.max(0.2, 1 - 2 * Number.parseFloat(theme.padding) / 100) : 1
-  const isSvg = cleanFile.endsWith('.svg')
-  const objectFit = fit || (theme && theme.fit) || (isSvg ? 'contain' : 'cover')
+export default function Artwork({ artKey, title, product, ratio = '16/10', className = '', src, fit, eager = false, decorative = false }) {
+  const brand = product ? brandFor(product) : getBrand(artKey)
+  const label = title || product?.title || brand?.name || 'GameVault'
+  // Only self-hosted files are rendered. Remote merchant URLs cannot bypass the registry.
+  const file = src?.startsWith('/') ? src : ARTWORK_FILES[artKey || product?.art] || brand?.logo || ARTWORK_FILES.default
+  const style = ARTWORK_STYLES[artKey || product?.art] || brand || {}
   const [failedSource, setFailedSource] = useState('')
-
+  const game = brand?.group === 'games'
+  const objectFit = fit || style.fit || (file?.endsWith('.svg') ? 'contain' : 'cover')
+  const padding = game ? '0%' : style.padding || '18%'
   return (
-    <div
-      className={`artwork relative overflow-hidden ${className}`}
-      style={{
-        aspectRatio: ratio,
-        background: theme.background || 'var(--color-surface, #0e1626)',
-      }}
-    >
+    <div className={`artwork ${game ? 'artwork--game' : 'artwork--brand'} ${className}`}
+      style={{ aspectRatio: ratio, '--artwork-background': style.background || 'var(--color-artwork)', '--artwork-fit': objectFit, '--artwork-padding': padding }}>
+      {game && objectFit === 'contain' && brand.hero && <img className="artwork-backdrop" src={brand.hero} alt="" aria-hidden="true" width="460" height="215" loading={eager ? 'eager' : 'lazy'} decoding="async" />}
       {failedSource !== file ? (
-        <img
-          src={file}
-          alt={`${title} product artwork`}
-          loading={eager ? 'eager' : 'lazy'}
-          onError={() => setFailedSource(file)}
-          style={{
-            position: 'absolute',
-            inset: 0,
-            width: '100%',
-            height: '100%',
-            objectFit,
-            transform: insetScale < 1 ? `scale(${insetScale})` : undefined,
-          }}
-        />
+        <img className="artwork-image" src={file} alt={decorative ? '' : `${label} product artwork`}
+          width={game ? 600 : 480} height={game ? 900 : 480}
+          loading={eager ? 'eager' : 'lazy'} decoding="async" fetchPriority={eager ? 'high' : 'auto'}
+          onError={() => setFailedSource(file)} />
       ) : (
-        <span className="flex h-full items-center justify-center p-4 text-center text-sm text-[var(--color-muted)]">
-          Product image unavailable
+        <span className="artwork-fallback">
+          <BrandLogo brand={game ? 'steam' : 'default'} size={56} decorative />
+          <span>{label}</span>
         </span>
       )}
     </div>

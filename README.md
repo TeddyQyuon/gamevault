@@ -51,3 +51,17 @@ npm run build
 npm run lint
 npm run api:lint
 ```
+
+## Adding a product
+
+1. Add native artwork metadata to `src/data/brands.js`: id, name, local logo/cover, original background, fit, padding, tag, group and source. Existing artwork exports and subscription templates derive their presentation metadata from this registry.
+2. Save the original logo in `public/assets/storefront/`, or a publisher cover in `public/assets/storefront/games/`. Preserve native proportions and colors; never reconstruct a vendor wordmark.
+3. Record the exact source URL and download/review date in `public/assets/storefront/sources.json`. A review date for an existing file is not a claim of a fresh download.
+4. Add product data using its registered `art` key and a local `artworkPath`. Review real supply, region and fulfilment separately; a logo is not evidence of stock or authority to sell.
+5. Run `npm test`, `npm run lint` and `npm run build`. Artwork tests cover every product and subscription, local files larger than 100 bytes, and source records.
+
+`node scripts/fetch-storefront-assets.mjs` fetches official Steam portrait capsules first and keeps local landscape headers for fallback. Inter is self-hosted with its OFL license under `public/fonts/`. No new application dependencies were added.
+
+### Redesign verification notes
+
+The original test suite contains a Windows-only local-path assertion and requires two Antigravity manifests. Those requirements conflict with portable execution and the requested single GameVault manifest. They remain unchanged pending review. The Game Pass tile uses the native parent Xbox mark instead of the old reconstructed Ultimate wordmark; its legacy SVG-content assertion remains unchanged and requires an approved exact lockup or a reviewed assertion update. `MobileCoder.jsx` is explicitly protected and retains three original literal colors.

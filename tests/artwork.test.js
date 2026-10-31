@@ -145,3 +145,32 @@ describe('storefront brand artwork & styling verification', () => {
   })
 })
 
+
+// Complete catalogue coverage: a product cannot ship with an unregistered,
+// missing or untraceable cover/logo. Existing assertions above are preserved.
+import { PRODUCTS } from '../src/data/products.js'
+import { SUBSCRIPTION_TEMPLATES } from '../src/data/subscriptionServices.js'
+import { SUBSCRIPTION_PLANS } from '../src/data/subscriptions.js'
+import { BRANDS, brandFor, getBrand } from '../src/data/brands.js'
+
+describe('complete native artwork registry', () => {
+  const sources = JSON.parse(fs.readFileSync(path.join(rootDir, 'public/assets/storefront/sources.json'), 'utf8'))
+  const verify = (brand, label) => {
+    assert.ok(brand, `${label} needs a brand registry entry`)
+    assert.ok(brand.logo.startsWith('/assets/'), `${label} must use a local asset`)
+    assert.ok(fs.statSync(path.join(rootDir, 'public', brand.logo)).size > 100, `${label} asset must be larger than 100 bytes`)
+    const source = sources.find(item => item.file === brand.logo)
+    assert.ok(source?.source?.startsWith('https://'), `${label} needs recorded provenance`)
+    assert.match(source.downloadedAt || source.retrievedAt || source.reviewedAt || '', /^\d{4}-\d{2}-\d{2}/, `${label} needs a source date`)
+  }
+  it('covers every product and subscription with a native local asset and source', () => {
+    for (const product of PRODUCTS) verify(brandFor(product), product.title)
+    for (const item of [...SUBSCRIPTION_TEMPLATES, ...SUBSCRIPTION_PLANS]) verify(getBrand(item.art), item.id)
+  })
+  it('covers every registered brand and game with provenance', () => {
+    for (const brand of new Set(Object.values(BRANDS))) verify(brand, brand.id)
+  })
+  it('renders no hotlinked product images', () => {
+    for (const product of PRODUCTS) assert.ok(!product.artworkPath || product.artworkPath.startsWith('/'), product.title)
+  })
+})
