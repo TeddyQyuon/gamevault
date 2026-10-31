@@ -2,7 +2,7 @@
 
 Date: 31 October 2026 (Singapore)
 Branch: feat/storefront-marketplace-redesign
-Status: implemented locally for review; release gates remain unresolved. Six phase/documentation commits are retained locally. No production merge or real payment performed. GitHub push was rejected by automatic approval review as insufficiently authorized external export; do not bypass this rejection. Explicit user approval is required before pushing branch feat/storefront-marketplace-redesign to TeddyQyuon/gamevault. No PR has been created.
+Status: the owner explicitly authorized committing, pushing and redeploying GameVault on 31 October 2026, after reviewing the reported verification limitations. Prior push authorization blocker is resolved. Production release is in progress; the three legacy test conflicts and performance target remain open. No real payment has been performed. The saved redesign commits and release handoff will be pushed to TeddyQyuon/gamevault and the production deployment verified in the owner's signed-in cloud browser.
 
 ## Objective and boundaries
 
@@ -32,7 +32,7 @@ npm install succeeded. npm test: 34/35 (existing Windows directory assertion fai
 
 ## Blockers and decisions
 
-1. tests/coder-pwa.test.js is outside the allowed test-edit scope and contradicts the requested one GameVault manifest. Its Windows filesystem assertion is nonportable. Approve an explicit test migration preserving meaningful PWA/portable preset coverage before merge.
+1. tests/coder-pwa.test.js is outside the allowed test-edit scope and contradicts the requested one GameVault manifest. Its Windows filesystem assertion is nonportable. An explicit test migration preserving meaningful PWA/portable preset coverage is still needed; this release does not resolve that test conflict.
 2. Provide an approved exact Xbox Game Pass Ultimate lockup, or approve native-parent Xbox presentation with a reviewed replacement of the old asset-specific assertion. No logo was invented or recolored to satisfy a string test.
 3. Mobile performance remains below90 and requires further profiling. Do not label the release complete against the requested Definition of Done.
 4. Known pre-existing payment confirmation/readiness behavior identified before this redesign remains out of scope under the frontend-only boundary. Backend production readiness must be reviewed separately.
@@ -41,4 +41,4 @@ npm install succeeded. npm test: 34/35 (existing Windows directory assertion fai
 
 1. Resolve the PWA/preset and Xbox asset-test decisions with the owner, keeping existing coverage meaningful.
 2. Profile carousel LCP and remaining unused/render-blocking CSS, then repeat mobile Lighthouse under stable conditions until the required threshold is met.
-3. Review screenshots and local commits, explicitly approve the branch push, then create a draft PR. Verify protected-route behavior against the real backend and release only after gates pass.
+3. Verify the owner-authorized production release in Vercel and the public storefront, then address the remaining test and performance work separately.
