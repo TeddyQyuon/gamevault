@@ -21,10 +21,10 @@ export default function SubscriptionCard({ plan, period, highlight }) {
   const variantId = variantForPlan(plan, period)
 
   return (
-    <article className={`flex flex-col overflow-hidden rounded-[12px] border ${highlight ? 'border-[#8B5CF6] bg-[#141b36]' : 'border-[var(--color-border)] bg-[var(--color-surface)]'}`}>
+    <article className={`subscription-plan-card ${highlight ? 'subscription-plan-card--featured' : ''}`}>
       <Artwork artKey={plan.art || plan.id} title={plan.name} ratio="16/8" />
       <div className="flex flex-1 flex-col p-5">
-      {plan.badge && <span className="mb-2 w-fit rounded-full bg-[#8B5CF6] px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-white">{plan.badge}</span>}
+      
       <h3 className="text-lg font-extrabold">{plan.name}</h3>
       <p className="text-sm text-[var(--color-muted)]">{plan.blurb}</p>
       <p className="mt-3">
@@ -53,7 +53,7 @@ export default function SubscriptionCard({ plan, period, highlight }) {
       <ul className="mt-4 space-y-1.5 text-sm">
         {plan.features.map((f) => (
           <li key={f} className="flex items-start gap-2">
-            <Check size={15} className="mt-0.5 shrink-0 text-[#10D9A0]" aria-hidden />
+            <Check size={15} className="mt-0.5 shrink-0 plan-highlights" aria-hidden />
             <span>{f}</span>
           </li>
         ))}

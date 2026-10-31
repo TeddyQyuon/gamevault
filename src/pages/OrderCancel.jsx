@@ -27,10 +27,10 @@ export default function OrderCancel() {
   }, [orderId])
 
   return (
-    <div className="mx-auto max-w-xl text-center">
+    <div className="customer-page order-status-page mx-auto max-w-xl text-center">
       <Breadcrumbs trail={[{ label: 'Home', to: '/' }, { label: 'Checkout status' }]} />
       <div className="card p-8">
-        <Undo2 size={44} className="mx-auto text-[#fbbf24]" aria-hidden />
+        <Undo2 size={44} className="mx-auto text-[var(--color-warning)]" aria-hidden />
         <h1 className="mt-2 text-3xl font-extrabold">{payStatus === 'paid' ? 'Payment received' : 'Checkout closed'}</h1>
         {payStatus === 'checking' && <p className="mt-1 text-sm text-[var(--color-muted)]">Checking your order status…</p>}
         {payStatus === 'paid' && (

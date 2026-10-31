@@ -82,15 +82,15 @@ export default function OrderSuccess() {
   const manual = order?.items.some(item => item.fulfilment === 'manual')
   const waiting = order?.items.filter(item => item.fulfilment === 'manual' && !item.deliveredAt) || []
   const complete = order?.fulfilStatus === 'fulfilled'
-  return <div className="mx-auto max-w-2xl text-center">
+  return <div className="customer-page order-status-page mx-auto max-w-2xl text-center">
     <Breadcrumbs trail={[{ label: 'Home', to: '/' }, { label: 'Order status' }]} />
     <div className="card p-6 sm:p-8">
       {state === 'loading' || state === 'pending' ? <>
-        <Clock size={48} className="mx-auto animate-pulse text-[var(--color-primary)]" aria-hidden />
+        <Clock size={48} className="mx-auto text-[var(--color-primary)]" aria-hidden />
         <h1 className="mt-3 text-2xl font-extrabold">Confirming payment…</h1>
         <p className="mt-2 text-sm text-[var(--color-muted)]">Please wait while your payment is confirmed.</p>
       </> : state === 'paid' ? <>
-        <CheckCircle2 size={48} className="mx-auto text-green-600" aria-hidden />
+        <CheckCircle2 size={48} className="mx-auto text-[var(--color-success)]" aria-hidden />
         <h1 className="mt-3 text-2xl font-extrabold">{complete ? 'Order delivered' : 'Payment received'}</h1>
         {testMode && <p className="mt-2 text-sm">Test payment · No real charge</p>}
         <p className="mt-2 text-sm text-[var(--color-muted)]">Order <strong>{order.id}</strong> · {formatPrice(order.totalCents)} {order.currency}</p>
@@ -118,14 +118,14 @@ export default function OrderSuccess() {
               ))}
             </div>
           ) : (
-            item.codes?.map(code => <code key={code} className="mt-2 block select-all rounded-lg bg-[#080c14] border border-[var(--color-border)] p-2 font-mono text-sm text-[var(--color-text)]">{code}</code>)
+            item.codes?.map(code => <code key={code} className="mt-2 block select-all rounded-lg bg-[var(--color-elevated)] border border-[var(--color-border)] p-2 font-mono text-sm text-[var(--color-text)]">{code}</code>)
           )}
           {item.fulfilment !== 'manual' && !item.codes?.length && !item.allocations?.length && <p className="mt-1 text-[var(--color-muted)]">Delivery pending. Contact support if you need help.</p>}
         </li>)}</ul>
         {order.guest && <p className="mt-3 text-xs text-[var(--color-muted)]">Keep this private order link to check delivery status.</p>}
         <div className="mt-5 flex flex-wrap justify-center gap-3"><button className="btn-primary px-4 py-2 text-sm" onClick={() => setRetry(value => value + 1)}>Refresh status</button>{!order.guest && <Button to={`/account/orders/${order.id}`} variant="secondary">Order details</Button>}<Button to="/subscriptions" variant="secondary">Continue shopping</Button><Button to={`/support?order=${encodeURIComponent(orderId)}`} variant="ghost">Get help</Button></div>
       </> : state === 'failed' ? <>
-        <XCircle size={48} className="mx-auto text-red-600" aria-hidden />
+        <XCircle size={48} className="mx-auto text-[var(--color-danger)]" aria-hidden />
         <h1 className="mt-3 text-2xl font-extrabold">Payment wasn’t completed</h1>
         <p className="mt-2 text-sm text-[var(--color-muted)]">Your cart is saved. Please try checkout again.</p>
         <div className="mt-4"><Button to="/checkout">Return to checkout</Button></div>

@@ -194,9 +194,9 @@ export default function Admin() {
           </div>
           {preview && (
             <div className="rounded-xl border border-[var(--color-border)] p-3 text-sm" role="status">
-              <p>Total lines: <strong>{preview.total}</strong> · Valid new: <strong className="text-[#15803d]">{preview.valid}</strong> · Duplicates skipped: <strong>{preview.duplicateCount}</strong></p>
+              <p>Total lines: <strong>{preview.total}</strong> · Valid new: <strong className="text-success">{preview.valid}</strong> · Duplicates skipped: <strong>{preview.duplicateCount}</strong></p>
               {!!preview.errors?.length && (
-                <ul className="mt-2 space-y-1 text-xs text-[#b91c1c]">
+                <ul className="mt-2 space-y-1 text-xs text-danger">
                   {preview.errors.slice(0, 8).map((er, i) => <li key={i}>Line {er.line}: {er.error} ({er.code})</li>)}
                 </ul>
               )}

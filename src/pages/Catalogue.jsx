@@ -1,169 +1,342 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import { SlidersHorizontal } from 'lucide-react'
+import { Link, useSearchParams } from 'react-router-dom'
+import { ArrowRight, SearchX, SlidersHorizontal, X } from 'lucide-react'
 import { getProducts, getRecent } from '../services/catalogService.js'
 import { PLATFORMS, GENRES, REGIONS } from '../data/products.js'
 import { ProductCard } from '../components/products/ProductCard.jsx'
-import Artwork from '../components/ui/Artwork.jsx'
 import { Breadcrumbs, Button } from '../components/ui/controls.jsx'
 import { CheckRow, FilterGroup } from '../components/ui/search.jsx'
-import { Drawer, EmptyState, ProductGridSkeleton } from '../components/ui/feedback.jsx'
+import { Drawer, ProductGridSkeleton } from '../components/ui/feedback.jsx'
+import Rail from '../components/ui/Rail.jsx'
+import SectionHeader from '../components/ui/SectionHeader.jsx'
 
-const PAGE_SIZE = 8
+const PAGE_SIZE = 12
 const SORTS = [
   { id: 'featured', label: 'Featured' },
-  { id: 'price-asc', label: 'Price: Low to High' },
-  { id: 'price-desc', label: 'Price: High to Low' },
+  { id: 'price-asc', label: 'Price: low to high' },
+  { id: 'price-desc', label: 'Price: high to low' },
+  { id: 'discount', label: 'Best discount' },
+  { id: 'name', label: 'Name: A to Z' },
 ]
+const discountFor = (product) =>
+  Math.max(
+    0,
+    ...product.variants.map((variant) =>
+      variant.compareAtCents > variant.priceCents
+        ? (variant.compareAtCents - variant.priceCents) / variant.compareAtCents
+        : 0,
+    ),
+  )
 
-// Reused by /games, /gift-cards, /streaming, /deals, /search —
-// callers pass a fixed category / dealsOnly / title instead of duplicating code.
-export default function Catalogue({ category, dealsOnly, title, subtitle, heroArt = 'elden-ring' }) {
+// Shared by the existing category and search routes. URL parameters remain the
+// source of truth so filters, pagination and browser history keep working.
+export default function Catalogue({ category, dealsOnly, title, subtitle }) {
   const [params, setParams] = useSearchParams()
   const [items, setItems] = useState([])
   const [recent, setRecent] = useState([])
   const [loading, setLoading] = useState(true)
   const [drawer, setDrawer] = useState(false)
-
-  const filters = useMemo(() => ({
-    q: params.get('q') || '',
-    platforms: params.getAll('platform'),
-    genres: params.getAll('genre'),
-    regions: params.getAll('region'),
-    maxPrice: params.get('max') ? Number(params.get('max')) : null,
-    inStockOnly: params.get('stock') === 'in',
-    sort: params.get('sort') || 'featured',
-    page: Math.max(1, Number(params.get('page')) || 1),
-  }), [params])
+  const filters = useMemo(
+    () => ({
+      q: params.get('q') || '',
+      platforms: params.getAll('platform'),
+      genres: params.getAll('genre'),
+      regions: params.getAll('region'),
+      maxPrice: params.get('max') ? Number(params.get('max')) : null,
+      inStockOnly: params.get('stock') === 'in',
+      sort: params.get('sort') || 'featured',
+      page: Math.max(1, Number(params.get('page')) || 1),
+    }),
+    [params],
+  )
 
   useEffect(() => {
     let alive = true
     setLoading(true)
-    getProducts({ category, dealsOnly, q: filters.q, platforms: filters.platforms, genres: filters.genres, regions: filters.regions, maxPrice: filters.maxPrice, inStockOnly: filters.inStockOnly, sort: filters.sort })
-      .then((list) => alive && (setItems(list), setLoading(false)))
-    getRecent().then((r) => alive && setRecent(r))
-    return () => { alive = false }
-  }, [category, dealsOnly, filters.q, filters.platforms, filters.genres, filters.regions, filters.maxPrice, filters.inStockOnly, filters.sort])
+    getProducts({
+      category,
+      dealsOnly,
+      q: filters.q,
+      platforms: filters.platforms,
+      genres: filters.genres,
+      regions: filters.regions,
+      maxPrice: filters.maxPrice,
+      inStockOnly: filters.inStockOnly,
+      sort: filters.sort,
+    }).then((list) => {
+      if (!alive) return
+      // These are display orderings only; prices and availability are unchanged.
+      const ordered = [...list]
+      if (filters.sort === 'discount') ordered.sort((a, b) => discountFor(b) - discountFor(a))
+      if (filters.sort === 'name') ordered.sort((a, b) => a.title.localeCompare(b.title))
+      setItems(ordered)
+      setLoading(false)
+    })
+    getRecent().then((list) => {
+      if (alive) setRecent(list)
+    })
+    return () => {
+      alive = false
+    }
+  }, [
+    category,
+    dealsOnly,
+    filters.q,
+    filters.platforms,
+    filters.genres,
+    filters.regions,
+    filters.maxPrice,
+    filters.inStockOnly,
+    filters.sort,
+  ])
 
-  const patch = (mut) => {
+  const patch = (mutation) => {
     const next = new URLSearchParams(params)
-    mut(next)
-    next.delete('page') // reset pagination whenever filters change
+    mutation(next)
+    next.delete('page')
     setParams(next, { replace: false })
   }
-  const toggleList = (key, value) => patch((n) => {
-    const cur = n.getAll(key)
-    n.delete(key)
-    cur.filter((x) => x !== value).forEach((x) => n.append(key, x))
-    if (!cur.includes(value)) n.append(key, value)
-  })
-
+  const toggleList = (key, value) =>
+    patch((next) => {
+      const current = next.getAll(key)
+      next.delete(key)
+      current.filter((item) => item !== value).forEach((item) => next.append(key, item))
+      if (!current.includes(value)) next.append(key, value)
+    })
+  const clearFilters = () => setParams({ sort: filters.sort })
   const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE))
   const page = Math.min(filters.page, totalPages)
   const pageItems = items.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
-  const hasFilters = filters.platforms.length + filters.genres.length + filters.regions.length > 0 || filters.maxPrice || filters.inStockOnly || filters.q
+  const activeFilters = [
+    ...filters.platforms.map((value) => ({
+      key: `platform-${value}`,
+      label: value,
+      remove: () => toggleList('platform', value),
+    })),
+    ...filters.genres.map((value) => ({
+      key: `genre-${value}`,
+      label: value,
+      remove: () => toggleList('genre', value),
+    })),
+    ...filters.regions.map((value) => ({
+      key: `region-${value}`,
+      label: value,
+      remove: () => toggleList('region', value),
+    })),
+    ...(filters.q
+      ? [{ key: 'q', label: `Search: ${filters.q}`, remove: () => patch((next) => next.delete('q')) }]
+      : []),
+    ...(filters.maxPrice
+      ? [
+          {
+            key: 'max',
+            label: `Up to S$${filters.maxPrice}`,
+            remove: () => patch((next) => next.delete('max')),
+          },
+        ]
+      : []),
+    ...(filters.inStockOnly
+      ? [{ key: 'stock', label: 'In stock', remove: () => patch((next) => next.delete('stock')) }]
+      : []),
+  ]
 
   const filterPanel = (
-    <div className="space-y-4">
+    <div className="catalogue-filter-groups">
       <FilterGroup title="Platform">
-        {PLATFORMS.map((p) => <CheckRow key={p} label={p} checked={filters.platforms.includes(p)} onChange={() => toggleList('platform', p)} />)}
+        {PLATFORMS.map((platform) => (
+          <CheckRow
+            key={platform}
+            label={platform}
+            checked={filters.platforms.includes(platform)}
+            onChange={() => toggleList('platform', platform)}
+          />
+        ))}
       </FilterGroup>
       <FilterGroup title="Genre">
-        {GENRES.map((g) => <CheckRow key={g} label={g} checked={filters.genres.includes(g)} onChange={() => toggleList('genre', g)} />)}
+        {GENRES.map((genre) => (
+          <CheckRow
+            key={genre}
+            label={genre}
+            checked={filters.genres.includes(genre)}
+            onChange={() => toggleList('genre', genre)}
+          />
+        ))}
       </FilterGroup>
       <FilterGroup title="Region">
-        {REGIONS.map((r) => <CheckRow key={r} label={r} checked={filters.regions.includes(r)} onChange={() => toggleList('region', r)} />)}
+        {REGIONS.map((region) => (
+          <CheckRow
+            key={region}
+            label={region}
+            checked={filters.regions.includes(region)}
+            onChange={() => toggleList('region', region)}
+          />
+        ))}
       </FilterGroup>
       <FilterGroup title="Price">
-        {[{ l: 'Under S$10', m: 10 }, { l: 'Under S$30', m: 30 }, { l: 'Under S$60', m: 60 }].map((o) => (
-          <CheckRow key={o.l} label={o.l} checked={filters.maxPrice === o.m} onChange={(c) => patch((n) => { c ? n.set('max', o.m) : n.delete('max') })} />
+        {[
+          { label: 'S$10 and under', max: 10 },
+          { label: 'S$30 and under', max: 30 },
+          { label: 'S$60 and under', max: 60 },
+        ].map((option) => (
+          <CheckRow
+            key={option.max}
+            label={option.label}
+            checked={filters.maxPrice === option.max}
+            onChange={(checked) =>
+              patch((next) => {
+                checked ? next.set('max', option.max) : next.delete('max')
+              })
+            }
+          />
         ))}
       </FilterGroup>
       <FilterGroup title="Availability">
-        <CheckRow label="In stock only" checked={filters.inStockOnly} onChange={(c) => patch((n) => { c ? n.set('stock', 'in') : n.delete('stock') })} />
+        <CheckRow
+          label="In stock only"
+          checked={filters.inStockOnly}
+          onChange={(checked) =>
+            patch((next) => {
+              checked ? next.set('stock', 'in') : next.delete('stock')
+            })
+          }
+        />
       </FilterGroup>
     </div>
   )
 
   return (
-    <div>
+    <div className="catalogue-page">
       <Breadcrumbs trail={[{ label: 'Home', to: '/' }, { label: title }]} />
-      <section className="card mb-5 overflow-hidden">
-        <div className="grid md:grid-cols-[1.2fr_.8fr]">
-          <div className="p-6 md:p-8">
-            <h1 className="text-3xl font-extrabold md:text-4xl">Browse <span className="gradient-text">{title.replace('Browse ', '')}</span></h1>
-            <p className="mt-1 text-[var(--color-muted)]">{subtitle}</p>
-            {filters.q && <p className="mt-2 text-sm">Search: <strong>“{filters.q}”</strong></p>}
-          </div>
-          <div className="hidden md:block"><Artwork artKey={heroArt} title={`${title} banner`} ratio="21/9" className="h-full" /></div>
+      <header className="catalogue-hero">
+        <div>
+          <p className="eyebrow">The GameVault collection</p>
+          <h1>{title}</h1>
+          <p>{subtitle}</p>
         </div>
-      </section>
-
-      <div className="grid gap-5 lg:grid-cols-[240px_1fr]">
-        <aside className="card hidden h-fit p-4 lg:block" aria-label="Filters">
-          <div className="mb-2 flex items-center justify-between">
-            <h2 className="font-extrabold">Filters</h2>
-            {hasFilters && <button onClick={() => setParams({ sort: filters.sort })} className="text-xs font-semibold text-[var(--color-cyan)] hover:underline">Clear filters</button>}
+        <span className="catalogue-hero-note">
+          Check your platform.
+          <br />
+          Choose your region.
+        </span>
+      </header>
+      <div className="catalogue-layout">
+        <aside className="catalogue-filters" aria-label="Filters">
+          <div className="catalogue-filter-heading">
+            <h2>Filter by</h2>
+            {activeFilters.length > 0 && <button onClick={clearFilters}>Clear all</button>}
           </div>
           {filterPanel}
         </aside>
-
-        <div>
-          <div className="mb-3 flex flex-wrap items-center gap-2">
-            <button className="rounded-lg border border-[var(--color-border)] px-3 py-2 text-sm font-semibold lg:hidden" onClick={() => setDrawer(true)}>
-              <span className="inline-flex items-center gap-1.5"><SlidersHorizontal size={15} aria-hidden /> Filters</span>
+        <div className="catalogue-results">
+          <div className="catalogue-toolbar">
+            <button
+              className="catalogue-filter-toggle"
+              onClick={() => setDrawer(true)}
+              aria-haspopup="dialog"
+            >
+              <SlidersHorizontal size={17} aria-hidden />
+              Filters{activeFilters.length > 0 && <span>{activeFilters.length}</span>}
             </button>
-            <p className="text-sm text-[var(--color-muted)]" role="status">
-              {loading ? 'Loading…' : `Showing ${pageItems.length} of ${items.length} result${items.length === 1 ? '' : 's'}`}
+            <p role="status" aria-live="polite">
+              {loading
+                ? 'Finding your next favourite…'
+                : `${items.length} result${items.length === 1 ? '' : 's'}`}
             </p>
-            <label className="ml-auto flex items-center gap-2 text-sm">
-              Sort by
-              <select value={filters.sort} onChange={(e) => patch((n) => n.set('sort', e.target.value))} className="input !w-auto" aria-label="Sort products">
-                {SORTS.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
+            <label className="catalogue-sort">
+              <span>Sort by</span>
+              <select
+                value={filters.sort}
+                onChange={(event) => patch((next) => next.set('sort', event.target.value))}
+                className="input"
+                aria-label="Sort products"
+              >
+                {SORTS.map((sort) => (
+                  <option key={sort.id} value={sort.id}>
+                    {sort.label}
+                  </option>
+                ))}
               </select>
             </label>
           </div>
-
-          {loading ? <ProductGridSkeleton /> : pageItems.length === 0 ? (
-            <EmptyState
-              title="No products match those filters"
-              hint="Try removing a filter or searching for another product."
-              action={hasFilters ? <Button variant="secondary" onClick={() => setParams({})}>Clear filters</Button> : null}
-            />
-          ) : (
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
-              {pageItems.map((p) => <ProductCard key={p.id} product={p} />)}
+          {activeFilters.length > 0 && (
+            <div className="catalogue-active-filters" aria-label="Active filters">
+              {activeFilters.map((filter) => (
+                <button key={filter.key} onClick={filter.remove} aria-label={`Remove ${filter.label} filter`}>
+                  {filter.label}
+                  <X size={14} aria-hidden />
+                </button>
+              ))}
+              <button className="catalogue-clear" onClick={clearFilters}>
+                Clear all
+              </button>
             </div>
           )}
-
+          {loading ? (
+            <ProductGridSkeleton count={12} />
+          ) : pageItems.length ? (
+            <div className="product-grid catalogue-grid">
+              {pageItems.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          ) : (
+            <div className="catalogue-empty">
+              <SearchX size={42} strokeWidth={1.5} aria-hidden />
+              <h2>A fresh search could do it.</h2>
+              <p>We couldn’t find a match for these filters. Try another title, platform or region.</p>
+              <div>
+                <Button variant="secondary" onClick={clearFilters}>
+                  Clear filters
+                </Button>
+                <Link to="/subscriptions">
+                  Explore subscriptions <ArrowRight size={16} aria-hidden />
+                </Link>
+              </div>
+            </div>
+          )}
+          {!loading && items.length > 0 && (
+            <p className="catalogue-page-count">
+              Showing {(page - 1) * PAGE_SIZE + 1}–{Math.min(page * PAGE_SIZE, items.length)} of{' '}
+              {items.length} products
+            </p>
+          )}
           {totalPages > 1 && (
-            <nav aria-label="Pagination" className="mt-5 flex flex-wrap items-center gap-1.5">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((n) => (
-                <button key={n} aria-label={`Page ${n}`} aria-current={n === page ? 'page' : undefined}
-                  onClick={() => { const next = new URLSearchParams(params); next.set('page', n); setParams(next) }}
-                  className={`min-h-[40px] min-w-[40px] rounded-lg border px-3 text-sm font-bold ${n === page ? 'border-transparent bg-[var(--color-primary)] text-white' : 'border-[var(--color-border)] hover:border-[var(--color-cyan)] text-[var(--color-text)]'}`}>
-                  {n}
+            <nav aria-label="Pagination" className="catalogue-pagination">
+              {Array.from({ length: totalPages }, (_, index) => index + 1).map((number) => (
+                <button
+                  key={number}
+                  aria-label={`Page ${number}`}
+                  aria-current={number === page ? 'page' : undefined}
+                  onClick={() => {
+                    const next = new URLSearchParams(params)
+                    next.set('page', number)
+                    setParams(next)
+                  }}
+                >
+                  {number}
                 </button>
               ))}
             </nav>
           )}
-
-          {recent.length > 0 && (
-            <section aria-label="Recently viewed" className="card mt-6 p-4">
-              <h2 className="mb-3 font-extrabold">Recently Viewed</h2>
-              <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-                {recent.slice(0, 4).map((p) => <ProductCard key={p.id} product={p} />)}
-              </div>
-            </section>
-          )}
         </div>
       </div>
-
-      <Drawer open={drawer} onClose={() => setDrawer(false)} title="Filters">
+      {recent.length > 0 && (
+        <section className="catalogue-recent" aria-label="Recently viewed">
+          <SectionHeader title="Recently viewed" subtitle="Take another look." />
+          <Rail label="Recently viewed products">
+            {recent.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </Rail>
+        </section>
+      )}
+      <Drawer open={drawer} onClose={() => setDrawer(false)} title="Filter products">
         {filterPanel}
-        <div className="mt-4 flex gap-2">
-          <button onClick={() => setParams({})} className="flex-1 rounded-lg border border-[var(--color-border)] py-2.5 text-sm font-semibold">Clear all</button>
-          <button onClick={() => setDrawer(false)} className="btn-primary flex-1 py-2.5 text-sm">Show {items.length} results</button>
+        <div className="catalogue-drawer-actions">
+          <button onClick={clearFilters}>Clear all</button>
+          <button onClick={() => setDrawer(false)} className="btn-primary">
+            Show {items.length} results
+          </button>
         </div>
       </Drawer>
     </div>

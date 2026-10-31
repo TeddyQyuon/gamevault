@@ -1,0 +1,60 @@
+/* Native artwork: one registry supplies both cover art and provider tile colors. */
+.artwork { position:relative;overflow:hidden;width:100%;background:var(--artwork-background,var(--color-artwork));isolation:isolate; }
+.artwork-image { display:block;position:absolute;inset:0;width:100%;height:100%;padding:var(--artwork-padding,0);object-fit:var(--artwork-fit,contain);transition:transform var(--dur) var(--ease-out); }
+.artwork-backdrop { position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:blur(18px);opacity:.3;transform:scale(1.15); }
+.artwork-fallback { display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--space-3,12px);position:absolute;inset:0;padding:var(--space-4,16px);color:var(--color-muted);font-size:.8125rem;text-align:center;background:var(--color-elevated); }
+.brand-logo { display:inline-flex;flex-shrink:0;align-items:center;justify-content:center;width:var(--brand-size,24px);height:var(--brand-size,24px);overflow:hidden;border-radius:var(--radius-sm,8px);background:var(--brand-background,var(--color-elevated));vertical-align:middle; }
+.brand-logo img { display:block;width:calc(100% - var(--brand-padding,18%) - var(--brand-padding,18%));height:calc(100% - var(--brand-padding,18%) - var(--brand-padding,18%));object-fit:contain; }
+.brand-logo--tile { width:100%;height:auto;aspect-ratio:1; }
+.brand-logo-fallback { overflow:hidden;font-size:.625rem;line-height:1.2;color:var(--color-muted); }
+
+.market-product-card { position:relative;display:flex;flex-direction:column;height:100%;min-width:0;overflow:hidden;border:1px solid var(--color-border);border-radius:var(--radius-lg,16px);background:var(--color-surface);transition:transform var(--dur) var(--ease-out); }
+.product-image-wrap { position:relative;overflow:hidden;background:var(--color-artwork); }
+.product-art-link { display:block; }
+.product-image-wrap .artwork { border-radius:0; }
+.product-heart { position:absolute;top:8px;right:8px;display:grid;place-items:center;width:44px;height:44px;border:1px solid var(--color-border);border-radius:var(--radius-pill,999px);background:var(--color-surface);color:var(--color-muted);box-shadow:var(--shadow-sm); }
+.product-heart.wished { color:var(--color-danger); }
+.product-discount { position:absolute;left:10px;top:10px;border-radius:var(--radius-sm,8px);padding:5px 8px;background:var(--color-danger);color:var(--color-on-primary);font-size:.75rem;font-weight:750;line-height:1.2; }
+.product-card-body { display:flex;flex-direction:column;flex:1;gap:8px;padding:14px; }
+.product-card-meta { display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:24px; }
+.product-card-type { color:var(--color-muted);font-size:.625rem;line-height:1.4;letter-spacing:.065em;text-transform:uppercase;font-weight:650; }
+.product-platforms { display:flex;gap:3px; }
+.product-platforms .brand-logo { border-radius:4px;padding:4px; }
+.product-title { display:block;color:var(--color-text); }
+.product-title h3 { display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.75em;margin:0;font-size:.875rem;line-height:1.375;font-weight:700;letter-spacing:-.015em; }
+.product-title:hover { color:var(--color-primary); }
+.product-card-region { display:flex;align-items:flex-start;gap:5px;color:var(--color-muted);font-size:.6875rem;line-height:1.45; }
+.product-card-region svg { flex-shrink:0;margin-top:2px; }
+.product-card-edition { overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--color-muted);font-size:.6875rem; }
+.product-delivery { display:flex;align-items:center;gap:5px;color:var(--color-success);font-size:.6875rem;font-weight:550;line-height:1.4; }
+.product-delivery--neutral { color:var(--color-muted); }
+.product-card-price { margin-top:auto;padding-top:10px; }
+.product-card-price .price { align-items:flex-start; }
+.product-card-actions { display:flex;gap:6px;margin-top:2px; }
+.product-buy-button { display:flex;flex:1;align-items:center;justify-content:center;min-height:44px;border-radius:var(--radius-sm,8px);background:var(--color-primary-soft);color:var(--color-primary);font-size:.75rem;font-weight:700; }
+.product-cart-button { display:grid;place-items:center;flex:0 0 44px;min-height:44px;border-radius:var(--radius-sm,8px);background:var(--color-primary);color:var(--color-on-primary); }
+.product-cart-button:disabled { background:var(--color-elevated);color:var(--color-muted);cursor:not-allowed; }
+.product-unavailable-label { position:absolute;inset:auto 10px 10px;border-radius:var(--radius-sm,8px);padding:7px 8px;text-align:center;font-size:.75rem;font-weight:650;color:var(--color-text);background:var(--color-surface); }
+.product-card--unavailable .product-image-wrap { opacity:.65; }
+.product-card--unavailable .product-card-type { color:var(--color-danger); }
+.product-card--unavailable { border-style:dashed; }
+.subscription-plan-card { display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--color-border);border-radius:var(--radius-lg,16px);background:var(--color-surface); }
+.subscription-plan-card--featured { border-color:var(--color-primary); }
+.subscription-plan-card .plan-highlights { color:var(--color-success); }
+
+@media (hover:hover) and (pointer:fine) and (prefers-reduced-motion:no-preference) {
+  .market-product-card:hover { transform:translateY(-3px);box-shadow:var(--shadow-md); }
+  .market-product-card:hover .artwork--game .artwork-image { transform:scale(1.035); }
+  .product-cart-button { opacity:0;transform:translateY(4px);transition:transform var(--dur-fast) var(--ease-out),opacity var(--dur-fast) var(--ease-out); }
+  .market-product-card:hover .product-cart-button,.market-product-card:focus-within .product-cart-button { opacity:1;transform:none; }
+}
+@media (max-width:479px) {
+  .product-card-body { padding:10px;gap:6px; }
+  .product-card-type { font-size:.5625rem;letter-spacing:.025em; }
+  .product-platforms .brand-logo:nth-child(n+3) { display:none; }
+  .product-title h3 { font-size:.8125rem; }
+  .product-heart { right:5px;top:5px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .market-product-card,.artwork-image,.product-cart-button { transition:none;transform:none; }
+}

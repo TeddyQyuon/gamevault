@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
-import { Copy, Check, ExternalLink, ShieldCheck } from 'lucide-react'
+import { ExternalLink } from 'lucide-react'
 import AccountSidebar from '../../components/account/AccountSidebar.jsx'
 import { Badge, Button, Field } from '../../components/ui/controls.jsx'
 import { EmptyState } from '../../components/ui/feedback.jsx'
@@ -19,14 +19,14 @@ import { resetDemoData } from '../../utils/storage.js'
 export function AccountLayout({ children }) {
   const { user } = useSession()
   return (
-    <div>
-      <section className="card mb-5 overflow-hidden">
+    <div className="customer-page account-page">
+      <section className="card account-welcome mb-5 overflow-hidden">
         <div className="p-6 md:p-8 bg-[var(--color-surface)]">
           <h1 className="text-3xl font-extrabold text-[var(--color-text)]">Welcome Back, {user?.name?.split(' ')[0] || 'Gamer'}!</h1>
           <p className="text-[var(--color-muted)]">Manage your games, subscriptions, orders and key vault — all in one place.</p>
         </div>
       </section>
-      <div className="grid gap-5 lg:grid-cols-[250px_1fr]">
+      <div className="account-layout">
         <AccountSidebar />
         <div className="min-w-0">{children}</div>
       </div>
@@ -67,7 +67,7 @@ export function Dashboard() {
   return (
     <div className="space-y-5">
       <div className="card flex flex-wrap items-center gap-4 p-5">
-        <div aria-hidden className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[#2855FF] to-[#8B5CF6] text-xl font-black">{(user?.name || 'D')[0]}</div>
+        <div aria-hidden className="flex h-14 w-14 items-center justify-center rounded-full account-avatar text-xl font-black">{(user?.name || 'D')[0]}</div>
         <div><p className="text-lg font-extrabold">{user?.name}</p><p className="text-sm text-[var(--color-muted)]">{user?.email}</p></div>
         <div className="ml-auto grid grid-cols-3 gap-6">
           {stats.map((s) => <div key={s.label}><p className="text-xl font-extrabold">{s.value}</p><p className="text-xs text-[var(--color-muted)]">{s.label}<br />{s.note}</p></div>)}
@@ -76,7 +76,7 @@ export function Dashboard() {
 
       <div className="grid gap-5 xl:grid-cols-2">
         <section className="card p-5" aria-label="Active subscriptions">
-          <div className="mb-3 flex items-center justify-between"><h2 className="font-extrabold">Subscriptions</h2><Link to="/account/subscriptions" className="text-sm text-[var(--color-cyan)] hover:underline">Manage All →</Link></div>
+          <div className="mb-3 flex items-center justify-between"><h2 className="font-extrabold">Subscriptions</h2><Link to="/account/subscriptions" className="text-sm text-[var(--color-primary)] hover:underline">Manage All →</Link></div>
           {subs.length === 0
             ? <p className="text-sm text-[var(--color-muted)]">Membership details are delivered by email within 1 hour after confirmed payment. Track delivery in your orders.</p>
             : (
@@ -90,7 +90,7 @@ export function Dashboard() {
             )}
         </section>
         <section className="card p-5" aria-label="Recent purchases">
-          <div className="mb-3 flex items-center justify-between"><h2 className="font-extrabold">Recent Purchases</h2><Link to="/account/orders" className="text-sm text-[var(--color-cyan)] hover:underline">View All →</Link></div>
+          <div className="mb-3 flex items-center justify-between"><h2 className="font-extrabold">Recent Purchases</h2><Link to="/account/orders" className="text-sm text-[var(--color-primary)] hover:underline">View All →</Link></div>
           {orders.length === 0 ? <p className="text-sm text-[var(--color-muted)]">Your purchases will appear here after checkout.</p> : (
             <ul className="space-y-2">
               {orders.slice(0, 4).map((o) => (
@@ -105,7 +105,7 @@ export function Dashboard() {
       </div>
 
       <section className="card p-5" aria-label="Order history">
-        <div className="mb-2 flex items-center justify-between"><h2 className="font-extrabold">Order History</h2><Link to="/account/orders" className="text-sm text-[var(--color-cyan)] hover:underline">View All Orders →</Link></div>
+        <div className="mb-2 flex items-center justify-between"><h2 className="font-extrabold">Order History</h2><Link to="/account/orders" className="text-sm text-[var(--color-primary)] hover:underline">View All Orders →</Link></div>
         <OrdersTable limit={5} />
       </section>
     </div>
@@ -130,7 +130,7 @@ export function OrdersTable({ limit }) {
               <td className="p-3 font-bold">{formatPrice(o.totalCents)}</td>
               <td className="p-3">{payBadge(o.payStatus)}</td>
               <td className="p-3"><Badge tone={o.fulfilStatus === 'fulfilled' ? 'success' : 'warning'}>{o.fulfilStatus}</Badge></td>
-              <td className="p-3"><Link to={`/account/orders/${o.id}`} className="rounded-lg border border-[var(--color-border)] px-3 py-1.5 text-xs font-semibold hover:border-[var(--color-cyan)]">View Details</Link></td>
+              <td className="p-3"><Link to={`/account/orders/${o.id}`} className="rounded-lg border border-[var(--color-border)] px-3 py-1.5 text-xs font-semibold hover:border-[var(--color-primary)]">View Details</Link></td>
             </tr>
           ))}
         </tbody>
@@ -185,13 +185,13 @@ export function OrderDetail() {
                 ))}
               </div>
             ) : it.codes?.length > 0 ? (
-              <p className="mt-1 font-mono text-xs text-[#9db4ff]">{it.codes.join(' · ')}</p>
+              <p className="mt-1 font-mono text-xs text-[var(--color-primary)]">{it.codes.join(' · ')}</p>
             ) : null}
           </li>
         ))}
       </ul>
       <p className="text-right text-sm text-[var(--color-muted)]">Subtotal {formatPrice(order.subtotalCents)}{order.discountCents > 0 && <> · Promo {order.promoCode} −{formatPrice(order.discountCents)}</>}</p>
-      <p className="text-right font-extrabold">Total: <span className="text-[var(--color-cyan)]">{formatPrice(order.totalCents)} {order.currency}</span></p>
+      <p className="text-right font-extrabold">Total: <span className="text-[var(--color-primary)]">{formatPrice(order.totalCents)} {order.currency}</span></p>
       <OrderTaxNote />
     </div>
   )
@@ -225,7 +225,7 @@ export function SubscriptionsTab() {
     <div className="card p-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="font-extrabold">Subscriptions <span className="ml-1 text-xs font-normal text-[var(--color-muted)]">{testMode ? '(test mode · synced from Stripe)' : '(synced from Stripe)'}</span></h2>
-        <button onClick={openPortal} disabled={portalBusy} className="inline-flex items-center gap-1.5 rounded-[10px] border border-[var(--color-border)] px-3.5 py-2 text-sm font-semibold hover:border-[var(--color-cyan)] disabled:opacity-50">
+        <button onClick={openPortal} disabled={portalBusy} className="inline-flex items-center gap-1.5 rounded-[10px] border border-[var(--color-border)] px-3.5 py-2 text-sm font-semibold hover:border-[var(--color-primary)] disabled:opacity-50">
           <ExternalLink size={14} aria-hidden /> {portalBusy ? 'Opening…' : 'Manage subscription'}
         </button>
       </div>
@@ -293,7 +293,7 @@ export function Library() {
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--color-border)] pb-3">
         <div>
           <h2 className="text-xl font-extrabold text-[var(--color-text)]">
-            Digital Key Vault <span className="ml-2 rounded-full bg-[var(--color-cyan)]/10 px-2.5 py-0.5 text-xs font-semibold text-[var(--color-cyan)]">{allocationsList.length} Items</span>
+            Digital Key Vault <span className="ml-2 rounded-full bg-[var(--color-primary-soft)] px-2.5 py-0.5 text-xs font-semibold text-[var(--color-primary)]">{allocationsList.length} Items</span>
           </h2>
           <p className="mt-1 text-xs text-[var(--color-muted)]">
             Manage and reveal your purchased activation keys. Unrevealed keys are masked for security and chargeback protection.
@@ -326,7 +326,7 @@ export function WishlistTab() {
   return (
     <div>
       <h2 className="mb-3 text-xl font-extrabold">Wishlist ({items.length})</h2>
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-3">{items.map((p) => <ProductCard key={p.id} product={p} />)}</div>
+      <div className="product-grid account-wishlist-grid">{items.map((p) => <ProductCard key={p.id} product={p} />)}</div>
     </div>
   )
 }
@@ -352,7 +352,7 @@ export function SettingsTab() {
         <h2 className="font-extrabold sm:col-span-2">Profile Settings</h2>
         <Field label="Display name" htmlFor="s-name"><input id="s-name" className="input" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} /></Field>
         <Field label="Country" htmlFor="s-country"><input id="s-country" className="input" value={f.country} onChange={(e) => setF({ ...f, country: e.target.value })} /></Field>
-        <p className="text-sm text-[var(--color-muted)] sm:col-span-2">Email (login): <strong className="text-white">{user?.email}</strong></p>
+        <p className="text-sm text-[var(--color-muted)] sm:col-span-2">Email (login): <strong className="text-[var(--color-text)]">{user?.email}</strong></p>
         <div className="sm:col-span-2"><button className="btn-primary px-5 py-2.5 text-sm">Save changes</button></div>
       </form>
       <section className="card p-5" aria-label="Payment methods">
