@@ -30,6 +30,12 @@
   filter: none;
   opacity: 1;
 }
+/* Google's supplied file has a generous transparent canvas. Enlarge it
+   uniformly so the actual acceptance mark matches the other marks; the
+   original artwork, outline, proportions and clear space remain intact. */
+.payment-brands__tile img[src$="/google-pay.svg"] {
+  transform: scale(1.4);
+}
 @media (max-width: 380px) {
   .payment-brands { gap: 6px; }
   .payment-brands__tile { flex-basis: 52px; width: 52px; height: 36px; padding: 4px; }
