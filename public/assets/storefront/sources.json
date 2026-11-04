@@ -351,39 +351,183 @@
     "note": "Existing GameVault brand asset."
   },
   {
-    "file": "/assets/storefront/visa.svg",
-    "source": "https://www.visa.com/",
-    "reviewedAt": "2026-10-31",
-    "note": "Existing native payment provider mark."
-  },
-  {
-    "file": "/assets/storefront/mastercard.svg",
-    "source": "https://www.mastercard.com/",
-    "reviewedAt": "2026-10-31",
-    "note": "Existing native payment provider mark."
-  },
-  {
-    "file": "/assets/storefront/apple-pay.svg",
-    "source": "https://developer.apple.com/apple-pay/marketing/",
-    "reviewedAt": "2026-10-31",
-    "note": "Existing native payment provider mark."
-  },
-  {
-    "file": "/assets/storefront/google-pay.svg",
-    "source": "https://developers.google.com/pay/api/web/guides/brand-guidelines",
-    "reviewedAt": "2026-10-31",
-    "note": "Existing native payment provider mark."
-  },
-  {
-    "file": "/assets/storefront/stripe.svg",
-    "source": "https://stripe.com/newsroom/brand-assets",
-    "reviewedAt": "2026-10-31",
-    "note": "Existing native payment provider mark."
-  },
-  {
     "file": "/assets/storefront/xbox-game-pass.svg",
     "source": "https://upload.wikimedia.org/wikipedia/commons/f/f9/Xbox_one_logo.svg",
     "reviewedAt": "2026-10-31",
     "note": "Native parent Xbox logo used for Game Pass. Specific Game Pass Ultimate lockup remains a review decision; no reconstructed wordmark."
+  },
+  {
+    "source": "https://www.adobe.com/cc-shared/assets/img/product-icons/svg/creative-cloud.svg",
+    "file": "/assets/storefront/official/adobe.svg",
+    "downloadedAt": "2026-11-04",
+    "sha256": "027c924fd3b502a18328ebe4f206fdb3d16b14156452f96f91e3a8a09d247c9e",
+    "page": "https://www.adobe.com/creativecloud.html"
+  },
+  {
+    "source": "https://www.apple.com/v/apple-music/ah/images/overview/apple_music_app_icon__ehrv06ssfpea_large.png",
+    "file": "/assets/storefront/official/apple-music.png",
+    "downloadedAt": "2026-11-04",
+    "sha256": "f213cfdf423ae079d94004b1063476602466eb3527b854049ac08ecbda4419be",
+    "page": "https://www.apple.com/apple-music/"
+  },
+  {
+    "source": "https://www.apple.com/apple-music/",
+    "note": "Exact inline Apple global navigation SVG; default native black, original viewBox unchanged.",
+    "file": "/assets/storefront/official/apple.svg",
+    "downloadedAt": "2026-11-04",
+    "sha256": "173a4aceb67e416738f3af19eeda9de484cac388914881915dc94e4f6ce77687",
+    "page": "https://www.apple.com/apple-music/"
+  },
+  {
+    "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/b3/61/b0/b361b0a6-4295-6738-be3d-0f97418cfbf9/AppIcon-0-0-1x_U007epad-0-11-0-85-220.png/512x512bb.jpg",
+    "page": "https://itunes.apple.com/lookup?id=897446215",
+    "note": "Unmodified official publisher-supplied app icon from Apple App Store.",
+    "file": "/assets/storefront/official/canva.jpg",
+    "downloadedAt": "2026-11-04",
+    "sha256": "60e1ae5a4520749c4a7ad7404332846f053d6932d04a98c62b95401d4cbf81fe"
+  },
+  {
+    "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/51/e2/8f/51e28f69-7bc1-d9e1-5c7e-d636f53ed0d2/AppIcon-0-0-1x_U007epad-0-1-0-85-220.png/512x512bb.jpg",
+    "page": "https://itunes.apple.com/lookup?id=329913454",
+    "note": "Unmodified official publisher-supplied app icon from Apple App Store.",
+    "file": "/assets/storefront/official/crunchyroll.jpg",
+    "downloadedAt": "2026-11-04",
+    "sha256": "a78a3839559dd2f7019fd40ce3476a69ae3f133a6cf4c18ae19ca799d7fe0a23"
+  },
+  {
+    "source": "https://cdn.prod.website-files.com/6257adef93867e50d84d30e2/66e3d7f4ef6498ac018f2c55_Symbol.svg",
+    "page": "https://discord.com/branding",
+    "note": "Official Discord Symbol SVG linked on brand page, unmodified.",
+    "file": "/assets/storefront/official/discord.svg",
+    "downloadedAt": "2026-11-04",
+    "sha256": "eb3bf5a2e8b9f9aa39c1b1d38aeaa7c2997084567634c55f4141aa39cf426cec"
+  },
+  {
+    "source": "https://cnbl-cdn.bamgrid.com/assets/3e17693b8248ad37a66f8d92439647627185b4da03e64e88c0b6edc7fb67fb7f/original",
+    "file": "/assets/storefront/official/disney.png",
+    "downloadedAt": "2026-11-04",
+    "sha256": "3e17693b8248ad37a66f8d92439647627185b4da03e64e88c0b6edc7fb67fb7f",
+    "page": "https://www.disneyplus.com/"
+  },
+  {
+    "source": "https://media.contentapi.ea.com/content/dam/eacom/subscription/ea-play/common/embed-code/color/ea-play-logo-hyper-crimson.png",
+    "file": "/assets/storefront/official/ea-play.png",
+    "downloadedAt": "2026-11-04",
+    "sha256": "30a38b690830b54ca1728ef721dcbb109a800624f8013c8e423b74add1c201ae",
+    "page": "https://www.ea.com/ea-play"
+  },
+  {
+    "source": "https://play.google.com/store/games",
+    "page": "https://play.google.com/store/games",
+    "note": "Google Play header logo SVG, extracted unchanged.",
+    "file": "/assets/storefront/official/googleplay.svg",
+    "downloadedAt": "2026-11-04",
+    "sha256": "11021c8c5b717889c4c805e737b030bffdf8ee708111c479d57c0c1cd5f7b375"
+  },
+  {
+    "source": "https://uhf.microsoft.com/images/microsoft/RE1Mu3b.png",
+    "file": "/assets/storefront/official/microsoft365.png",
+    "downloadedAt": "2026-11-04",
+    "sha256": "112fec798b78aa02e102a724b5cb1990c0f909bc1d8b7b1fa256eab41bbc0960",
+    "page": "https://www.microsoft.com/en-us/microsoft-365"
+  },
+  {
+    "source": "https://assets.ctfassets.net/4cd45et68cgf/5vCbQ45TfVUvWgm8eiDOtn/ef1c2431dc81f79ae93fcce649ae796f/Netflix_Symbol.zip",
+    "page": "https://about.netflix.com/en/company-assets",
+    "archiveMember": "02_Netflix_Symbol/01_Netflix_Symbol_RGB/Netflix_Symbol_RGB.png",
+    "file": "/assets/storefront/official/netflix.png",
+    "downloadedAt": "2026-11-04",
+    "sha256": "d2c5760ceb2f46d3cedc6fbc3320708d4caa2bf884af2af8d934343315042962"
+  },
+  {
+    "source": "https://www.nintendo.com/sg/nintendo-switch-online/regions/img/img-logo.svg",
+    "file": "/assets/storefront/official/nintendo-online.svg",
+    "downloadedAt": "2026-11-04",
+    "sha256": "1d1bfb8b8dec0fc215b2aefae25f2c85ba3333a7a9f2536ad4e4022c0b10593f",
+    "page": "https://www.nintendo.com/sg/nintendo-switch-online/index.html"
+  },
+  {
+    "source": "https://www.nintendo.co.jp/common/v2/img/ncommon/_common/logo/switch.svg",
+    "file": "/assets/storefront/official/nintendo.svg",
+    "downloadedAt": "2026-11-04",
+    "sha256": "834838b6d0f66452b9d016c9f9f6d0e814dd8c3d1829e0a65d30f98e8abca141",
+    "page": "https://www.nintendo.co.jp/common/v2/img/ncommon/_common/logo/switch.svg"
+  },
+  {
+    "source": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/b1/28/64/b1286427-ec8b-81b0-26d8-9c0523cf1efc/AppIcon-0-0-1x_U007epad-0-1-0-85-220.png/512x512bb.jpg",
+    "page": "https://itunes.apple.com/lookup?id=905953485",
+    "note": "Unmodified official publisher-supplied app icon from Apple App Store.",
+    "file": "/assets/storefront/official/nordvpn.jpg",
+    "downloadedAt": "2026-11-04",
+    "sha256": "769b0b1916e296f4878fd286ec3d13675e3c2729d9c4b3b2430959400ced07b0"
+  },
+  {
+    "source": "https://www.playstation.com/etc.clientlibs/global_pdc/clientlibs/auto-clientlibs/pdc.designkit/resources/ps-icons-map__dig__brand.svg#ps-icon_brand_playstation-family_logo",
+    "note": "Selected official symbol extracted unchanged from the provider SVG sprite; default native black.",
+    "file": "/assets/storefront/official/playstation.svg",
+    "downloadedAt": "2026-11-04",
+    "sha256": "22e3942e8fea99960e1c9afa254e84254dea69fa5feca5b64ec87010e6c3e445",
+    "page": "https://www.playstation.com/etc.clientlibs/global_pdc/clientlibs/auto-clientlibs/pdc.designkit/resources/ps-icons-map__dig__brand.svg#ps-icon_brand_playstation-family_logo"
+  },
+  {
+    "source": "https://www.playstation.com/en-sg/ps-plus/",
+    "note": "Exact inline ps_plus_light_theme SVG from the official page, original viewBox and paths.",
+    "file": "/assets/storefront/official/ps-plus.svg",
+    "downloadedAt": "2026-11-04",
+    "sha256": "8bcb06199c3d729d41338baf04b4bf1cb03fc50e33d444a8693cf8f955d6cb4b",
+    "page": "https://www.playstation.com/en-sg/ps-plus/"
+  },
+  {
+    "source": "https://assets2.razerzone.com/images/phoenix/razer-ths-logo.svg",
+    "page": "https://www.razer.com/sg-en/legal/trademark-use-guidelines",
+    "note": "Original Razer-hosted snake SVG, unmodified.",
+    "file": "/assets/storefront/official/razer.svg",
+    "downloadedAt": "2026-11-04",
+    "sha256": "5beec6b8f0ee5b2f481fdf26045d918ca3a5952ecedc61ad51444ecbf054fd60"
+  },
+  {
+    "source": "https://about.roblox.com/images/Roblox_Logo_White.svg",
+    "file": "/assets/storefront/official/roblox.svg",
+    "downloadedAt": "2026-11-04",
+    "sha256": "69e3a758173a476e2bf928a7e3916ccdf6c008601b4321d864ab581de87444c2",
+    "page": "https://about.roblox.com/"
+  },
+  {
+    "source": "https://developer.spotify.com/images/guidelines/design/2024-spotify-logo-icon.zip",
+    "page": "https://developer.spotify.com/documentation/design",
+    "archiveMember": "Primary_Logo_Green_RGB.svg",
+    "file": "/assets/storefront/official/spotify.svg",
+    "downloadedAt": "2026-11-04",
+    "sha256": "ead72f82725038389cca09f439fdb7807640e122500c934f2500c7036bf40dbb"
+  },
+  {
+    "source": "https://store.fastly.steamstatic.com/public/shared/images/header/logo_steam.svg?t=962016",
+    "file": "/assets/storefront/official/steam.svg",
+    "downloadedAt": "2026-11-04",
+    "sha256": "19d0f67899a61b13d43ad1c810ba2d8d619b48ec00caba3b888fe6a285ce6cde",
+    "page": "https://store.steampowered.com/"
+  },
+  {
+    "source": "https://cms-assets.xboxservices.com/assets/dc/a1/dca12e01-f367-4d86-a2c8-1ef23bfd593a.png?n=Game-Pass_SKU-Chart-0_3x-XGP-Logo-540_1225x150.png",
+    "file": "/assets/storefront/official/xbox-game-pass.png",
+    "downloadedAt": "2026-11-04",
+    "sha256": "2c8a21710157d7a5906226e3d80fa6ef00307e013790313da4557c0da405e0c4",
+    "page": "https://www.xbox.com/en-US/xbox-game-pass"
+  },
+  {
+    "source": "https://uhf.microsoft.com/images/xbox/RW8TP2.png",
+    "file": "/assets/storefront/official/xbox.png",
+    "downloadedAt": "2026-11-04",
+    "sha256": "924f6058ccd6fa902d9d17f75a8d552ff8f4d1cb8fa9691535d357caf94e9699",
+    "page": "https://www.xbox.com/en-US/xbox-game-pass"
+  },
+  {
+    "source": "https://www.gstatic.com/marketing-cms/89/d9/cf95c4f345709f4998dc581221b0/youtube-icon.zip",
+    "page": "https://brand.youtube/youtube-logo/",
+    "archiveMember": "YouTube_Icon/Digital/01 Red/yt_icon_red_digital.png",
+    "note": "Official red YouTube icon from current brand kit; kit updates red to FF0033. Original PNG bytes unmodified.",
+    "file": "/assets/storefront/official/youtube.png",
+    "downloadedAt": "2026-11-04",
+    "sha256": "1027b1b0517727adb9697155a270744381c3ce9b047b1c8bd8a9389dc7d07a83"
   }
 ]

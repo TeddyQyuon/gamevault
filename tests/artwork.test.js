@@ -1,9 +1,10 @@
+import { createHash } from 'node:crypto'
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { ARTWORK_FILES, ARTWORK_STYLES, ARTWORK_THEMES, themeFor } from '../src/utils/artwork.js'
+import { ARTWORK_FILES, ARTWORK_STYLES, ARTWORK_THEMES, themeFor, resolveArtworkSource } from '../src/utils/artwork.js'
 import { getProductBySlug } from '../src/services/catalogService.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -50,50 +51,31 @@ describe('storefront brand artwork & styling verification', () => {
     }
   })
 
-  it('verifies Xbox Game Pass Ultimate SVG has crisp white vector emblem on green background', () => {
-    const p = path.join(rootDir, 'public', 'assets', 'storefront', 'xbox-game-pass.svg')
-    const svg = fs.readFileSync(p, 'utf8')
-    assert.ok(svg.includes('#FFFFFF') || svg.includes('white'), 'Xbox Game Pass SVG must include crisp white vector paths')
-    assert.ok(svg.includes('#107C10') || svg.includes('#107c10'), 'Xbox Game Pass SVG must use official Xbox green')
-    assert.ok(svg.includes('GAME PASS'), 'Xbox Game Pass SVG must include GAME PASS wordmark')
-    assert.ok(svg.includes('ULTIMATE'), 'Xbox Game Pass SVG must include ULTIMATE badge')
-  })
-
-  it('verifies Nintendo eShop / Switch SVG has official Nintendo red (#E60012) and crisp white logo', () => {
-    const p = path.join(rootDir, 'public', 'assets', 'storefront', 'nintendo.svg')
-    const svg = fs.readFileSync(p, 'utf8')
-    assert.ok(svg.includes('#E60012'), 'Nintendo SVG must use official Nintendo vibrant red')
-    assert.ok(svg.includes('#FFFFFF'), 'Nintendo SVG must use crisp white elements for contrast')
-    assert.ok(svg.includes('NINTENDO') && svg.includes('SWITCH'), 'Nintendo SVG must feature official Nintendo Switch branding')
-    assert.ok(!svg.includes('fill="#000000"'), 'Nintendo SVG must not be a pure black icon on dark background')
-  })
-
-  it('verifies Steam, PlayStation, Roblox, Apple SVGs have crisp white vector paths for dark backgrounds', () => {
-    const brands = [
-      { file: 'steam.svg', name: 'Steam' },
-      { file: 'playstation.svg', name: 'PlayStation' },
-      { file: 'roblox.svg', name: 'Roblox' },
-      { file: 'apple.svg', name: 'Apple' },
-      { file: 'xbox.svg', name: 'Xbox' },
-    ]
-    for (const b of brands) {
-      const p = path.join(rootDir, 'public', 'assets', 'storefront', b.file)
-      const svg = fs.readFileSync(p, 'utf8')
-      assert.ok(svg.includes('#FFFFFF') || svg.includes('fill="white"'), `${b.name} (${b.file}) must have white vector fill for high contrast`)
-      assert.ok(!svg.includes('fill="#000000"'), `${b.name} (${b.file}) must not be pure black on dark surface`)
+  it('keeps every third-party provider on an original, immutable official asset', () => {
+    const sources = JSON.parse(fs.readFileSync(path.join(rootDir, 'public/assets/storefront/sources.json'), 'utf8'))
+    const providers = [...new Set(Object.values(BRANDS))].filter(brand => brand.group !== 'games' && brand.id !== 'default')
+    assert.equal(providers.length, 25)
+    for (const brand of providers) {
+      assert.ok(brand.logo.startsWith('/assets/storefront/official/'), `${brand.id}: legacy artwork is still registered`)
+      const provenance = sources.find(item => item.file === brand.logo)
+      assert.ok(provenance?.source?.startsWith('https://'), `${brand.id}: missing original source`)
+      assert.match(provenance?.sha256 || '', /^[a-f0-9]{64}$/, `${brand.id}: missing original byte fingerprint`)
+      const bytes = fs.readFileSync(path.join(rootDir, 'public', brand.logo))
+      assert.equal(createHash('sha256').update(bytes).digest('hex'), provenance.sha256, `${brand.id}: original artwork bytes changed`)
+      if (brand.logo.endsWith('.svg')) {
+        const svg = bytes.toString('utf8')
+        assert.match(svg, /<svg[\s>]/, `${brand.id}: expected SVG artwork`)
+        assert.doesNotMatch(svg, /<script|<foreignObject|<text[\s>]/i, `${brand.id}: executable content or a typed substitute is not allowed`)
+      }
     }
   })
 
-  it('verifies Google Play has authentic 4-color facets and Razer has neon green on black', () => {
-    const gplay = fs.readFileSync(path.join(rootDir, 'public', 'assets', 'storefront', 'googleplay.svg'), 'utf8')
-    assert.ok(gplay.includes('#0086F8'), 'Google Play must have Blue facet')
-    assert.ok(gplay.includes('#00A94B'), 'Google Play must have Green facet')
-    assert.ok(gplay.includes('#FF334B'), 'Google Play must have Red facet')
-    assert.ok(gplay.includes('#FFCE00'), 'Google Play must have Yellow facet')
-
-    const razer = fs.readFileSync(path.join(rootDir, 'public', 'assets', 'storefront', 'razer.svg'), 'utf8')
-    assert.ok(razer.includes('#00FF00'), 'Razer must have neon green Chroma fill')
-    assert.equal(ARTWORK_STYLES.razer.background, '#000000', 'Razer style must have pitch black background')
+  it('updates old stored logo paths while preserving merchant artwork and publisher covers', () => {
+    assert.equal(resolveArtworkSource('/assets/storefront/xbox-game-pass.svg', 'game-pass-ultimate'), getBrand('game-pass-ultimate').logo)
+    assert.equal(resolveArtworkSource('/assets/storefront/googleplay.svg', 'googleplay'), getBrand('googleplay').logo)
+    assert.equal(resolveArtworkSource('/uploads/merchant-custom-art.png', 'netflix'), '/uploads/merchant-custom-art.png')
+    assert.equal(resolveArtworkSource('/assets/storefront/games/elden-ring.jpg', 'elden-ring'), '/assets/storefront/games/elden-ring.jpg')
+    assert.equal(resolveArtworkSource('https://example.com/untrusted.png', 'spotify'), getBrand('spotify').logo)
   })
 
   it('correctly resolves gift card vs subscription product slugs without collision', async () => {
@@ -124,30 +106,30 @@ describe('storefront brand artwork & styling verification', () => {
 
   it('resolves ARTWORK_FILES and ARTWORK_STYLES for product slugs and IDs without failure', () => {
     // Slugs and IDs must directly resolve valid asset files and styles
-    assert.equal(ARTWORK_FILES['xbox-game-pass-ultimate'], '/assets/storefront/xbox-game-pass.svg')
+    assert.equal(ARTWORK_FILES['xbox-game-pass-ultimate'], getBrand('game-pass-ultimate').logo)
     assert.equal(ARTWORK_STYLES['xbox-game-pass-ultimate'].background, '#107c10')
-    assert.equal(ARTWORK_FILES['p-xbox-game-pass-ultimate'], '/assets/storefront/xbox-game-pass.svg')
+    assert.equal(ARTWORK_FILES['p-xbox-game-pass-ultimate'], getBrand('game-pass-ultimate').logo)
 
-    assert.equal(ARTWORK_FILES['eshop-credit-us'], '/assets/storefront/nintendo.svg')
+    assert.equal(ARTWORK_FILES['eshop-credit-us'], getBrand('nintendo').logo)
     assert.equal(ARTWORK_STYLES['eshop-credit-us'].background, '#e60012')
-    assert.equal(ARTWORK_FILES['p-eshop-us'], '/assets/storefront/nintendo.svg')
+    assert.equal(ARTWORK_FILES['p-eshop-us'], getBrand('nintendo').logo)
 
-    assert.equal(ARTWORK_FILES['playstation-plus-essential'], '/assets/storefront/ps-plus.svg')
-    assert.equal(ARTWORK_STYLES['playstation-plus-essential'].background, '#00439c')
+    assert.equal(ARTWORK_FILES['playstation-plus-essential'], getBrand('playstation-plus').logo)
+    assert.equal(ARTWORK_STYLES['playstation-plus-essential'].background, '#ffffff')
 
-    assert.equal(ARTWORK_FILES['xbox-gift-sg'], '/assets/storefront/xbox.svg')
+    assert.equal(ARTWORK_FILES['xbox-gift-sg'], getBrand('xbox').logo)
     assert.equal(ARTWORK_STYLES['xbox-gift-sg'].background, '#107c10')
 
-    assert.equal(ARTWORK_FILES['psn-credit-sg'], '/assets/storefront/playstation.svg')
-    assert.equal(ARTWORK_STYLES['psn-credit-sg'].background, '#00439c')
+    assert.equal(ARTWORK_FILES['psn-credit-sg'], getBrand('psn').logo)
+    assert.equal(ARTWORK_STYLES['psn-credit-sg'].background, '#ffffff')
 
-    assert.equal(ARTWORK_STYLES['apple-music'].background, '#fc3c44')
+    assert.equal(ARTWORK_STYLES['apple-music'].background, '#ffffff')
   })
 })
 
 
 // Complete catalogue coverage: a product cannot ship with an unregistered,
-// missing or untraceable cover/logo. Existing assertions above are preserved.
+// missing or untraceable cover/logo. Original provider byte fingerprints and catalogue coverage are checked above.
 import { PRODUCTS } from '../src/data/products.js'
 import { SUBSCRIPTION_TEMPLATES } from '../src/data/subscriptionServices.js'
 import { SUBSCRIPTION_PLANS } from '../src/data/subscriptions.js'

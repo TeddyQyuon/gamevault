@@ -24,6 +24,7 @@ Before marking any task complete, or when the user indicates pausing, switching 
 ---
 
 ## 3. Engineering Quality & Verification Standards
+0. **Company logos:** Use original official provider artwork and record its exact source. Preserve native colors, geometry, aspect ratio and clear space. Never redraw a brand, imitate its wordmark with text, or recolor it to match the theme. Use a legible neutral tile when necessary.
 1. **Codebase Preservation:** Preserve existing working functionality, comments, docstrings, and configurations.
 2. **Verification Gates:** Always run automated tests (`npm test`) and build checks (`npm run build`) to ensure zero regressions before completing tasks.
 3. **Security Standards:** Prevent secret leaks; never hardcode API keys or credentials.

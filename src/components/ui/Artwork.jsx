@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ARTWORK_FILES, ARTWORK_STYLES } from '../../utils/artwork.js'
+import { ARTWORK_STYLES, resolveArtworkSource } from '../../utils/artwork.js'
 import { getBrand, brandFor } from '../../data/brands.js'
 import BrandLogo from './BrandLogo.jsx'
 
@@ -7,7 +7,7 @@ export default function Artwork({ artKey, title, product, ratio = '16/10', class
   const brand = product ? brandFor(product) : getBrand(artKey)
   const label = title || product?.title || brand?.name || 'GameVault'
   // Only self-hosted files are rendered. Remote merchant URLs cannot bypass the registry.
-  const file = src?.startsWith('/') ? src : ARTWORK_FILES[artKey || product?.art] || brand?.logo || ARTWORK_FILES.default
+  const file = resolveArtworkSource(src, artKey, product)
   const style = ARTWORK_STYLES[artKey || product?.art] || brand || {}
   const [failedSource, setFailedSource] = useState('')
   const game = brand?.group === 'games'

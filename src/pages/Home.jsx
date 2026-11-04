@@ -1,3 +1,4 @@
+import PaymentBrands from '../components/ui/PaymentBrands.jsx'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ArrowRight, CreditCard, Globe2, LifeBuoy, Mail } from 'lucide-react'
@@ -26,13 +27,6 @@ const TRUST = [
   { Icon: Globe2, title: 'Know your region', copy: 'Check compatibility on every listing.' },
   { Icon: CreditCard, title: 'Stripe Checkout', copy: 'Enter payment details directly on Stripe.' },
   { Icon: LifeBuoy, title: 'Help with your order', copy: 'Contact support with your order number.' },
-]
-const PAYMENTS = [
-  { id: 'visa', name: 'Visa' },
-  { id: 'mastercard', name: 'Mastercard' },
-  { id: 'apple-pay', name: 'Apple Pay' },
-  { id: 'google-pay', name: 'Google Pay' },
-  { id: 'stripe', name: 'Stripe' },
 ]
 
 export default function Home() {
@@ -171,19 +165,7 @@ export default function Home() {
           <strong>Checkout, handled by Stripe.</strong>
           <p>Available payment methods are shown at checkout.</p>
         </div>
-        <div className="home-payment-logos">
-          {PAYMENTS.map((payment) => (
-            <img
-              key={payment.id}
-              src={`/assets/storefront/${payment.id}.svg`}
-              alt={payment.name}
-              width="56"
-              height="32"
-              loading="lazy"
-              decoding="async"
-            />
-          ))}
-        </div>
+        <PaymentBrands />
       </section>
     </div>
   )
