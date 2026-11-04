@@ -1,3 +1,4 @@
+import PaymentBrands from '../components/ui/PaymentBrands.jsx'
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { KeyRound, Lock, Mail, ShieldCheck } from 'lucide-react'
@@ -257,13 +258,7 @@ export default function Checkout() {
               
               <div className="checkout-reassurance"><ShieldCheck size={18} aria-hidden /><p>Your card details are collected by Stripe. GameVault does not see or store your card number.</p></div>
 
-              <div className="flex items-center justify-center gap-2 pt-1 opacity-80">
-                <img src="/assets/storefront/visa.svg" alt="Visa" width="34" height="22" decoding="async" loading="lazy" />
-                <img src="/assets/storefront/mastercard.svg" alt="Mastercard" width="34" height="22" decoding="async" loading="lazy" />
-                <img src="/assets/storefront/apple-pay.svg" alt="Apple Pay" width="34" height="22" decoding="async" loading="lazy" />
-                <img src="/assets/storefront/google-pay.svg" alt="Google Pay" width="34" height="22" decoding="async" loading="lazy" />
-                <img src="/assets/storefront/stripe.svg" alt="Stripe" width="44" height="18" decoding="async" loading="lazy" />
-              </div>
+              <PaymentBrands />
               <p className="text-center text-xs text-[var(--color-muted)]">
                 Continue to Stripe to choose an available payment method.
               </p>

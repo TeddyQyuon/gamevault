@@ -50,3 +50,16 @@ npm install succeeded. npm test: 34/35 (existing Windows directory assertion fai
 - Public storefront https://gamevault-alpha-ten.vercel.app/ verified in cloud browser: new light homepage, games catalogue (14 results), product artwork/edition controls and truthful delivery copy render. No checkout was submitted.
 - Lint and production build pass. Automated tests remain 35/38 for the explicitly recorded conflicts above. Performance target remains open.
 - Local Git had no terminal authentication; the connected GitHub integration published the exact saved content after explicit owner authorization. No security settings, environment variables, payment configuration or protected business logic changed.
+
+
+## 4 November 2026 official-logo repair
+
+Objective: replace malformed payment artwork and audit all personal project company marks.
+
+- Visa, Mastercard, Apple Pay, Google Pay and Stripe now use exact first-party files in `public/assets/payment-brands/`, with source URLs and SHA-256 hashes. Home, footer and checkout share `PaymentBrands.jsx`; native proportions and colors stay intact on neutral tiles.
+- All 25 provider/platform registry entries use original assets. Known stored catalogue artwork URLs migrate to the new files; custom merchant images and publisher covers remain unchanged. Inventory: `NONPAYMENT_LOGO_AUDIT.md`.
+- Playlist Port replaces five service logos, including current Deezer and native TIDAL; portfolio replaces GitHub, LinkedIn, WhatsApp and Stripe marks. Their repositories contain source inventories. SCENTHAUS (35 house names), SOLE DISTRICT (21 labels) and MeterWise use normal brand-name text or their own identity rather than improvised external marks; no runtime edits required there.
+- Validation: payment source-integrity regression and provider artwork/migration tests pass. Production build and lint pass. Full suite 35/37: the existing obsolete Antigravity manifest and Windows-only preset tests remain unrelated failures in `coder-pwa.test.js`.
+- Older separate Mobile Coder deployment exposes emoji service placeholders. Its GitHub source is inaccessible and Vercel truncates the large source-file response; avoid patching its compiled bundle. Record this as a source-access blocker if it cannot be recovered.
+
+Next actions: publish verified repository commits; verify official images and theme behavior on live pages; restore older Mobile Coder source access before changing its five emoji service placeholders.

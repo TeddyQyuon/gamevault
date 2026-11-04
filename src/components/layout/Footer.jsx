@@ -1,13 +1,7 @@
+import PaymentBrands from '../ui/PaymentBrands.jsx'
 import { ArrowUpRight, Clock3 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
-const PAYMENTS = [
-  ['visa.svg', 'Visa', 38, 25],
-  ['mastercard.svg', 'Mastercard', 38, 25],
-  ['apple-pay.svg', 'Apple Pay', 38, 25],
-  ['google-pay.svg', 'Google Pay', 38, 25],
-  ['stripe.svg', 'Stripe', 48, 25],
-]
 
 export default function Footer() {
   return (
@@ -45,9 +39,7 @@ export default function Footer() {
         </div>
         <div className="footer-payment-group">
           <span>Checkout with Stripe</span>
-          <div className="footer-payments" aria-label="Payment brands">
-            {PAYMENTS.map(([file, label, width, height]) => <span className="footer-payment-logo" key={file}><img src={`/assets/storefront/${file}`} alt={label} width={width} height={height} loading="lazy" decoding="async" /></span>)}
-          </div>
+          <PaymentBrands />
         </div>
       </div>
     </footer>
