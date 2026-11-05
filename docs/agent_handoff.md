@@ -82,3 +82,15 @@ Next three actions:
 1. Publish the reviewed security revision and deploy the updated Vercel functions and Express service wherever used.
 2. Verify that public coder requests return 404 and configure the exact intended checkout origin for each deployment.
 3. Run payment verification and fulfilment checks with the provider sandbox and optional test database before relying on real checkout; preserve private guest links and monitor errors.
+
+
+## 5 November 2026 release revalidation
+
+Objective: publish the existing security remediation after current-instance validation. Local checkout fast-forwarded to `00fec6de792bcf828b49b3789723a58656aa6e55`; no application source or lockfile edits were made during revalidation.
+
+- Frozen `npm ci` installs succeeded in the root and `server/`. Root tests: 45 passed, zero failed. Backend tests: 65 passed, zero failed; the opt-in live MySQL suite remains disabled and was not validated.
+- Production build and root lint passed. Backend lint passed with the existing unused `DataTypes` warning in `005_order_snapshots.js`. Root and backend dependency audits each reported zero known vulnerabilities. Sequelize CommonJS UUID v4 compatibility was verified.
+- Built frontend started through Vite preview; local HTTP requests verified the GameVault HTML and referenced built JavaScript bundle. Security regressions exercised disabled Express coder routes and stateless Stripe checkout/order behavior with test doubles. No real payments, provider calls, database migrations or live deployment checks were performed.
+- Only this handoff was edited locally after the existing fix commit. No push or deployment was performed by the validation worker. Deployment status must be verified separately before claiming production remediation.
+
+Next three actions: publish the validated security commit through the authorized release workflow; confirm the linked Vercel production deployment reaches Ready; verify live coder rejection and private order verification without creating a real payment.
