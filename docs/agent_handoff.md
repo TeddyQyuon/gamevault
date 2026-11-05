@@ -94,3 +94,9 @@ Objective: publish the existing security remediation after current-instance vali
 - Only this handoff was edited locally after the existing fix commit. No push or deployment was performed by the validation worker. Deployment status must be verified separately before claiming production remediation.
 
 Next three actions: publish the validated security commit through the authorized release workflow; confirm the linked Vercel production deployment reaches Ready; verify live coder rejection and private order verification without creating a real payment.
+
+## 5 November hosted security release verification
+
+The security PR is merged and closed. Vercel production deployment `dpl_9iT3RcJBJqiKNyKMCZM28irUMm5y` is READY on source `13bac41`. Public `/api/health` returns success and `/api/products` returns 37 products. An empty POST to `/api/coder/execute` returns HTTP 404 / NOT_FOUND, confirming public automation fails closed. No payment or real MySQL integration test was performed. All local release gates and the optional MySQL limitation are recorded above. This follow-up changes documentation only.
+
+Next actions: retain these regression gates for future changes; run optional native MySQL integration in its configured environment; keep production API credentials in protected hosting settings.
