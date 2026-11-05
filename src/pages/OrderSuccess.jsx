@@ -32,31 +32,6 @@ export default function OrderSuccess() {
         if (!alive) return
         setOrder(result)
         if (!result) {
-          if (sessionId) {
-            const fallbackOrder = {
-              id: orderId || 'GV-SUCCESS',
-              payStatus: 'paid',
-              fulfilStatus: 'pending',
-              totalCents: 1958,
-              currency: 'SGD',
-              contact: { email: 'your checkout email' },
-              guest: true,
-              paidAt: new Date().toISOString(),
-              items: [
-                {
-                  id: 'item-1',
-                  productTitle: 'Confirmed Digital Order',
-                  variantLabel: 'Email Delivery Within 1 Hour',
-                  qty: 1,
-                  fulfilment: 'manual',
-                  deliveryWindowMinutes: 60,
-                },
-              ],
-            }
-            setOrder(fallbackOrder)
-            setState('paid')
-            return
-          }
           setState('missing')
           return
         }

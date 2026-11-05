@@ -1,91 +1,79 @@
+import { randomUUID } from 'node:crypto'
 import Stripe from 'stripe'
-import { findVariant } from '../../src/data/products.js'
+import { priceCheckout, checkoutOrigin } from '../../serverless/checkoutPolicy.js'
+import { applyPromo, DEMO_PROMO } from '../../src/services/promoPolicy.js'
 
-export default async function handler(req, res) {
-  if (req.method !== 'POST') return res.status(405).json({ error: { message: 'Method not allowed' } })
-
-  const STRIPE_KEY = process.env.STRIPE_SECRET_KEY
-  if (!STRIPE_KEY) {
-    return res.status(503).json({ error: { code: 'CONFIG_ERROR', message: 'Stripe secret key not configured in environment variables.' } })
-  }
-  const stripe = new Stripe(STRIPE_KEY)
-
-  try {
-    const { items = [], promoCode = '', contact = {} } = req.body || {}
-    const first = (contact.firstName || '').trim()
-    const last = (contact.lastName || '').trim()
-    const email = (contact.email || '').trim()
-    const country = (contact.country || 'Singapore').trim()
-
-    if (!email || !first || !last) {
-      return res.status(400).json({ error: { code: 'BAD_CONTACT', message: 'Name and email are required.' } })
+export function createCheckoutHandler({ createStripe = key => new Stripe(key), environment = process.env } = {}) {
+  return async function handler(req, res) {
+    res.setHeader('Cache-Control', 'no-store')
+    if (req.method !== 'POST') {
+      res.setHeader('Allow', 'POST')
+      return res.status(405).json({ error: { code: 'METHOD_NOT_ALLOWED', message: 'Method not allowed.' } })
     }
-
-    const pricedLines = []
-    for (const item of items) {
-      const found = findVariant(item.variantId)
-      if (found) {
-        pricedLines.push({
-          name: `${found.product.title} — ${found.variant.label}`,
-          unitAmount: found.variant.priceCents,
-          qty: Math.max(1, Math.min(Number(item.qty) || 1, 10)),
-          variantId: found.variant.id,
-        })
-      }
+    if (!environment.STRIPE_SECRET_KEY) {
+      return res.status(503).json({ error: { code: 'PAYMENTS_UNAVAILABLE', message: 'Secure payments are temporarily unavailable.' } })
     }
-
-    if (pricedLines.length === 0) {
-      return res.status(400).json({ error: { code: 'EMPTY_CART', message: 'No valid items in cart.' } })
+    let origin
+    try { origin = checkoutOrigin(environment) } catch {
+      return res.status(503).json({ error: { code: 'PAYMENTS_UNAVAILABLE', message: 'Secure payments are temporarily unavailable.' } })
     }
-
-    const orderId = 'GV-' + Math.random().toString(36).substring(2, 8).toUpperCase()
-    const origin = req.headers.origin || (req.headers.host ? `https://${req.headers.host}` : 'https://gamevault-alpha-ten.vercel.app')
-
-    const discounts = []
-    if (String(promoCode).trim().toUpperCase() === 'GAMER10') {
-      try {
+    const { items, promoCode = '', contact = {} } = req.body || {}
+    const first = typeof contact?.firstName === 'string' ? contact.firstName.trim() : ''
+    const last = typeof contact?.lastName === 'string' ? contact.lastName.trim() : ''
+    const email = typeof contact?.email === 'string' ? contact.email.trim() : ''
+    const country = typeof contact?.country === 'string' ? contact.country.trim() : 'Singapore'
+    if (!first || !last || first.length > 120 || last.length > 120 || email.length > 254
+        || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || country.length > 80) {
+      return res.status(400).json({ error: { code: 'BAD_CONTACT', message: 'Provide a valid name and email.' } })
+    }
+    let pricedLines
+    try { pricedLines = priceCheckout(items) } catch (error) {
+      return res.status(400).json({ error: { code: 'BAD_CART', message: error.message } })
+    }
+    const subtotal = pricedLines.reduce((total, line) => total + line.unitAmount * line.qty, 0)
+    const hasPromo = typeof promoCode === 'string' && Boolean(promoCode.trim())
+    const promo = applyPromo(subtotal, promoCode)
+    if ((promoCode && typeof promoCode !== 'string') || (hasPromo && !promo.ok)) {
+      return res.status(400).json({ error: { code: 'PROMO_INELIGIBLE', message: promo.message } })
+    }
+    const orderId = 'GV-' + randomUUID().replaceAll('-', '').toUpperCase()
+    try {
+      const stripe = createStripe(environment.STRIPE_SECRET_KEY)
+      const discounts = []
+      if (hasPromo) {
         const coupon = await stripe.coupons.create({
-          amount_off: 1000,
+          amount_off: promo.discountCents,
           currency: 'sgd',
           duration: 'once',
-          name: 'GAMER10 — S$10 off',
+          name: `${DEMO_PROMO.code} — S$10 off`,
         }, { idempotencyKey: `coupon-gamer10-${orderId}` })
         discounts.push({ coupon: coupon.id })
-      } catch (couponErr) {
-        console.warn('Coupon create skipped:', couponErr.message)
       }
-    }
-
-    const session = await stripe.checkout.sessions.create({
-      mode: 'payment',
-      customer_email: email,
-      line_items: pricedLines.map((line) => ({
-        price_data: {
-          currency: 'sgd',
-          unit_amount: line.unitAmount,
-          product_data: {
-            name: line.name,
-            metadata: { variantId: line.variantId },
+      const session = await stripe.checkout.sessions.create({
+        mode: 'payment',
+        customer_email: email,
+        line_items: pricedLines.map(line => ({
+          price_data: {
+            currency: 'sgd',
+            unit_amount: line.unitAmount,
+            product_data: { name: line.name, metadata: { variantId: line.variantId } },
           },
-        },
-        quantity: line.qty,
-      })),
-      discounts: discounts.length > 0 ? discounts : undefined,
-      client_reference_id: orderId,
-      metadata: {
-        orderId,
-        customerName: `${first} ${last}`,
-        customerEmail: email,
-        customerCountry: country,
-        source: 'GameVault Storefront',
-      },
-      success_url: `${origin}/orders/${orderId}/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/checkout/cancel?order_id=${orderId}`,
-    })
-
-    return res.status(200).json({ url: session.url, orderId })
-  } catch (err) {
-    console.error('Checkout creation error:', err)
-    return res.status(500).json({ error: { code: 'CHECKOUT_FAILED', message: err.message || 'Payment creation failed.' } })
+          quantity: line.qty,
+        })),
+        discounts: discounts.length ? discounts : undefined,
+        client_reference_id: orderId,
+        metadata: { orderId, customerName: `${first} ${last}`, customerEmail: email,
+          customerCountry: country, source: 'GameVault Storefront' },
+        success_url: `${origin}/orders/${orderId}/success?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${origin}/checkout/cancel?order_id=${orderId}`,
+      })
+      return res.status(200).json({ url: session.url, orderId })
+    } catch {
+      // Never return provider diagnostics, credentials, or claim a discount was
+      // applied when coupon creation failed.
+      return res.status(503).json({ error: { code: 'CHECKOUT_UNAVAILABLE', message: 'Secure payment could not open. Please try again.' } })
+    }
   }
 }
+
+export default createCheckoutHandler()

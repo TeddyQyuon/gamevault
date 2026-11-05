@@ -63,3 +63,22 @@ Objective: replace malformed payment artwork and audit all personal project comp
 - Older separate Mobile Coder deployment exposes emoji service placeholders. Its GitHub source is inaccessible and Vercel truncates the large source-file response; avoid patching its compiled bundle. Record this as a source-access blocker if it cannot be recovered.
 
 Next actions: publish verified repository commits; verify official images and theme behavior on live pages; restore older Mobile Coder source access before changing its five emoji service placeholders.
+
+## 5 November 2026 security remediation
+
+Objective: fix all five GameVault application findings from the security audit, with dependency updates handled in parallel. These are source changes awaiting publication and deployment; no live service, credential, or payment configuration was changed.
+
+- Removed every public Express coder route and reject the namespace with 404. Disabled the Vercel AI execution proxy without making provider calls. Trusted local controller imports remain possible, but public storefront automation is intentionally unavailable.
+- Removed fabricated paid-order responses in the Vercel order function and success page. Stripe session identity, order reference, metadata, payment mode, currency, and amount are verified. Unknown/mismatched orders are 404; unavailable verification is 503; incomplete payment is pending. Paid status requires an authoritative complete, paid session; items and totals come from Stripe. No payment timestamp or fulfilment confirmation is invented.
+- Shared the documented promo rule between UI estimates and Vercel checkout/preview. Checkout resolves catalogue prices, rejects invalid quantities, checks the S$50 minimum before creating a S$10 coupon, and stops if coupon creation fails.
+- Vercel checkout uses `CHECKOUT_PUBLIC_URL`, falling back to `CLIENT_URL` and the existing production origin. Request headers cannot select return destinations. Configuration accepts only an exact HTTPS origin (development loopback excepted). Full deployment notes: `docs/SECURITY_FIXES_2026-11-05.md`.
+- Added behavioral security suites for the real Express HTTP boundary and injected Stripe clients. Updated obsolete PWA/preset tests to verify the current single GameVault manifest and configured repository presets without depending on the owner's Windows folders. Existing local command tests now use this checkout directory. Test coverage remains active.
+- Parallel dependency work upgraded vulnerable direct/transitive packages and included both security suites in the npm test commands. Root and server registry audits each report zero known vulnerabilities. Sequelize remains on 6.37.8, with a UUID 11.1.1 override whose CommonJS v4 compatibility check passed; consult the manifests and dependency remediation report for versions.
+
+Validation: root tests 45/45 passed; server tests 65/65 passed, with the optional live MySQL integration suite gated. Production build and root lint passed. Server lint passed with one pre-existing unused `DataTypes` warning in migration `005_order_snapshots.js`. Whitespace checks passed. Stripe and AI requests were stubbed or disabled; no real payment, live database test, production exploit, or browser checkout was performed.
+
+Next three actions:
+
+1. Publish the reviewed security revision and deploy the updated Vercel functions and Express service wherever used.
+2. Verify that public coder requests return 404 and configure the exact intended checkout origin for each deployment.
+3. Run payment verification and fulfilment checks with the provider sandbox and optional test database before relying on real checkout; preserve private guest links and monitor errors.
