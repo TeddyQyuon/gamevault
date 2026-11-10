@@ -2,19 +2,23 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import fs from 'fs'
 import path from 'path'
+import { REPOSITORIES } from '../server/src/controllers/coderController.js'
 
-test('PWA manifest: valid JSON and required properties in both webmanifest and json formats', () => {
-  const manifests = ['public/manifest.webmanifest', 'public/manifest.json']
+test('PWA manifest: the linked manifest describes the current GameVault storefront', () => {
+  const manifests = ['public/manifest.webmanifest']
+  const html = fs.readFileSync(path.resolve('index.html'), 'utf8')
+  assert.match(html, /rel="manifest" href="\/manifest\.webmanifest"/)
 
   for (const m of manifests) {
     const manifestPath = path.resolve(m)
     assert.ok(fs.existsSync(manifestPath), `${m} exists`)
 
     const content = JSON.parse(fs.readFileSync(manifestPath, 'utf8'))
-    assert.equal(content.name, 'Antigravity Mobile Coder')
-    assert.equal(content.short_name, 'Antigravity')
+    assert.equal(content.name, 'GameVault')
+    assert.equal(content.short_name, 'GameVault')
     assert.equal(content.display, 'standalone')
-    assert.equal(content.start_url, '/coder')
+    assert.equal(content.start_url, '/')
+    assert.equal(content.scope, '/')
     assert.equal(content.theme_color, '#0f172a')
     assert.ok(Array.isArray(content.icons))
     assert.ok(content.icons.length >= 3)
@@ -27,8 +31,10 @@ test('PWA manifest: valid JSON and required properties in both webmanifest and j
     assert.ok(hasMaskable, `${m} contains maskable icon`)
 
     assert.ok(Array.isArray(content.shortcuts), `${m} contains shortcuts array`)
-    assert.ok(content.shortcuts.length >= 3, `${m} has all 3 repo shortcuts`)
-    assert.ok(content.shortcuts.some((s) => s.url.includes('repo=meterwise')))
+    assert.ok(content.shortcuts.length >= 3, `${m} has all 3 storefront shortcuts`)
+    for (const url of ['/games', '/subscriptions', '/account/orders']) {
+      assert.ok(content.shortcuts.some(shortcut => shortcut.url === url), `${m} contains ${url}`)
+    }
   }
 })
 
@@ -73,15 +79,17 @@ test('HTML: index.html contains PWA meta tags and manifest link', () => {
   assert.match(html, /viewport-fit=cover/)
 })
 
-test('Repository presets: all 3 target repositories are defined with verified paths', () => {
-  const paths = [
-    'c:/Users/waiya/Downloads/GameValut',
-    'c:/Users/waiya/Downloads/TeddyQyuonPortfolio',
-    'c:/Users/waiya/Downloads/meterwise'
-  ]
-
-  for (const p of paths) {
-    assert.ok(fs.existsSync(p), `Path exists: ${p}`)
+test('Local tooling presets define absolute paths and the intended repositories without requiring an owner workstation', () => {
+  const expected = {
+    gamevault: 'TeddyQyuon/gamevault',
+    portfolio: 'TeddyQyuon/TeddyQyuonPortfolio',
+    meterwise: 'TeddyQyuon/meterwise',
+  }
+  for (const [key, slug] of Object.entries(expected)) {
+    assert.equal(REPOSITORIES[key].key, key)
+    assert.equal(REPOSITORIES[key].githubRepo, slug)
+    assert.ok(path.isAbsolute(REPOSITORIES[key].path))
+    assert.equal(typeof REPOSITORIES[key].testCmd, 'string')
   }
 })
 
