@@ -72,3 +72,27 @@ skills/
 
 gamevault-*.jpg
 scripts/update-products.mjs
+
+# Local tools and internal working artifacts
+AGENTS.md
+CLAUDE.md
+*_UPGRADE.md
+design-qa.md
+skills-lock.json
+scripts/generate_bigtech_agents.mjs
+scripts/generate_portfolio_pdf.py
+docs/agent_handoff.md
+docs/big_tech_agents_roster.md
+docs/future-backend.md
+docs/portfolio_template.html
+docs/preview_p1.png
+docs/Wai_Yan_Hpone_Lat*_Portfolio.pdf
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.cursor/
+.codex/
+.ipynb_checkpoints/
