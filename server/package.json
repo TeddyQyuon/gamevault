@@ -13,7 +13,7 @@
     "db:migrate": "node src/migrate.js",
     "db:seed": "node src/seed.js",
     "admin:promote": "node src/make-admin.js",
-    "test": "node --test tests/pricing.test.js tests/webhooks.test.js tests/integration.test.js tests/connect.test.js tests/live-guards.test.js tests/manual-delivery.test.js tests/coder.test.js",
+    "test": "node --test tests/*.test.js",
     "lint": "eslint src tests"
   },
   "dependencies": {
@@ -21,11 +21,17 @@
     "cookie-parser": "1.4.7",
     "cors": "2.8.5",
     "dotenv": "16.4.5",
-    "express": "4.21.2",
+    "express": "4.22.3",
     "express-rate-limit": "7.4.1",
     "mysql2": "3.24.4",
     "sequelize": "6.37.8",
     "stripe": "22.6.1"
+  },
+  "overrides": {
+    "qs": "^6.16.1",
+    "sequelize": {
+      "uuid": "^11.1.1"
+    }
   },
   "devDependencies": {
     "eslint": "^9.13.0"

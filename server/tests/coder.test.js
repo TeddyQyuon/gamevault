@@ -75,7 +75,7 @@ test('coder controller: test endpoint execution', async () => {
 
   const mockReq = {
     body: {
-      repoKey: 'gamevault',
+      repoKey: process.cwd(),
       customCmd: 'node -e "console.log(\'custom-test-passed\')"'
     }
   }
@@ -120,7 +120,7 @@ test('coder controller: executeAutonomousTask executes deterministic protocol', 
 
   const mockReq = {
     body: {
-      repoKey: 'gamevault',
+      repoKey: process.cwd(),
       task: 'Verify autonomous test protocol runner',
       autoVerify: false // skip heavy nested test during unit run
     }
