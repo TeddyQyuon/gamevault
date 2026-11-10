@@ -9,24 +9,8 @@
 
 import { findVariant } from '../data/products.js'
 import { apiGet, apiPost } from './api.js'
-
-// Documented promo (mirrored in the server seed; the server validates it).
-export const DEMO_PROMO = {
-  code: 'GAMER10',
-  description: 'S$10 off one-time orders over S$50',
-  minSubtotalCents: 5000,
-  discountCents: 1000,
-}
-
-export function applyPromo(subtotalCents, code) {
-  const clean = (code || '').trim().toUpperCase()
-  if (!clean) return { ok: false, discountCents: 0, message: 'Enter a promo code.' }
-  if (clean !== DEMO_PROMO.code) return { ok: false, discountCents: 0, message: 'That code is not valid.' }
-  if (subtotalCents < DEMO_PROMO.minSubtotalCents) {
-    return { ok: false, discountCents: 0, message: 'Needs a subtotal of at least S$50.' }
-  }
-  return { ok: true, discountCents: Math.min(DEMO_PROMO.discountCents, subtotalCents), message: `${DEMO_PROMO.code} applied! You saved S$10.00` }
-}
+import { applyPromo } from './promoPolicy.js'
+export { DEMO_PROMO, applyPromo } from './promoPolicy.js'
 
 /** Resolve cart lines against local data; drops unknown variants. */
 export function priceLines(lines) {
