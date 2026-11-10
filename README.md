@@ -1,67 +1,68 @@
-﻿# GameVault
+# GameVault
 
-Subscription marketplace built with React/Vite, Express, Sequelize/MySQL and Stripe Checkout.
+A digital marketplace for game subscriptions, gift cards and games, built with React, Vite, Express and MySQL. The storefront connects product discovery and a sliding cart to server-priced Stripe Checkout and a staff-managed email-delivery workflow.
+
+**[Live storefront](https://gamevault-alpha-ten.vercel.app/)**
+
+![GameVault light marketplace showing search, category navigation and product rails](.github/preview.webp)
+
+## Features
+
+- Responsive catalogue, autocomplete search, category filters and product details with regional eligibility and delivery terms.
+- Sliding cart, quantity controls and server-validated discount calculations.
+- Stripe Checkout, signed webhooks, payment-to-order verification and duplicate-event handling.
+- Protected staff workflows for catalogue publishing, orders and manual email delivery.
+- Self-hosted artwork and fonts, light/dark themes and reduced-motion support.
+
+## My contribution
+
+This is an **AI-assisted personal project**. I scoped the marketplace, directed its storefront design, built the React interface and cart, implemented the Vercel API and Express/Sequelize backend, integrated Stripe Checkout and webhook verification, and carried out release verification with AI assistance.
+
+## Stack
+
+React 18, Vite, Tailwind CSS, Node.js, Express, Sequelize, MySQL, Stripe and Vercel Serverless Functions.
 
 ## Run locally
 
-Configure `server/.env` from `server/.env.example`. Keep secrets local.
+Install Node.js and a local MySQL service, then:
 
-```powershell
-npm install
-npm --prefix server install
+```bash
+git clone https://github.com/TeddyQyuon/gamevault.git
+cd gamevault
+npm ci
+npm --prefix server ci
+cp server/.env.example server/.env
+```
+
+Configure the local database and generated secrets in `server/.env`. Keep that file private; provider credentials belong in local or hosting environment settings.
+
+```bash
 npm run db:migrate
 npm run catalog:prepare
 npm run api
-npm run dev
 ```
 
-Storefront: http://localhost:5173. Staff: http://localhost:5173/admin.
+In a second terminal, run `npm run dev` and open the Vite URL. The staff workspace is at `/admin`; local API configuration is documented in `server/.env.example`.
 
-## Sell subscriptions with email delivery
+## Checks
 
-Fifteen popular services have local original brand artwork and editable starter price references. `catalog:prepare` creates manual-delivery drafts and preserves existing merchant products. It does not import codes or publish offers.
-
-1. Sign in with an admin account and open **Staff → Sell subscriptions**.
-2. Review price, membership term, supported countries and account requirements for each offer you can fulfill.
-3. Select offers and click **Publish selected offers**. Published, available manual offers accept one-time SGD payments without code inventory.
-4. When Stripe confirms payment, the order appears in **Paid orders · Email delivery** with customer contact details, items, regions and a one-hour deadline.
-5. Compose the email, add the actual subscription details/instructions, send it yourself, then **Mark delivered**. This records the timestamp and staff audit entry. The button does not send email.
-6. Pause an offer in Catalogue workflow if you cannot fulfill it.
-
-See [Email delivery operations](docs/MANUAL_DELIVERY.md). The optional encrypted activation-code inventory workflow remains available; see [Prepaid codes](docs/PREPAID_CODES.md).
-
-## Payments and launch
-
-Stripe signed webhooks are the authority for payment confirmation. Prices, permissions and order ownership are enforced server-side. Customer order pages never mark themselves paid. Manual delivery is available for fixed-term, one-time offers; live recurring and demo checkout remain blocked.
-
-Set the live Stripe secret key, the matching webhook signing secret, and the public HTTPS `CLIENT_URL` before accepting live payments. The staff readiness panel shows missing configuration. Deployment startup runs migrations without seeding demo products.
-
-See [Go-live runbook](docs/GO_LIVE.md). No live payment was made during implementation.
-
-## Artwork and prices
-
-Artwork URLs are recorded in `public/assets/storefront/sources.json`. Provider names and logos belong to their owners. Logos retain native colors and proportions. Research prices and their source format/region are in `src/data/subscriptionPrices.js`; they are comparisons rather than supplier costs or guaranteed margins. Your actual delivery terms must be entered before publication.
-
-The storefront uses only published database listings. API failures show an error; no preview products or fake stock are substituted.
-
-## Compile and lint
-
-```powershell
+```bash
+npm test
+npm run api:test
 npm run build
 npm run lint
 npm run api:lint
 ```
 
-## Adding a product
+The optional live MySQL integration suite needs its dedicated test configuration. Payment tests use test doubles; a passing local suite does not establish real payment or delivery readiness.
 
-1. Add native artwork metadata to `src/data/brands.js`: id, name, local logo/cover, original background, fit, padding, tag, group and source. Existing artwork exports and subscription templates derive their presentation metadata from this registry.
-2. Save the original logo in `public/assets/storefront/`, or a publisher cover in `public/assets/storefront/games/`. Preserve native proportions and colors; never reconstruct a vendor wordmark.
-3. Record the exact source URL and download/review date in `public/assets/storefront/sources.json`. A review date for an existing file is not a claim of a fresh download.
-4. Add product data using its registered `art` key and a local `artworkPath`. Review real supply, region and fulfilment separately; a logo is not evidence of stock or authority to sell.
-5. Run `npm test`, `npm run lint` and `npm run build`. Artwork tests cover every product and subscription, local files larger than 100 bytes, and source records.
+## Operations and limits
 
-`node scripts/fetch-storefront-assets.mjs` fetches official Steam portrait capsules first and keeps local landscape headers for fallback. Inter is self-hosted with its OFL license under `public/fonts/`. No new application dependencies were added.
+Catalogue listings, availability, supplier authority and delivery terms require review before accepting payments. Staff compose and send fulfilment emails themselves; marking an order delivered records the action. Public coder execution routes are disabled.
 
-### Redesign verification notes
-
-The original test suite contains a Windows-only local-path assertion and requires two Antigravity manifests. Those requirements conflict with portable execution and the requested single GameVault manifest. They remain unchanged pending review. The Game Pass tile uses the native parent Xbox mark instead of the old reconstructed Ultimate wordmark; its legacy SVG-content assertion remains unchanged and requires an approved exact lockup or a reviewed assertion update. `MobileCoder.jsx` is explicitly protected and retains three original literal colors.
+- [Go-live requirements](docs/GO_LIVE.md)
+- [Manual email delivery](docs/MANUAL_DELIVERY.md)
+- [Encrypted prepaid-code inventory](docs/PREPAID_CODES.md)
+- [Stripe sandbox testing](docs/STRIPE_TESTING.md)
+- [Security and deployment configuration](docs/SECURITY_FIXES_2026-11-05.md)
+- [Artwork provenance](docs/NONPAYMENT_LOGO_AUDIT.md)
